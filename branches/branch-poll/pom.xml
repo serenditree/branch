@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>com.serenditree</groupId>
+    <artifactId>branches</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>branch-poll</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>branch-poll-model</module>
+    <module>branch-poll-repository-api</module>
+    <module>branch-poll-repository</module>
+    <module>branch-poll-service-api</module>
+    <module>branch-poll-service-client</module>
+    <module>branch-poll-service</module>
+  </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.serenditree</groupId>
+      <artifactId>data-generic</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+</project>

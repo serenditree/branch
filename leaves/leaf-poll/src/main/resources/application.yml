@@ -1,0 +1,72 @@
+# Only edit leaf-seed application.yml!
+serenditree:
+  log:
+    level: INFO
+  fence:
+    verification:
+      paths: /api/v1/user/verify/callback/*
+      scopes: profile,openid
+    policies:
+      enabled: false
+  root:
+    user:
+      user: user
+      password: password
+    seed:
+      user: user
+      password: password
+
+quarkus:
+  datasource:
+    db-kind: mariadb
+    username: ${serenditree.root.user.user}
+    password: ${serenditree.root.user.password}
+    jdbc:
+      url: jdbc:mariadb://root-user:3306/serenditree
+  hibernate-orm:
+    database:
+      generation: none
+    log:
+      jdbc-warnings: true
+  mongodb:
+    credentials:
+      username: ${serenditree.root.seed.user}
+      password: ${serenditree.root.seed.password}
+      auth-mechanism: SCRAM-SHA-256
+    database: serenditree
+    hosts:
+      - root-seed-0.root-seed-headless:27017
+      - root-seed-1.root-seed-headless:27017
+  oidc:
+    at:
+      auth-server-url: ~
+      application-type: web-app
+      client-id: ~
+      credentials:
+        secret: ~
+      authentication:
+        scopes: ${serenditree.fence.verification.scopes}
+    auth-server-url: ${quarkus.oidc.at.auth-server-url}
+    application-type: ${quarkus.oidc.at.application-type}
+    client-id: ${quarkus.oidc.at.client-id}
+    credentials:
+      secret: ${quarkus.oidc.at.credentials.secret}
+    authentication:
+      scopes: ${quarkus.oidc.at.authentication.scopes}
+
+  http:
+    auth:
+      permission:
+        authenticated:
+          paths: ${serenditree.fence.verification.paths}
+          policy: authenticated
+  log:
+    category:
+      "org.mongodb.driver":
+        level: INFO
+      "io.smallrye.health":
+        level: WARN
+      "com.serenditree":
+        level: ${serenditree.log.level}
+  shutdown:
+    timeout: 10

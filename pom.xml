@@ -22,6 +22,10 @@
     <serenditree.encoding>UTF-8</serenditree.encoding>
     <serenditree.cli>${env._ST_HOME_STEM}</serenditree.cli>
 
+    <serenditree.build>${maven.build.timestamp}</serenditree.build>
+    <serenditree.build.pod.down.after.all>true</serenditree.build.pod.down.after.all>
+    <serenditree.build.pod.down.after.each>false</serenditree.build.pod.down.after.each>
+
     <project.build.sourceEncoding>${serenditree.encoding}</project.build.sourceEncoding>
     <project.reporting.outputEncoding>${serenditree.encoding}</project.reporting.outputEncoding>
 
@@ -184,10 +188,6 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-metrics</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-opentracing</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -374,6 +374,11 @@
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>${version.maven.exec.plugin}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
           <version>${version.versions.maven.plugin}</version>
           <configuration>
@@ -402,13 +407,12 @@
 
   <profiles>
     <profile>
-      <id>integration-test</id>
+      <id>integration</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
-            <version>${version.maven.exec.plugin}</version>
             <configuration>
               <executable>./cli.sh</executable>
               <workingDirectory>${serenditree.cli}</workingDirectory>
@@ -428,8 +432,10 @@
                 <configuration>
                   <arguments>
                     <argument>up</argument>
-                    <argument>root</argument>
-                    <argument>--expose</argument>
+                    <argument>--integration</argument>
+                    <argument>${serenditree.build}</argument>
+                    <argument>${project.basedir}</argument>
+                    <argument>${serenditree.build.pod.down.after.each}</argument>
                   </arguments>
                 </configuration>
               </execution>
@@ -442,6 +448,11 @@
                 <configuration>
                   <arguments>
                     <argument>down</argument>
+                    <argument>--integration</argument>
+                    <argument>${serenditree.build}</argument>
+                    <argument>${project.artifactId}</argument>
+                    <argument>${serenditree.build.pod.down.after.all}</argument>
+                    <argument>${serenditree.build.pod.down.after.each}</argument>
                   </arguments>
                 </configuration>
               </execution>
@@ -479,7 +490,7 @@
     </profile>
 
     <profile>
-      <id>version-update</id>
+      <id>version</id>
       <properties>
         <verbose>true</verbose>
       </properties>

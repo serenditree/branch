@@ -95,7 +95,7 @@ public class UserLeaf extends AbstractEndpointRest {
 
         return this.buildCacheResponse(
                 this.userService.retrieveBySubstring(substring),
-                Objects::nonNull,
+                this.notNullNotEmpty,
                 Response.Status.NOT_FOUND);
     }
 

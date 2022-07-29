@@ -435,6 +435,7 @@
                     <argument>--integration</argument>
                     <argument>${serenditree.build}</argument>
                     <argument>${project.basedir}</argument>
+                    <argument>${serenditree.build.pod.down.after.all}</argument>
                     <argument>${serenditree.build.pod.down.after.each}</argument>
                   </arguments>
                 </configuration>

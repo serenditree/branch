@@ -2,22 +2,22 @@ package com.serenditree.root.data.geo.model;
 
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
 
-import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTransient;
 
 
 public class LngLatBounds extends AbstractEntity {
 
+    @JsonbProperty("_sw")
     private LngLat southWest;
 
+    @JsonbProperty("_ne")
     private LngLat northEast;
 
     public LngLatBounds() {
     }
 
-    @JsonbCreator
-    public LngLatBounds(@JsonbProperty("_sw") LngLat southWest, @JsonbProperty("_ne") LngLat northEast) {
+    public LngLatBounds(LngLat southWest, LngLat northEast) {
         this.southWest = southWest;
         this.northEast = northEast;
     }

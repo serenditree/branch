@@ -62,6 +62,7 @@
     <version.jayway.jsonpath>2.7.0</version.jayway.jsonpath>
     <version.mockito>4.6.1</version.mockito>
     <version.rest-assured>5.1.1</version.rest-assured>
+    <version.awaitility>4.2.0</version.awaitility>
   </properties>
 
   <dependencyManagement>
@@ -120,6 +121,11 @@
         <groupId>com.jayway.jsonpath</groupId>
         <artifactId>json-path-assert</artifactId>
         <version>${version.jayway.jsonpath}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>${version.awaitility}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -240,6 +246,11 @@
     <dependency>
       <groupId>com.jayway.jsonpath</groupId>
       <artifactId>json-path-assert</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

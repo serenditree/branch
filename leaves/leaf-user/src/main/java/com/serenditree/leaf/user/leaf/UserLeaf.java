@@ -116,7 +116,7 @@ public class UserLeaf extends AbstractEndpointRest {
                 this.userService.delete(id),
                 result -> result.getId() != null,
                 id.toString(),
-                Response.Status.ACCEPTED,
+                Response.Status.OK,
                 Response.Status.NOT_FOUND);
     }
 

@@ -145,7 +145,7 @@ public class SeedLeaf extends AbstractEndpointRest {
                 this.seedService.delete(id),
                 result -> result.getId() != null,
                 id.toString(),
-                Response.Status.ACCEPTED,
+                Response.Status.OK,
                 Response.Status.NOT_FOUND);
     }
 

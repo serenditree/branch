@@ -1,5 +1,6 @@
 package com.serenditree.branch.user.model.entities;
 
+import com.serenditree.branch.user.model.serializer.RoleSetDeserializer;
 import com.serenditree.branch.user.model.serializer.RoleSetSerializer;
 import com.serenditree.fence.model.AbstractTimestampedFenceEntity;
 import com.serenditree.fence.model.api.FenceEntity;
@@ -9,6 +10,7 @@ import com.serenditree.root.data.generic.model.validation.ValidationGroups;
 import com.serenditree.root.etc.oak.Oak;
 
 import javax.json.bind.annotation.JsonbTransient;
+import javax.json.bind.annotation.JsonbTypeDeserializer;
 import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -75,6 +77,7 @@ public class User extends AbstractTimestampedFenceEntity<Long> implements FenceU
     @NotNull(groups = ValidationGroups.Put.class)
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JsonbTypeSerializer(RoleSetSerializer.class)
+    @JsonbTypeDeserializer(RoleSetDeserializer.class)
     private Set<Role> roles;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

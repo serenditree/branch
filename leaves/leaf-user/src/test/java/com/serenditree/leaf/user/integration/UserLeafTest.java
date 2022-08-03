@@ -3,6 +3,7 @@ package com.serenditree.leaf.user.integration;
 import com.serenditree.branch.user.model.entities.User;
 import com.serenditree.fence.model.FenceHeaders;
 import com.serenditree.fence.model.enums.RoleType;
+import com.serenditree.root.test.authentication.Authenticator;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
@@ -25,13 +26,6 @@ import static org.hamcrest.Matchers.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserLeafTest {
 
-    @BeforeAll
-    static void beforeAll() {
-        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-        RestAssured.baseURI = "http://localhost/api/v1/user";
-        RestAssured.port = 8081;
-    }
-
     static final String USERNAME = UUID.randomUUID().toString().substring(1, 20);
     static final String PASSWORD = UUID.randomUUID().toString();
     static final Headers FENCE_HEADERS = new Headers(
@@ -40,7 +34,14 @@ class UserLeafTest {
     );
 
     static Long userId;
-    static String token;
+    static Header fenceHeader;
+
+    @BeforeAll
+    static void beforeAll() {
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+        RestAssured.baseURI = "http://localhost/api/v1/user";
+        RestAssured.port = 8081;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // SIGN UP
@@ -61,7 +62,7 @@ class UserLeafTest {
                 .extract()
                 .headers();
         userId = Long.parseLong(headers.getValue(FenceHeaders.ID));
-        token = headers.getValue(HttpHeaders.AUTHORIZATION);
+        fenceHeader = headers.get(HttpHeaders.AUTHORIZATION);
     }
 
     @ParameterizedTest
@@ -132,7 +133,6 @@ class UserLeafTest {
                 .header(HttpHeaders.AUTHORIZATION, not(blankOrNullString()));
     }
 
-
     @ParameterizedTest
     @MethodSource("signInHeadersSource")
     @Order(3)
@@ -201,6 +201,17 @@ class UserLeafTest {
         );
     }
 
+    @Test
+    @Order(7)
+    void retrieveByUsernameNotFound() {
+        given()
+                .pathParam("username", USERNAME)
+                .when()
+                .get("{username}")
+                .then()
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // RETRIEVE BY SUBSTRING
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -230,38 +241,25 @@ class UserLeafTest {
     // DELETE
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("deleteSource")
     @Order(6)
-    void deleteUnauthenticated() {
+    void delete(Header header, Long id, Response.Status status) {
         given()
-                .pathParam("id", userId)
+                .header(header)
+                .pathParam("id", id)
                 .when()
                 .delete("delete/{id}")
                 .then()
-                .statusCode(Response.Status.UNAUTHORIZED.getStatusCode());
+                .statusCode(status.getStatusCode());
     }
 
-    @Test
-    @Order(6)
-    void deleteUnauthorized() {
-        given()
-                .headers(HttpHeaders.AUTHORIZATION, token)
-                .pathParam("id", userId + 1)
-                .when()
-                .delete("delete/{id}")
-                .then()
-                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
-    }
-
-    @Test
-    @Order(7)
-    void delete() {
-        given()
-                .headers(HttpHeaders.AUTHORIZATION, token)
-                .pathParam("id", userId)
-                .when()
-                .delete("delete/{id}")
-                .then()
-                .statusCode(Response.Status.OK.getStatusCode());
+    static Stream<Arguments> deleteSource() {
+        return Stream.of(
+                Arguments.of(Authenticator.NOOP_HEADER, userId, Response.Status.UNAUTHORIZED),
+                Arguments.of(fenceHeader, userId + 1, Response.Status.FORBIDDEN),
+                Arguments.of(fenceHeader, userId, Response.Status.OK),
+                Arguments.of(fenceHeader, userId, Response.Status.FORBIDDEN)
+        );
     }
 }

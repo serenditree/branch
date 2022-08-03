@@ -3,6 +3,7 @@ package com.serenditree.root.test.authentication;
 import com.serenditree.fence.model.FenceHeaders;
 import com.serenditree.fence.model.Principal;
 import com.serenditree.fence.model.api.FencePrincipal;
+import io.restassured.http.Header;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.client.Client;
@@ -14,6 +15,8 @@ import javax.ws.rs.core.Response;
 import java.util.UUID;
 
 public class Authenticator {
+
+    public static final Header NOOP_HEADER = new Header(HttpHeaders.ACCEPT, MediaType.WILDCARD);
 
     private static final Client CLIENT = ClientBuilder.newClient();
     private static final Entity<?> EMPTY_ENTITY = Entity.entity(null, MediaType.WILDCARD_TYPE);

@@ -116,6 +116,9 @@ public abstract class AbstractEndpointRest {
             responseBuilder.cacheControl(this.cacheControl);
         } else {
             responseBuilder = Response.status(error);
+            if (result != null) {
+                responseBuilder.entity(result);
+            }
         }
 
         return responseBuilder.build();
@@ -138,6 +141,9 @@ public abstract class AbstractEndpointRest {
                     .entity(result);
         } else {
             responseBuilder = Response.status(error);
+            if (result != null) {
+                responseBuilder.entity(result);
+            }
         }
 
         return responseBuilder;

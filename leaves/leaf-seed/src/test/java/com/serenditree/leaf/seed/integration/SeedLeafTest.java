@@ -17,7 +17,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -49,6 +48,10 @@ class SeedLeafTest {
     static void afterAll() {
         Authenticator.cleanup(fencePrincipal);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // CREATE
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Test
     @Order(1)
@@ -85,6 +88,10 @@ class SeedLeafTest {
         assertThat(created.getNubits(), nullValue());
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // RETRIEVE BY ID
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Test
     @Order(2)
     void retrieveById() {
@@ -111,6 +118,21 @@ class SeedLeafTest {
     }
 
     @Test
+    @Order(5)
+    void retrieveByIdNotFound() {
+        given()
+                .pathParam("id", created.getId().toString())
+                .when()
+                .get("{id}")
+                .then()
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // RETRIEVE BY FILTER
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Test
     @Order(2)
     void retrieveByFilter() {
         SeedFilter filter = new SeedFilter();
@@ -132,6 +154,10 @@ class SeedLeafTest {
                 .body("$", iterableWithSize(1));
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // RETRIEVE TAGS
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Test
     @Order(2)
     void retrieveTags() {
@@ -144,6 +170,10 @@ class SeedLeafTest {
                 .contentType(ContentType.JSON)
                 .body("$", containsInAnyOrder("ipsum", "loripsum"));
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // WATER, PRUNE and NUBIT
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @ParameterizedTest
     @MethodSource("waterPruneSource")
@@ -175,9 +205,13 @@ class SeedLeafTest {
         return Stream.of(
                 Arguments.of(fenceHeader, Response.Status.OK),
                 Arguments.of(fenceHeader, Response.Status.FORBIDDEN),
-                Arguments.of(new Header(HttpHeaders.ACCEPT, MediaType.WILDCARD), Response.Status.UNAUTHORIZED)
+                Arguments.of(Authenticator.NOOP_HEADER, Response.Status.UNAUTHORIZED)
         );
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // DELETE
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @ParameterizedTest
     @MethodSource("deleteSource")
@@ -194,13 +228,10 @@ class SeedLeafTest {
 
     static Stream<Arguments> deleteSource() {
         return Stream.of(
-                Arguments.of(
-                        new Header(HttpHeaders.ACCEPT, MediaType.WILDCARD),
-                        created.getId().toString(),
-                        Response.Status.UNAUTHORIZED
-                ),
+                Arguments.of(Authenticator.NOOP_HEADER, created.getId().toString(), Response.Status.UNAUTHORIZED),
                 Arguments.of(fenceHeader, new ObjectId().toString(), Response.Status.FORBIDDEN),
-                Arguments.of(fenceHeader, created.getId().toString(), Response.Status.OK)
+                Arguments.of(fenceHeader, created.getId().toString(), Response.Status.OK),
+                Arguments.of(fenceHeader, created.getId().toString(), Response.Status.FORBIDDEN)
         );
     }
 }

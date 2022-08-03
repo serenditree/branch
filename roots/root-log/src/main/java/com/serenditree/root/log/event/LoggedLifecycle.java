@@ -23,7 +23,7 @@ public class LoggedLifecycle {
                     .forEach(property -> {
                         if (StringUtils.startsWithIgnoreCase(property, "serenditree") ||
                                 StringUtils.startsWithIgnoreCase(property, "quarkus"))
-                            LOGGER.info(property + ": " + ConfigProvider.getConfig()
+                            LOGGER.fine(() -> property + ": " + ConfigProvider.getConfig()
                                     .getConfigValue(property)
                                     .getValue());
                     });

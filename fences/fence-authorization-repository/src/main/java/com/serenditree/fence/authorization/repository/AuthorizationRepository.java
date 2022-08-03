@@ -6,6 +6,7 @@ import com.serenditree.fence.model.FenceRecord;
 
 import javax.enterprise.context.Dependent;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -69,6 +70,19 @@ public class AuthorizationRepository implements AuthorizationRepositoryApi {
         return this.getEntityManager()
                 .createNamedQuery(FenceRecord.DELETE_BY_ENTITY)
                 .setParameter(FenceRecord.ENTITY_REFERENCE, entityId)
+                .executeUpdate();
+    }
+
+    /**
+     * Deletes expired {@link FenceRecord}s.
+     *
+     * @return Number of deleted records.
+     */
+    @Transactional
+    public int deleteFenceRecordsByExpiration() {
+        return this.getEntityManager()
+                .createNamedQuery(FenceRecord.DELETE_BY_EXPIRATION)
+                .setParameter(FenceRecord.EXPIRATION_REFERENCE, LocalDateTime.now())
                 .executeUpdate();
     }
 }

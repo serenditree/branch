@@ -14,4 +14,6 @@ public interface AuthorizationRepositoryApi extends PanacheRepository<FenceRecor
     List<FenceRecord> retrieveFenceRecordsByEntity(String entityId);
 
     int deleteFenceRecordsByEntity(String entityId);
+
+    int deleteFenceRecordsByExpiration();
 }

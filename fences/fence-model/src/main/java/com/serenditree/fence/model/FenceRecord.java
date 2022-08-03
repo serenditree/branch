@@ -42,6 +42,11 @@ import java.util.UUID;
         query = "DELETE FROM FenceRecord " +
                 "WHERE " + FenceRecord.ENTITY_REFERENCE + " = :" + FenceRecord.ENTITY_REFERENCE
 )
+@NamedQuery(
+        name = FenceRecord.DELETE_BY_EXPIRATION,
+        query = "DELETE FROM FenceRecord " +
+                "WHERE " + FenceRecord.EXPIRATION_REFERENCE + " < :" + FenceRecord.EXPIRATION_REFERENCE
+)
 public class FenceRecord extends AbstractEntity implements FenceEntity<UUID> {
 
     public static final String USER_REFERENCE = "userId";
@@ -52,6 +57,7 @@ public class FenceRecord extends AbstractEntity implements FenceEntity<UUID> {
     public static final String RETRIEVE = "FenceRecord.retrieve";
     public static final String RETRIEVE_BY_ENTITY = "FenceRecord.retrieveByEntity";
     public static final String DELETE_BY_ENTITY = "FenceRecord.deleteByEntity";
+    public static final String DELETE_BY_EXPIRATION = "FenceRecord.deleteByExpiration";
 
     @Id
     @GeneratedValue(generator = "uuid2")

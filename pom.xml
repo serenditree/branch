@@ -18,9 +18,11 @@
   </modules>
 
   <properties>
+    <serenditree.name>serenditree</serenditree.name>
+    <serenditree.config>serenditree.yml</serenditree.config>
+    <serenditree.cli>${env._ST_HOME_STEM}</serenditree.cli>
     <serenditree.java>11</serenditree.java>
     <serenditree.encoding>UTF-8</serenditree.encoding>
-    <serenditree.cli>${env._ST_HOME_STEM}</serenditree.cli>
 
     <serenditree.build>${maven.build.timestamp}</serenditree.build>
     <serenditree.build.pod.down.after.all>true</serenditree.build.pod.down.after.all>
@@ -35,7 +37,9 @@
     <maven.required>3.6.2</maven.required>
     <maven.home/>
 
-    <version.quarkus>2.10.2.Final</version.quarkus>
+    <version.quarkus>2.11.1.Final</version.quarkus>
+    <quarkus.package.output-directory>${serenditree.name}</quarkus.package.output-directory>
+    <quarkus.config.locations>${serenditree.config}</quarkus.config.locations>
 
     <version.maven.clean.plugin>3.1.0</version.maven.clean.plugin>
     <version.maven.compiler.plugin>3.8.1</version.maven.compiler.plugin>
@@ -170,14 +174,6 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-jdbc-mariadb</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-mongodb-panache</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-mongodb-client</artifactId>
-    </dependency>
     <!-- MICRO -->
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -212,10 +208,10 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-logging-gelf</artifactId>
     </dependency>
-    <!-- OIDC -->
+    <!-- SCHEDULER -->
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-oidc</artifactId>
+      <artifactId>quarkus-scheduler</artifactId>
     </dependency>
     <!-- UTILS -->
     <dependency>
@@ -346,6 +342,10 @@
           <version>${version.maven.clean.plugin}</version>
         </plugin>
         <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${version.maven.resources.plugin}</version>
+        </plugin>
+        <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${version.maven.compiler.plugin}</version>
         </plugin>
@@ -364,10 +364,6 @@
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
           <version>${version.maven.dependency.plugin}</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>${version.maven.resources.plugin}</version>
         </plugin>
         <!-- UTILS -->
         <plugin>
@@ -401,13 +397,7 @@
     <!-- DEFAULT PLUGINS-->
     <plugins>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-      </plugin>
-      <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.jboss.jandex</groupId>

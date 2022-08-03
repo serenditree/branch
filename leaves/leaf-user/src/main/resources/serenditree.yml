@@ -1,0 +1,41 @@
+serenditree:
+  log:
+    level: INFO
+  fence:
+    verification:
+      paths: /api/v1/user/verify/callback/*
+      scopes: profile,openid
+    policies:
+      enabled: false
+    cronjobs:
+      cleanup: 0 2 * * *
+  root:
+    user:
+      user: user
+      password: password
+    seed:
+      user: user
+      password: password
+
+quarkus:
+  datasource:
+    db-kind: mariadb
+    username: ${serenditree.root.user.user}
+    password: ${serenditree.root.user.password}
+    jdbc:
+      url: jdbc:mariadb://root-user:3306/serenditree
+  hibernate-orm:
+    database:
+      generation: none
+    log:
+      jdbc-warnings: true
+  log:
+    category:
+      "io.smallrye.health":
+        level: WARN
+      "com.serenditree":
+        level: ${serenditree.log.level}
+  scheduler:
+    cron-type: unix
+  shutdown:
+    timeout: 10

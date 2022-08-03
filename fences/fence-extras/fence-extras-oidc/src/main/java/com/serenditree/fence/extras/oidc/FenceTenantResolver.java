@@ -1,4 +1,4 @@
-package com.serenditree.fence;
+package com.serenditree.fence.extras.oidc;
 
 
 import io.quarkus.oidc.TenantResolver;

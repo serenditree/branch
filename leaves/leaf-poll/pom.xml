@@ -48,13 +48,13 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>./src/main/resources</outputDirectory>
+              <outputDirectory>${project.basedir}/src/main/resources</outputDirectory>
               <overwrite>true</overwrite>
               <resources>
                 <resource>
-                  <directory>../leaf-seed/src/main/resources</directory>
+                  <directory>../..</directory>
                   <includes>
-                    <include>application.yml</include>
+                    <include>${serenditree.config}</include>
                   </includes>
                 </resource>
               </resources>

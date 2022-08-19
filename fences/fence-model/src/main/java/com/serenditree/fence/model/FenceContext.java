@@ -12,6 +12,8 @@ import javax.ws.rs.core.SecurityContext;
  */
 public class FenceContext implements SecurityContext {
 
+    public static final String AUTHENTICATION_SCHEME = "SERENDITREE-JOSE-V1";
+
     private FencePrincipal principal;
 
     private boolean secure;
@@ -41,6 +43,6 @@ public class FenceContext implements SecurityContext {
 
     @Override
     public String getAuthenticationScheme() {
-        return "SERENDITREE-JOSE-V1";
+        return AUTHENTICATION_SCHEME;
     }
 }

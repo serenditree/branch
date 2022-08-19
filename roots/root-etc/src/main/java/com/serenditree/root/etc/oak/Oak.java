@@ -15,10 +15,6 @@ import java.util.regex.Pattern;
  */
 public class Oak {
 
-    private static final int MIN_ENTROPY = 64;
-    // Number of words in EFF word-list.
-    private static final int EFF_WORD_LIST_COUNT = 7776;
-
     private Oak() {
     }
 
@@ -55,6 +51,10 @@ public class Oak {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // PASSWORD
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static final int MIN_ENTROPY = 64;
+
+    private static final int EFF_WORD_LIST_COUNT = 7776;
 
     /**
      * Pattern that matches a word of a word-list with arbitrary delimiter.

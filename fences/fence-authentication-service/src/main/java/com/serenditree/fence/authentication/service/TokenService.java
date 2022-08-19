@@ -2,6 +2,7 @@ package com.serenditree.fence.authentication.service;
 
 import com.serenditree.fence.authentication.service.api.AuthenticationServiceApi;
 import com.serenditree.fence.authentication.service.api.TokenServiceApi;
+import com.serenditree.fence.model.FenceContext;
 import com.serenditree.fence.model.Principal;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.RoleType;
@@ -42,6 +43,7 @@ public class TokenService implements TokenServiceApi {
     private static final Logger LOGGER = Logger.getLogger(TokenService.class.getName());
 
     private static final String ISSUER = "serenditree.io";
+    private static final String WWW_AUTHENTICATE = FenceContext.AUTHENTICATION_SCHEME + " realm=\"serenditree.io\"";
     private static final String ROLES_KEY = "roles";
     private static final String USERNAME_KEY = "username";
     private static final int JWT_CONSUMER_ALLOWED_SKEW_SECONDS = 30;
@@ -114,7 +116,7 @@ public class TokenService implements TokenServiceApi {
                 throw new NotAuthorizedException(
                         Response.status(Response.Status.UNAUTHORIZED)
                                 .entity(apiResponse)
-                                .header(HttpHeaders.WWW_AUTHENTICATE, "Basic realm=\"serenditree.io\" expired")
+                                .header(HttpHeaders.WWW_AUTHENTICATE, WWW_AUTHENTICATE)
                                 .build()
                 );
             } else {

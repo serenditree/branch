@@ -32,12 +32,13 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     private static final String TEXT_FIELD_EXPRESSION = "$" + TEXT_FIELD;
 
     public static final String TOTAL_WATER = "totalWater";
-    public static final String WATER = "$water";
+    public static final String WATER_EXPRESSION = "$water";
 
     public static final String TOTAL_NUBITS = "totalNubits";
-    public static final String NUBITS = "$nubits";
+    public static final String NUBITS_EXPRESSION = "$nubits";
 
     public static final String TAG_SCORE = "score";
+    public static final String TAG_FIELD = "tag";
     public static final String TAGS_FIELD = "tags";
     public static final String TAGS_FIELD_EXPRESSION = "$" + TAGS_FIELD;
 
@@ -49,7 +50,7 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     protected static final Bson TAG_GROUP = Aggregates.group(TAGS_FIELD_EXPRESSION);
     protected static final Bson TAG_SCORE_FILTER = Aggregates.match(Filters.ne(TAG_SCORE, -1));
     protected static final Bson TAG_SCORE_SORT = Aggregates.sort(new Document().append(TAG_SCORE, 1));
-    protected static final Bson TAG_PROJECTION = Aggregates.project(Projections.include(TAGS_FIELD));
+    protected static final Bson TAG_PROJECTION = Aggregates.project(Projections.include(TAG_FIELD));
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // SORT
@@ -307,14 +308,14 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
             // NUTRITION AGGREGATES
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             if (this.sort == SORT_BY_WATER) {
-                this.pipeline.add(Aggregates.unwind(WATER));
+                this.pipeline.add(Aggregates.unwind(WATER_EXPRESSION));
                 this.pipeline.add(Aggregates.match(Objects.requireNonNull(fromFilter)));
-                this.includedFields.add(Accumulators.sum(TOTAL_WATER, WATER + ".value"));
+                this.includedFields.add(Accumulators.sum(TOTAL_WATER, WATER_EXPRESSION + ".value"));
                 this.pipeline.add(Aggregates.group("$_id", this.includedFields));
             } else if (this.sort == SORT_BY_NUBITS) {
-                this.pipeline.add(Aggregates.unwind(NUBITS));
+                this.pipeline.add(Aggregates.unwind(NUBITS_EXPRESSION));
                 this.pipeline.add(Aggregates.match(Objects.requireNonNull(fromFilter)));
-                this.includedFields.add(Accumulators.sum(TOTAL_NUBITS, NUBITS + ".value"));
+                this.includedFields.add(Accumulators.sum(TOTAL_NUBITS, NUBITS_EXPRESSION + ".value"));
                 this.pipeline.add(Aggregates.group("$_id", this.includedFields));
             }
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////

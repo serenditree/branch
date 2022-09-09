@@ -28,25 +28,28 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
 
     private static final Logger LOGGER = Logger.getLogger(AbstractMongoNativeQueryBuilder.class.getName());
 
+    private static final String TEXT_FIELD = "text";
+    private static final String TEXT_FIELD_EXPRESSION = "$" + TEXT_FIELD;
+
     public static final String TOTAL_WATER = "totalWater";
     public static final String WATER = "$water";
 
     public static final String TOTAL_NUBITS = "totalNubits";
     public static final String NUBITS = "$nubits";
 
-
     public static final String TAG_SCORE = "score";
-    public static final String TAGS = "$tags";
+    public static final String TAGS_FIELD = "tags";
+    public static final String TAGS_FIELD_EXPRESSION = "$" + TAGS_FIELD;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // TAG
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected static final Bson TAG_UNWIND = Aggregates.unwind(TAGS);
-    protected static final Bson TAG_GROUP = Aggregates.group(TAGS);
+    protected static final Bson TAG_UNWIND = Aggregates.unwind(TAGS_FIELD_EXPRESSION);
+    protected static final Bson TAG_GROUP = Aggregates.group(TAGS_FIELD_EXPRESSION);
     protected static final Bson TAG_SCORE_FILTER = Aggregates.match(Filters.ne(TAG_SCORE, -1));
     protected static final Bson TAG_SCORE_SORT = Aggregates.sort(new Document().append(TAG_SCORE, 1));
-    protected static final Bson TAG_PROJECTION = Aggregates.project(Projections.include("tag"));
+    protected static final Bson TAG_PROJECTION = Aggregates.project(Projections.include(TAGS_FIELD));
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // SORT
@@ -71,14 +74,14 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     protected static final List<BsonField> INCLUDED_FIELDS = List.of(
             Accumulators.first("created", "$created"),
             Accumulators.first("modified", "$modified"),
-            Accumulators.first("tags", TAGS),
+            Accumulators.first(TAGS_FIELD, TAGS_FIELD_EXPRESSION),
             Accumulators.first("parent", "$parent"),
             Accumulators.first("location", "$location"),
             Accumulators.first("username", "$username"),
             Accumulators.first("userId", "$userId"),
             Accumulators.first("anonymous", "$anonymous"),
             Accumulators.first("title", "$title"),
-            Accumulators.first("text", "$text")
+            Accumulators.first(TEXT_FIELD, TEXT_FIELD_EXPRESSION)
     );
 
     protected List<Bson> pipeline;
@@ -88,6 +91,8 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     protected List<Bson> filters;
 
     protected Bson sort;
+
+    protected Bson textLimit;
 
     protected Bson skip;
 
@@ -104,6 +109,7 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
         this.pipeline = new ArrayList<>();
         this.filters = new ArrayList<>();
         this.sort = null;
+        this.textLimit = null;
         this.skip = DEFAULT_SKIP;
         this.limit = DEFAULT_LIMIT;
         this.unwind = false;
@@ -147,7 +153,7 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     @Override
     public NativeQueryBuilderApi setTags(Set<String> tags) {
         if (tags.size() == 1) {
-            this.filters.add(Filters.eq("tags", tags.iterator().next()));
+            this.filters.add(Filters.eq(TAGS_FIELD, tags.iterator().next()));
         } else {
             throw new WebApplicationException(
                     "Only filtering by one tag is supported. You have provided " + tags.size() + ".",
@@ -190,6 +196,29 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     }
 
     @Override
+    public NativeQueryBuilderApi setTextLimit(final int maxBytes) {
+        List<Bson> fields = this.includedFields.stream()
+                .map(BsonField::getName)
+                .filter(field -> !field.equals(TEXT_FIELD))
+                .map(field -> new Document(field, 1))
+                .collect(Collectors.toList());
+
+        fields.add(
+                new Document(
+                        TEXT_FIELD,
+                        new Document(
+                                "$substrBytes",
+                                List.of(TEXT_FIELD_EXPRESSION, 0, maxBytes)
+                        )
+                )
+        );
+
+        this.textLimit = Aggregates.project(Projections.fields(fields));
+
+        return this;
+    }
+
+    @Override
     public NativeQueryBuilderApi setSkip(int skip) {
         this.skip = Aggregates.skip(skip);
 
@@ -198,15 +227,15 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
 
     @Override
     public NativeQueryBuilderApi setLimit(int limit) {
-
         this.limit = Aggregates.limit(limit);
+
         return this;
     }
 
     @Override
     public NativeQueryBuilderApi createTagsQuery(String name) {
         // TODO this won't scale...
-        this.pipeline.add(Aggregates.match(Filters.regex("tags", ".*" + name + ".*", "i")));
+        this.pipeline.add(Aggregates.match(Filters.regex(TAGS_FIELD, ".*" + name + ".*", "i")));
         this.pipeline.add(TAG_UNWIND);
         this.pipeline.add(TAG_GROUP);
         this.pipeline.add(
@@ -300,6 +329,12 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
             if (this.sort == null || this.sort != SORT_BY_CHANCE) {
                 this.pipeline.add(this.skip);
                 this.pipeline.add(this.limit);
+            }
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // PROJECTION
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            if (this.textLimit != null) {
+                this.pipeline.add(this.textLimit);
             }
         }
 

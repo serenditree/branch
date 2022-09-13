@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -71,7 +71,7 @@ class SeedLeafTest {
                 .when()
                 .post("create")
                 .then()
-                .statusCode(Response.Status.CREATED.getStatusCode())
+                .statusCode(Status.CREATED.getStatusCode())
                 .extract()
                 .as(Seed.class, ObjectMapperType.JSONB);
 
@@ -100,7 +100,7 @@ class SeedLeafTest {
                 .when()
                 .get("{id}")
                 .then()
-                .statusCode(Response.Status.OK.getStatusCode())
+                .statusCode(Status.OK.getStatusCode())
                 .extract()
                 .as(Seed.class, ObjectMapperType.JSONB);
 
@@ -125,7 +125,7 @@ class SeedLeafTest {
                 .when()
                 .get("{id}")
                 .then()
-                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+                .statusCode(Status.NOT_FOUND.getStatusCode());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ class SeedLeafTest {
                 .when()
                 .post("retrieve")
                 .then()
-                .statusCode(Response.Status.OK.getStatusCode())
+                .statusCode(Status.OK.getStatusCode())
                 .contentType(ContentType.JSON)
                 .body("$", iterableWithSize(1));
     }
@@ -166,7 +166,7 @@ class SeedLeafTest {
                 .when()
                 .get("retrieve/tags/{name}")
                 .then()
-                .statusCode(Response.Status.OK.getStatusCode())
+                .statusCode(Status.OK.getStatusCode())
                 .contentType(ContentType.JSON)
                 .body("$", containsInAnyOrder("ipsum", "loripsum"));
     }
@@ -178,7 +178,7 @@ class SeedLeafTest {
     @ParameterizedTest
     @MethodSource("waterPruneSource")
     @Order(3)
-    void water(Header header, Response.Status status) {
+    void water(Header header, Status status) {
         given()
                 .header(header)
                 .pathParam("id", created.getId().toString())
@@ -191,7 +191,7 @@ class SeedLeafTest {
     @ParameterizedTest
     @MethodSource("waterPruneSource")
     @Order(3)
-    void prune(Header header, Response.Status status) {
+    void prune(Header header, Status status) {
         given()
                 .header(header)
                 .pathParam("id", created.getId().toString())
@@ -203,9 +203,9 @@ class SeedLeafTest {
 
     static Stream<Arguments> waterPruneSource() {
         return Stream.of(
-                Arguments.of(fenceHeader, Response.Status.OK),
-                Arguments.of(fenceHeader, Response.Status.FORBIDDEN),
-                Arguments.of(Authenticator.NOOP_HEADER, Response.Status.UNAUTHORIZED)
+                Arguments.of(fenceHeader, Status.OK),
+                Arguments.of(fenceHeader, Status.FORBIDDEN),
+                Arguments.of(Authenticator.NOOP_HEADER, Status.UNAUTHORIZED)
         );
     }
 
@@ -216,7 +216,7 @@ class SeedLeafTest {
     @ParameterizedTest
     @MethodSource("deleteSource")
     @Order(4)
-    void delete(Header header, String id, Response.Status status) {
+    void delete(Header header, String id, Status status) {
         given()
                 .header(header)
                 .pathParam("id", id)
@@ -228,10 +228,10 @@ class SeedLeafTest {
 
     static Stream<Arguments> deleteSource() {
         return Stream.of(
-                Arguments.of(Authenticator.NOOP_HEADER, created.getId().toString(), Response.Status.UNAUTHORIZED),
-                Arguments.of(fenceHeader, new ObjectId().toString(), Response.Status.FORBIDDEN),
-                Arguments.of(fenceHeader, created.getId().toString(), Response.Status.OK),
-                Arguments.of(fenceHeader, created.getId().toString(), Response.Status.FORBIDDEN)
+                Arguments.of(Authenticator.NOOP_HEADER, created.getId().toString(), Status.UNAUTHORIZED),
+                Arguments.of(fenceHeader, new ObjectId().toString(), Status.FORBIDDEN),
+                Arguments.of(fenceHeader, created.getId().toString(), Status.OK),
+                Arguments.of(fenceHeader, created.getId().toString(), Status.FORBIDDEN)
         );
     }
 }

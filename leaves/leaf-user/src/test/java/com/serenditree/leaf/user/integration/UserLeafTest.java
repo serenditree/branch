@@ -15,7 +15,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -55,7 +55,7 @@ class UserLeafTest {
                 .when()
                 .post("sign-up")
                 .then()
-                .statusCode(Response.Status.CREATED.getStatusCode())
+                .statusCode(Status.CREATED.getStatusCode())
                 .header(FenceHeaders.USERNAME, equalTo(USERNAME))
                 .header(FenceHeaders.ID, not(blankOrNullString()))
                 .header(HttpHeaders.AUTHORIZATION, not(blankOrNullString()))
@@ -68,7 +68,7 @@ class UserLeafTest {
     @ParameterizedTest
     @MethodSource("signUpHeadersSource")
     @Order(2)
-    void signUpInvalid(Headers headers, Response.Status status) {
+    void signUpInvalid(Headers headers, Status status) {
         given()
                 .headers(headers)
                 .when()
@@ -85,7 +85,7 @@ class UserLeafTest {
                 // Already exists.
                 Arguments.of(
                         FENCE_HEADERS,
-                        Response.Status.BAD_REQUEST
+                        Status.BAD_REQUEST
                 ),
                 // Weak password.
                 Arguments.of(
@@ -93,7 +93,7 @@ class UserLeafTest {
                                 new Header(FenceHeaders.USERNAME, UUID.randomUUID().toString()),
                                 new Header(FenceHeaders.PASSWORD, "password")
                         ),
-                        Response.Status.BAD_REQUEST
+                        Status.BAD_REQUEST
                 ),
                 // Invalid email
                 Arguments.of(
@@ -102,7 +102,7 @@ class UserLeafTest {
                                 new Header(FenceHeaders.PASSWORD, PASSWORD),
                                 new Header(FenceHeaders.EMAIL, "invalid@")
                         ),
-                        Response.Status.BAD_REQUEST
+                        Status.BAD_REQUEST
                 ),
                 // Username too long.
                 Arguments.of(
@@ -110,7 +110,7 @@ class UserLeafTest {
                                 new Header(FenceHeaders.USERNAME, "x".repeat(21)),
                                 new Header(FenceHeaders.PASSWORD, PASSWORD)
                         ),
-                        Response.Status.BAD_REQUEST
+                        Status.BAD_REQUEST
                 )
         );
     }
@@ -127,7 +127,7 @@ class UserLeafTest {
                 .when()
                 .post("sign-in")
                 .then()
-                .statusCode(Response.Status.OK.getStatusCode())
+                .statusCode(Status.OK.getStatusCode())
                 .header(FenceHeaders.USERNAME, equalTo(USERNAME))
                 .header(FenceHeaders.ID, equalTo(userId.toString()))
                 .header(HttpHeaders.AUTHORIZATION, not(blankOrNullString()));
@@ -136,7 +136,7 @@ class UserLeafTest {
     @ParameterizedTest
     @MethodSource("signInHeadersSource")
     @Order(3)
-    void signInWrongUsernameOrPassword(Headers headers, Response.Status status) {
+    void signInWrongUsernameOrPassword(Headers headers, Status status) {
         given()
                 .headers(headers)
                 .when()
@@ -154,7 +154,7 @@ class UserLeafTest {
                                 new Header(FenceHeaders.USERNAME, USERNAME.substring(1)),
                                 new Header(FenceHeaders.PASSWORD, PASSWORD)
                         ),
-                        Response.Status.UNAUTHORIZED
+                        Status.UNAUTHORIZED
                 ),
                 // Wrong password.
                 Arguments.of(
@@ -162,7 +162,7 @@ class UserLeafTest {
                                 new Header(FenceHeaders.USERNAME, USERNAME),
                                 new Header(FenceHeaders.PASSWORD, USERNAME)
                         ),
-                        Response.Status.BAD_REQUEST
+                        Status.BAD_REQUEST
                 )
         );
     }
@@ -174,7 +174,7 @@ class UserLeafTest {
     @ParameterizedTest
     @MethodSource("usernameSource")
     @Order(4)
-    void retrieveByUsername(String username, Response.Status status) {
+    void retrieveByUsername(String username, Status status) {
         io.restassured.response.Response response = given()
                 .pathParam("username", username)
                 .when()
@@ -184,7 +184,7 @@ class UserLeafTest {
                 .extract()
                 .response();
 
-        if (status == Response.Status.OK) {
+        if (status == Status.OK) {
             User user = response.as(User.class, ObjectMapperType.JSONB);
             assertThat(user.getId(), equalTo(userId));
             assertThat(user.getUsername(), equalTo(USERNAME));
@@ -196,8 +196,8 @@ class UserLeafTest {
 
     static Stream<Arguments> usernameSource() {
         return Stream.of(
-                Arguments.of(USERNAME, Response.Status.OK),
-                Arguments.of(USERNAME.substring(1), Response.Status.NOT_FOUND)
+                Arguments.of(USERNAME, Status.OK),
+                Arguments.of(USERNAME.substring(1), Status.NOT_FOUND)
         );
     }
 
@@ -209,7 +209,7 @@ class UserLeafTest {
                 .when()
                 .get("{username}")
                 .then()
-                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+                .statusCode(Status.NOT_FOUND.getStatusCode());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,7 +219,7 @@ class UserLeafTest {
     @ParameterizedTest
     @MethodSource("substringSource")
     @Order(5)
-    void retrieveBySubstring(String substring, Response.Status status) {
+    void retrieveBySubstring(String substring, Status status) {
         given()
                 .pathParam("substring", substring)
                 .when()
@@ -227,13 +227,13 @@ class UserLeafTest {
                 .then()
                 .statusCode(status.getStatusCode())
                 .contentType(ContentType.JSON)
-                .body("$", status == Response.Status.OK ? iterableWithSize(1) : iterableWithSize(0));
+                .body("$", status == Status.OK ? iterableWithSize(1) : iterableWithSize(0));
     }
 
     static Stream<Arguments> substringSource() {
         return Stream.of(
-                Arguments.of(USERNAME.substring(0, 2), Response.Status.OK),
-                Arguments.of(USERNAME.substring(1), Response.Status.NOT_FOUND)
+                Arguments.of(USERNAME.substring(0, 2), Status.OK),
+                Arguments.of(USERNAME.substring(1), Status.NOT_FOUND)
         );
     }
 
@@ -244,7 +244,7 @@ class UserLeafTest {
     @ParameterizedTest
     @MethodSource("deleteSource")
     @Order(6)
-    void delete(Header header, Long id, Response.Status status) {
+    void delete(Header header, Long id, Status status) {
         given()
                 .header(header)
                 .pathParam("id", id)
@@ -256,10 +256,10 @@ class UserLeafTest {
 
     static Stream<Arguments> deleteSource() {
         return Stream.of(
-                Arguments.of(Authenticator.NOOP_HEADER, userId, Response.Status.UNAUTHORIZED),
-                Arguments.of(fenceHeader, userId + 1, Response.Status.FORBIDDEN),
-                Arguments.of(fenceHeader, userId, Response.Status.OK),
-                Arguments.of(fenceHeader, userId, Response.Status.FORBIDDEN)
+                Arguments.of(Authenticator.NOOP_HEADER, userId, Status.UNAUTHORIZED),
+                Arguments.of(fenceHeader, userId + 1, Status.FORBIDDEN),
+                Arguments.of(fenceHeader, userId, Status.OK),
+                Arguments.of(fenceHeader, userId, Status.FORBIDDEN)
         );
     }
 }

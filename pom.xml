@@ -19,7 +19,7 @@
 
   <properties>
     <serenditree.name>serenditree</serenditree.name>
-    <serenditree.config>serenditree.yml</serenditree.config>
+    <serenditree.config>serenditree.yml,application.yml</serenditree.config>
     <serenditree.cli>${env._ST_HOME_STEM}</serenditree.cli>
     <serenditree.java>11</serenditree.java>
     <serenditree.encoding>UTF-8</serenditree.encoding>
@@ -37,7 +37,7 @@
     <maven.required>3.6.2</maven.required>
     <maven.home/>
 
-    <version.quarkus>2.11.1.Final</version.quarkus>
+    <version.quarkus>2.13.3.Final</version.quarkus>
     <quarkus.package.output-directory>${serenditree.name}</quarkus.package.output-directory>
     <quarkus.config.locations>${serenditree.config}</quarkus.config.locations>
 
@@ -61,13 +61,13 @@
     <version.apache.commons.io>2.11.0</version.apache.commons.io>
     <version.apache.commons.lang>3.12.0</version.apache.commons.lang>
     <version.argon2>2.11</version.argon2>
-    <version.jose4j>0.7.12</version.jose4j>
+    <version.jose4j>0.9.1</version.jose4j>
     <version.owasp>20220608.1</version.owasp>
 
     <version.hamcrest>2.1</version.hamcrest>
     <version.jayway.jsonpath>2.7.0</version.jayway.jsonpath>
-    <version.mockito>4.6.1</version.mockito>
-    <version.rest-assured>5.1.1</version.rest-assured>
+    <version.mockito>4.8.1</version.mockito>
+    <version.rest-assured>5.2.0</version.rest-assured>
     <version.awaitility>4.2.0</version.awaitility>
   </properties>
 

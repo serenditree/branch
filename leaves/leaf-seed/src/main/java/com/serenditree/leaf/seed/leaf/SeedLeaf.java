@@ -100,10 +100,10 @@ public class SeedLeaf extends AbstractEndpointRest {
             expirationUnit = ChronoUnit.DAYS
     )
     @Transactional(Transactional.TxType.NEVER)
-    public Response water(final @PathParam("id") ObjectId id) {
+    public Response water(final @PathParam("id") ObjectId id, final @QueryParam("garden") ObjectId gardenId) {
 
         return this.buildResponse(
-                this.seedService.water(id),
+                this.seedService.water(id, gardenId),
                 r -> r != null && r.getId() != null,
                 Response.Status.INTERNAL_SERVER_ERROR);
     }
@@ -120,10 +120,10 @@ public class SeedLeaf extends AbstractEndpointRest {
             expirationUnit = ChronoUnit.DAYS
     )
     @Transactional(Transactional.TxType.NEVER)
-    public Response prune(final @PathParam("id") ObjectId id) {
+    public Response prune(final @PathParam("id") ObjectId id, final @QueryParam("garden") ObjectId gardenId) {
 
         return this.buildResponse(
-                this.seedService.prune(id),
+                this.seedService.prune(id, gardenId),
                 r -> r != null && r.getId() != null,
                 Response.Status.INTERNAL_SERVER_ERROR);
     }

@@ -16,9 +16,9 @@ public interface SeedServiceApi {
 
     List<String> retrieveTags(String name);
 
-    FenceResponse water(ObjectId id);
+    FenceResponse water(ObjectId id, ObjectId gardenId);
 
-    FenceResponse prune(ObjectId id);
+    FenceResponse prune(ObjectId id, ObjectId gardenId);
 
     FenceResponse delete(ObjectId id);
 }

@@ -27,6 +27,8 @@ public interface NativeQueryBuilderApi {
 
     NativeQueryBuilderApi setSort(SortingType sort);
 
+    NativeQueryBuilderApi setRetention(int retention);
+
     NativeQueryBuilderApi setTextLimit(int maxBytes);
 
     NativeQueryBuilderApi setSkip(int skip);

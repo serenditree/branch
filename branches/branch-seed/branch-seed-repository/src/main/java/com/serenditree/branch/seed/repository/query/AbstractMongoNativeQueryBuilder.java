@@ -11,6 +11,7 @@ import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -100,6 +101,9 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     protected Bson limit;
 
     protected boolean unwind;
+
+    @ConfigProperty(name = "serenditree.seed.water.retention", defaultValue = "21")
+    protected int retention;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // API
@@ -192,6 +196,13 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
         } else {
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
+
+        return this;
+    }
+
+    @Override
+    public NativeQueryBuilderApi setRetention(final int retention) {
+        this.retention = retention;
 
         return this;
     }
@@ -295,10 +306,10 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
             // TODO dynamic time frame/field
             Bson fromFilter = null;
             if (this.sort == SORT_BY_WATER) {
-                fromFilter = from("water.added", 14);
+                fromFilter = from("water.added", this.retention);
                 this.filters.add(fromFilter);
             } else if (this.sort == SORT_BY_NUBITS) {
-                fromFilter = from("nubits.added", 14);
+                fromFilter = from("nubits.added", this.retention);
                 this.filters.add(fromFilter);
             }
             if (!this.filters.isEmpty()) {

@@ -34,8 +34,8 @@ class TupleMatcherTest {
 
     static Stream<Arguments> firstItemSource() {
         return Stream.of(
-                Arguments.of(firstItem(is(1))),
-                Arguments.of(firstItem(is(not(2))))
+            Arguments.of(firstItem(is(1))),
+            Arguments.of(firstItem(is(not(2))))
         );
     }
 
@@ -47,8 +47,8 @@ class TupleMatcherTest {
 
     static Stream<Arguments> lastItemSource() {
         return Stream.of(
-                Arguments.of(lastItem(is(3))),
-                Arguments.of(lastItem(is(not(2))))
+            Arguments.of(lastItem(is(3))),
+            Arguments.of(lastItem(is(not(2))))
         );
     }
 
@@ -60,11 +60,11 @@ class TupleMatcherTest {
 
     static Stream<Arguments> itemAtSource() {
         return Stream.of(
-                Arguments.of(itemAt(1, is(2))),
-                Arguments.of(itemAt(1, is(not(1)))),
-                Arguments.of(itemAt(-1, is(3))),
-                Arguments.of(itemAt(-1, is(not(2)))),
-                Arguments.of(itemAt(0, any(Integer.class)))
+            Arguments.of(itemAt(1, is(2))),
+            Arguments.of(itemAt(1, is(not(1)))),
+            Arguments.of(itemAt(-1, is(3))),
+            Arguments.of(itemAt(-1, is(not(2)))),
+            Arguments.of(itemAt(0, any(Integer.class)))
         );
     }
 
@@ -76,10 +76,10 @@ class TupleMatcherTest {
 
     static Stream<Arguments> itemAtFailureSource() {
         return Stream.of(
-                Arguments.of(INTEGER_LIST, itemAt(INTEGER_LIST.size(), any(Integer.class))),
-                Arguments.of(INTEGER_LIST, itemAt(INTEGER_LIST.size() * -1, any(Integer.class))),
-                Arguments.of(new ArrayList<>(), itemAt(0, any(Integer.class))),
-                Arguments.of(null, itemAt(0, any(Object.class)))
+            Arguments.of(INTEGER_LIST, itemAt(INTEGER_LIST.size(), any(Integer.class))),
+            Arguments.of(INTEGER_LIST, itemAt(INTEGER_LIST.size() * -1, any(Integer.class))),
+            Arguments.of(new ArrayList<>(), itemAt(0, any(Integer.class))),
+            Arguments.of(null, itemAt(0, any(Object.class)))
         );
     }
 }

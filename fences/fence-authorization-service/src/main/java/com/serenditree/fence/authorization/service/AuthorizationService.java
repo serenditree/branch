@@ -98,11 +98,12 @@ public class AuthorizationService implements AuthorizationServiceApi {
             }
 
             authorized = this.isAuthorizedAssertion(
-                    authenticatedUser.getId().toString(),
-                    targetId,
-                    action,
-                    fenced.recordRequired(),
-                    fenced.recordCount());
+                authenticatedUser.getId().toString(),
+                targetId,
+                action,
+                fenced.recordRequired(),
+                fenced.recordCount()
+            );
         }
 
         return authorized;
@@ -122,11 +123,11 @@ public class AuthorizationService implements AuthorizationServiceApi {
         MultivaluedMap<String, String> params = uriInfo.getPathParameters(true);
 
         return this.isAuthorizedAssertion(
-                params.getFirst("userId"),
-                params.getFirst("entityId"),
-                params.getFirst("action"),
-                false,
-                0
+            params.getFirst("userId"),
+            params.getFirst("entityId"),
+            params.getFirst("action"),
+            false,
+            0
         );
     }
 
@@ -159,14 +160,14 @@ public class AuthorizationService implements AuthorizationServiceApi {
      * @return Boolean flag that indicates whether a user is authorized to access a certain resource.
      */
     private boolean isAuthorizedAssertion(
-            final String userId,
-            final String entityId,
-            final String action,
-            final boolean recordRequired,
-            final int recordCount) {
+        final String userId,
+        final String entityId,
+        final String action,
+        final boolean recordRequired,
+        final int recordCount) {
 
         LOGGER.fine(() ->
-                "Authorization check: " +
+                        "Authorization check: " +
                         "userId[" + userId + "], " +
                         "entityId[" + entityId + "], " +
                         "action[" + action + "], " +
@@ -188,10 +189,10 @@ public class AuthorizationService implements AuthorizationServiceApi {
             FenceRecord fenceRecord = fenceRecords.get(0);
             if (recordRequired) {
                 authorized = fenceRecord.getExpiration() == null ||
-                        LocalDateTime.now().isBefore(fenceRecord.getExpiration());
+                             LocalDateTime.now().isBefore(fenceRecord.getExpiration());
             } else {
                 authorized = fenceRecord.getExpiration() != null &&
-                        LocalDateTime.now().isAfter(fenceRecord.getExpiration());
+                             LocalDateTime.now().isAfter(fenceRecord.getExpiration());
             }
         } else if (!recordRequired) {
             authorized = true;
@@ -210,11 +211,11 @@ public class AuthorizationService implements AuthorizationServiceApi {
      */
     private boolean isAuthorizedAssertion(FenceRecordAssertion fenceRecordAssertion) {
         return this.isAuthorizedAssertion(
-                fenceRecordAssertion.getUserId(),
-                fenceRecordAssertion.getEntityId(),
-                fenceRecordAssertion.getActionType().name(),
-                fenceRecordAssertion.isRecordRequired(),
-                fenceRecordAssertion.getRecordCount()
+            fenceRecordAssertion.getUserId(),
+            fenceRecordAssertion.getEntityId(),
+            fenceRecordAssertion.getActionType().name(),
+            fenceRecordAssertion.isRecordRequired(),
+            fenceRecordAssertion.getRecordCount()
         );
     }
 
@@ -222,13 +223,13 @@ public class AuthorizationService implements AuthorizationServiceApi {
      * Verifies if the user is in a role that authorizes her or him to access a certain resource.
      *
      * @param authenticatedUser Authenticated user who claims authorization.
-     * @param fenced            Information about the the resource the user claims to be authorized for.
+     * @param fenced            Information about the resource the user claims to be authorized for.
      * @return Boolean flag that indicates whether a user is authorized to access a certain resource based on its roles.
      */
     private boolean rolesAllowed(FencePrincipal authenticatedUser, Fenced fenced) {
         final boolean authorized = Arrays
-                .stream(fenced.rolesAllowed())
-                .anyMatch(authenticatedUser::isInRole);
+            .stream(fenced.rolesAllowed())
+            .anyMatch(authenticatedUser::isInRole);
 
         LOGGER.fine(() -> "Authorized based on role: " + authorized);
 
@@ -254,12 +255,12 @@ public class AuthorizationService implements AuthorizationServiceApi {
             LOGGER.fine(() -> "User id: " + userId);
 
             authorized = this.policyEnforcer
-                    .getPolicies(policies)
-                    .parallelStream()
-                    .map(fencePolicy -> fencePolicy.apply(json, userId))
-                    .filter(Optional::isPresent)
-                    .map(assertion -> this.isAuthorizedAssertion(assertion.get()))
-                    .reduce(true, (acc, curr) -> acc && curr);
+                .getPolicies(policies)
+                .parallelStream()
+                .map(fencePolicy -> fencePolicy.apply(json, userId))
+                .filter(Optional::isPresent)
+                .map(assertion -> this.isAuthorizedAssertion(assertion.get()))
+                .reduce(true, (acc, curr) -> acc && curr);
 
             this.containerRequestContext.setEntityStream(IOUtils.toInputStream(body, Charset.defaultCharset()));
         } catch (IOException e) {
@@ -290,7 +291,7 @@ public class AuthorizationService implements AuthorizationServiceApi {
     void init() {
         if (this.policyEnforcerInstance.isAmbiguous()) {
             throw new IllegalStateException(
-                    "Found more than one implementation of " + PolicyEnforcerApi.class.getName()
+                "Found more than one implementation of " + PolicyEnforcerApi.class.getName()
             );
         } else if (this.policyEnforcerInstance.isResolvable()) {
             this.policyEnforcer = this.policyEnforcerInstance.get();

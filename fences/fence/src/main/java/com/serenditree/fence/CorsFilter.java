@@ -14,33 +14,33 @@ import javax.ws.rs.ext.Provider;
 public class CorsFilter implements ContainerResponseFilter {
 
     private static final String HOST = ConfigProvider
-            .getConfig()
-            .getOptionalValue("serenditree.host", String.class)
-            .orElse("https://serenditree.io");
+        .getConfig()
+        .getOptionalValue("serenditree.host", String.class)
+        .orElse("https://serenditree.io");
 
     private static final String ACCESS_CONTROL_ALLOW_HEADERS = String.join(
-            ", ",
-            "Origin",
-            HttpHeaders.ACCEPT,
-            HttpHeaders.AUTHORIZATION,
-            HttpHeaders.WWW_AUTHENTICATE,
-            HttpHeaders.CONTENT_TYPE,
-            HttpHeaders.ETAG,
-            FenceHeaders.ID,
-            FenceHeaders.USERNAME,
-            FenceHeaders.PASSWORD,
-            FenceHeaders.EMAIL,
-            FenceHeaders.VERIFICATION
+        ", ",
+        "Origin",
+        HttpHeaders.ACCEPT,
+        HttpHeaders.AUTHORIZATION,
+        HttpHeaders.WWW_AUTHENTICATE,
+        HttpHeaders.CONTENT_TYPE,
+        HttpHeaders.ETAG,
+        FenceHeaders.ID,
+        FenceHeaders.USERNAME,
+        FenceHeaders.PASSWORD,
+        FenceHeaders.EMAIL,
+        FenceHeaders.VERIFICATION
     );
 
     private static final String ACCESS_CONTROL_EXPOSE_HEADERS = String.join(
-            ", ",
-            "X-XSS-Protection",
-            HttpHeaders.AUTHORIZATION,
-            HttpHeaders.WWW_AUTHENTICATE,
-            HttpHeaders.ETAG,
-            FenceHeaders.ID,
-            FenceHeaders.USERNAME
+        ", ",
+        "X-XSS-Protection",
+        HttpHeaders.AUTHORIZATION,
+        HttpHeaders.WWW_AUTHENTICATE,
+        HttpHeaders.ETAG,
+        FenceHeaders.ID,
+        FenceHeaders.USERNAME
     );
 
     @Override

@@ -38,11 +38,11 @@ public class AuthorizationRepository implements AuthorizationRepositoryApi {
      */
     public List<FenceRecord> retrieveFenceRecords(String userId, String entityId, String action) {
         return this.getEntityManager()
-                .createNamedQuery(FenceRecord.RETRIEVE, FenceRecord.class)
-                .setParameter(FenceRecord.USER_REFERENCE, userId)
-                .setParameter(FenceRecord.ENTITY_REFERENCE, entityId)
-                .setParameter(FenceRecord.ACTION_REFERENCE, action)
-                .getResultList();
+            .createNamedQuery(FenceRecord.RETRIEVE, FenceRecord.class)
+            .setParameter(FenceRecord.USER_REFERENCE, userId)
+            .setParameter(FenceRecord.ENTITY_REFERENCE, entityId)
+            .setParameter(FenceRecord.ACTION_REFERENCE, action)
+            .getResultList();
     }
 
     /**
@@ -53,9 +53,9 @@ public class AuthorizationRepository implements AuthorizationRepositoryApi {
      */
     public List<FenceRecord> retrieveFenceRecordsByEntity(String entityId) {
         return this.getEntityManager()
-                .createNamedQuery(FenceRecord.RETRIEVE_BY_ENTITY, FenceRecord.class)
-                .setParameter(FenceRecord.ENTITY_REFERENCE, entityId)
-                .getResultList();
+            .createNamedQuery(FenceRecord.RETRIEVE_BY_ENTITY, FenceRecord.class)
+            .setParameter(FenceRecord.ENTITY_REFERENCE, entityId)
+            .getResultList();
     }
 
     /**
@@ -68,9 +68,9 @@ public class AuthorizationRepository implements AuthorizationRepositoryApi {
     public int deleteFenceRecordsByEntity(String entityId) {
         LOGGER.fine(() -> "Deleted fence records for entity " + entityId);
         return this.getEntityManager()
-                .createNamedQuery(FenceRecord.DELETE_BY_ENTITY)
-                .setParameter(FenceRecord.ENTITY_REFERENCE, entityId)
-                .executeUpdate();
+            .createNamedQuery(FenceRecord.DELETE_BY_ENTITY)
+            .setParameter(FenceRecord.ENTITY_REFERENCE, entityId)
+            .executeUpdate();
     }
 
     /**
@@ -81,8 +81,8 @@ public class AuthorizationRepository implements AuthorizationRepositoryApi {
     @Transactional
     public int deleteFenceRecordsByExpiration() {
         return this.getEntityManager()
-                .createNamedQuery(FenceRecord.DELETE_BY_EXPIRATION)
-                .setParameter(FenceRecord.EXPIRATION_REFERENCE, LocalDateTime.now())
-                .executeUpdate();
+            .createNamedQuery(FenceRecord.DELETE_BY_EXPIRATION)
+            .setParameter(FenceRecord.EXPIRATION_REFERENCE, LocalDateTime.now())
+            .executeUpdate();
     }
 }

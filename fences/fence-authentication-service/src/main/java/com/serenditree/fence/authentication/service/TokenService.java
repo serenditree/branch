@@ -51,8 +51,8 @@ public class TokenService implements TokenServiceApi {
     private static final int CLAIMS_NOT_BEFORE_MINUTES = 2;
     private static final String JWE_CONTENT_TYPE = "JWT";
     private static final Map<String, String> JWK_PARAMS = Map.of(
-            "kty", "oct",
-            "k", ConfigProvider.getConfig().getValue("serenditree.json.web.key", String.class)
+        "kty", "oct",
+        "k", ConfigProvider.getConfig().getValue("serenditree.json.web.key", String.class)
     );
     private static final JsonWebKey JWK;
 
@@ -86,12 +86,12 @@ public class TokenService implements TokenServiceApi {
         FencePrincipal principal;
 
         JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                .setRequireExpirationTime()
-                .setAllowedClockSkewInSeconds(TokenService.JWT_CONSUMER_ALLOWED_SKEW_SECONDS)
-                .setRequireSubject()
-                .setExpectedIssuer(TokenService.ISSUER)
-                .setDecryptionKey(TokenService.JWK.getKey())
-                .setVerificationKey(TokenService.JWK.getKey()).build();
+            .setRequireExpirationTime()
+            .setAllowedClockSkewInSeconds(TokenService.JWT_CONSUMER_ALLOWED_SKEW_SECONDS)
+            .setRequireSubject()
+            .setExpectedIssuer(TokenService.ISSUER)
+            .setDecryptionKey(TokenService.JWK.getKey())
+            .setVerificationKey(TokenService.JWK.getKey()).build();
 
         try {
             // Retrieve user-claims/information
@@ -99,7 +99,7 @@ public class TokenService implements TokenServiceApi {
             Long id = Long.parseLong(jwtClaims.getSubject());
             String username = jwtClaims.getStringClaimValue(TokenService.USERNAME_KEY);
             List<RoleType> roleTypes = Maple.mapList(
-                    jwtClaims.getStringListClaimValue(TokenService.ROLES_KEY), RoleType::valueOf);
+                jwtClaims.getStringListClaimValue(TokenService.ROLES_KEY), RoleType::valueOf);
 
             // Create Principal
             principal = new Principal();
@@ -114,10 +114,10 @@ public class TokenService implements TokenServiceApi {
             LOGGER.warning(apiResponse.getMessage());
             if (e.hasExpired()) {
                 throw new NotAuthorizedException(
-                        Response.status(Response.Status.UNAUTHORIZED)
-                                .entity(apiResponse)
-                                .header(HttpHeaders.WWW_AUTHENTICATE, WWW_AUTHENTICATE)
-                                .build()
+                    Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(apiResponse)
+                        .header(HttpHeaders.WWW_AUTHENTICATE, WWW_AUTHENTICATE)
+                        .build()
                 );
             } else {
                 throw new NotAuthorizedException(apiResponse.getMessage());
@@ -195,8 +195,10 @@ public class TokenService implements TokenServiceApi {
         // Principal information
         jwtClaims.setSubject(principal.getId().toString());
         jwtClaims.setStringClaim(TokenService.USERNAME_KEY, principal.getUsername());
-        jwtClaims.setStringListClaim(TokenService.ROLES_KEY,
-                Maple.mapList(principal.getRoleTypes(), RoleType::toString));
+        jwtClaims.setStringListClaim(
+            TokenService.ROLES_KEY,
+            Maple.mapList(principal.getRoleTypes(), RoleType::toString)
+        );
 
         return jwtClaims;
     }

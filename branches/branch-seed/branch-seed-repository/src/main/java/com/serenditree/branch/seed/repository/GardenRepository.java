@@ -16,15 +16,16 @@ import javax.persistence.NonUniqueResultException;
 
 @Dependent
 @Retry(
-        abortOn = {
-                EntityExistsException.class,
-                EntityNotFoundException.class,
-                NonUniqueResultException.class,
-                NoResultException.class
-        }
+    abortOn = {
+        EntityExistsException.class,
+        EntityNotFoundException.class,
+        NonUniqueResultException.class,
+        NoResultException.class
+    }
 )
-public class GardenRepository extends AbstractSeedRepository<Garden>
-        implements GardenRepositoryApi, PanacheMongoRepository<Garden> {
+public class GardenRepository
+    extends AbstractSeedRepository<Garden>
+    implements GardenRepositoryApi, PanacheMongoRepository<Garden> {
 
     @Override
     @Inject

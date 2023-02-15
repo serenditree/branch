@@ -45,8 +45,12 @@ public class LngLat extends AbstractEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         LngLat lngLat = (LngLat) o;
         return Objects.equals(lng, lngLat.lng) && Objects.equals(lat, lngLat.lat);
     }

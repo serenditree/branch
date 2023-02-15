@@ -53,9 +53,9 @@ public class UserService implements UserServiceApi {
     public FencePrincipal signUp(FencePrincipal principal) {
 
         User user = new User(
-                principal.getUsername(),
-                this.passwordService.hash(principal.getPassword()),
-                principal.getEmail()
+            principal.getUsername(),
+            this.passwordService.hash(principal.getPassword()),
+            principal.getEmail()
         );
 
         user.addRole(RoleType.USER);

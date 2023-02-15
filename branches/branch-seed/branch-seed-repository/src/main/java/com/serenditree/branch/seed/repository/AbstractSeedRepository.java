@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public abstract class AbstractSeedRepository<E extends AbstractSeed>
-        implements AbstractSeedRepositoryApi<E>, PanacheMongoRepository<E> {
+    implements AbstractSeedRepositoryApi<E>, PanacheMongoRepository<E> {
 
     @Inject
     @ConfigProperty(name = "quarkus.mongodb.database")
@@ -70,42 +70,42 @@ public abstract class AbstractSeedRepository<E extends AbstractSeed>
         }
 
         return StreamSupport
-                .stream(
-                        this.mongoCollection()
-                                .withDocumentClass(this.getEntityType())
-                                .aggregate(nativeQuery.build())
-                                .spliterator(),
-                        false
-                )
-                .collect(Collectors.toList());
+            .stream(
+                this.mongoCollection()
+                    .withDocumentClass(this.getEntityType())
+                    .aggregate(nativeQuery.build())
+                    .spliterator(),
+                false
+            )
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<String> retrieveTags(final String name) {
         return StreamSupport
-                .stream(
-                        this.getCollection()
-                                .aggregate(
-                                        this.nativeQueryBuilder
-                                                .createNativeQuery()
-                                                .createTagsQuery(name)
-                                                .build()
-                                )
-                                .spliterator(),
-                        false
-                )
-                .map(document -> document.get("tag").toString())
-                .collect(Collectors.toList());
+            .stream(
+                this.getCollection()
+                    .aggregate(
+                        this.nativeQueryBuilder
+                            .createNativeQuery()
+                            .createTagsQuery(name)
+                            .build()
+                    )
+                    .spliterator(),
+                false
+            )
+            .map(document -> document.get("tag").toString())
+            .collect(Collectors.toList());
     }
 
     @Override
     public FenceResponse water(ObjectId id) {
         Update water = this.nativeQueryBuilder.water(id);
         this.getCollection()
-                .updateOne(
-                        water.getFilter(),
-                        water.getDocument()
-                );
+            .updateOne(
+                water.getFilter(),
+                water.getDocument()
+            );
 
         return new FenceResponse(id);
     }
@@ -114,10 +114,10 @@ public abstract class AbstractSeedRepository<E extends AbstractSeed>
     public FenceResponse prune(ObjectId id) {
         Update prune = this.nativeQueryBuilder.prune(id);
         this.getCollection()
-                .updateOne(
-                        prune.getFilter(),
-                        prune.getDocument()
-                );
+            .updateOne(
+                prune.getFilter(),
+                prune.getDocument()
+            );
 
         return new FenceResponse(id);
     }
@@ -126,10 +126,10 @@ public abstract class AbstractSeedRepository<E extends AbstractSeed>
     public FenceResponse nubit(ObjectId id, int value) {
         Update nubit = this.nativeQueryBuilder.nubit(id, value);
         this.getCollection()
-                .updateOne(
-                        nubit.getFilter(),
-                        nubit.getDocument()
-                );
+            .updateOne(
+                nubit.getFilter(),
+                nubit.getDocument()
+            );
 
         return new FenceResponse(id);
     }
@@ -140,8 +140,8 @@ public abstract class AbstractSeedRepository<E extends AbstractSeed>
 
     private MongoCollection<Document> getCollection() {
         return this.mongoClient
-                .getDatabase(this.database)
-                .getCollection(this.getEntityType().getSimpleName());
+            .getDatabase(this.database)
+            .getCollection(this.getEntityType().getSimpleName());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -16,14 +16,14 @@ import java.util.List;
 
 @Dependent
 @Retry(
-        maxRetries = 4,
-        delay = 420L,
-        abortOn = {
-                EntityExistsException.class,
-                EntityNotFoundException.class,
-                NonUniqueResultException.class,
-                NoResultException.class
-        }
+    maxRetries = 4,
+    delay = 420L,
+    abortOn = {
+        EntityExistsException.class,
+        EntityNotFoundException.class,
+        NonUniqueResultException.class,
+        NoResultException.class
+    }
 )
 public class UserRepository implements UserRepositoryApi {
 
@@ -44,14 +44,14 @@ public class UserRepository implements UserRepositoryApi {
     @Override
     public User retrieveByUsername(String username) {
         return this.getEntityManager().createNamedQuery(User.RETRIEVE_BY_USERNAME, User.class)
-                .setParameter(User.USERNAME_REFERENCE, username)
-                .getSingleResult();
+            .setParameter(User.USERNAME_REFERENCE, username)
+            .getSingleResult();
     }
 
     @Override
     public List<User> retrieveBySubstring(String substring) {
         return this.getEntityManager().createNamedQuery(User.RETRIEVE_BY_SUBSTRING, User.class)
-                .setParameter(User.SUBSTRING_REFERENCE, substring + "%")
-                .getResultList();
+            .setParameter(User.SUBSTRING_REFERENCE, substring + "%")
+            .getResultList();
     }
 }

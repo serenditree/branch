@@ -8,6 +8,7 @@ import java.util.Date;
 /**
  * Converts LocalDateTime to Date.
  * Needs to be in the same package as the target repository.
+ *
  * @deprecated
  */
 @Deprecated(forRemoval = true)

@@ -30,12 +30,18 @@ public class RoleKey implements Serializable {
     @Override
     @Generated("IDE")
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         RoleKey roleKey = (RoleKey) o;
 
-        if (!user.equals(roleKey.user)) return false;
+        if (!user.equals(roleKey.user)) {
+            return false;
+        }
         return roleType == roleKey.roleType;
     }
 

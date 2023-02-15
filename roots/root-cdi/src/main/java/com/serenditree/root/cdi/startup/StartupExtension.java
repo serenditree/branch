@@ -20,7 +20,7 @@ public class StartupExtension implements Extension {
 
     public <T> void collect(@Observes ProcessBean<T> event) {
         if (event.getAnnotated().isAnnotationPresent(Startup.class)
-                && event.getAnnotated().isAnnotationPresent(ApplicationScoped.class)) {
+            && event.getAnnotated().isAnnotationPresent(ApplicationScoped.class)) {
             this.startupBeans.add(event.getBean());
         }
     }
@@ -28,8 +28,8 @@ public class StartupExtension implements Extension {
     public void load(@Observes AfterDeploymentValidation event, BeanManager beanManager) {
         for (Bean<?> bean : this.startupBeans) {
             String reference = beanManager
-                    .getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean))
-                    .toString();
+                .getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean))
+                .toString();
             LOGGER.info(() -> "Loaded " + reference);
         }
     }

@@ -21,7 +21,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.logging.Logger;
 
 /**
- * Intercepts "fenced" methods with {@link Fenced#createOrDeleteRecord()} set to true and creates a {@link FenceRecord}s for
+ * Intercepts "fenced" methods with {@link Fenced#createOrDeleteRecord()} set to true and creates a
+ * {@link FenceRecord}s for
  * returned entities.
  */
 @Dependent
@@ -48,7 +49,7 @@ public class FenceRecordInterceptor {
 
         Fenced fenced = invocationContext.getMethod().getAnnotation(Fenced.class);
         LOGGER.fine(() ->
-                "Fenced resource:" +
+                        "Fenced resource:" +
                         " actionBased: " + fenced.actionBased() +
                         " recordRequired: " + fenced.recordRequired() +
                         " recordType: " + fenced.recordType().name()
@@ -68,7 +69,7 @@ public class FenceRecordInterceptor {
             }
         } else {
             throw new SecurityException(
-                    "Fenced endpoint tried to persist an entity which is not an instance of FenceEntity."
+                "Fenced endpoint tried to persist an entity which is not an instance of FenceEntity."
             );
         }
 
@@ -88,12 +89,13 @@ public class FenceRecordInterceptor {
      * @param type   Record type i.e. method name.
      */
     private void createMethodFenceRecord(Fenced fenced, FenceEntity<?> entity, String type) {
-        this.authorizationRepository.createFenceRecord(new FenceRecord(
-                        entity.getId().toString(),
-                        this.principal.getId().toString(),
-                        type,
-                        this.buildExpiration(fenced)
-                )
+        this.authorizationRepository.createFenceRecord(
+            new FenceRecord(
+                entity.getId().toString(),
+                this.principal.getId().toString(),
+                type,
+                this.buildExpiration(fenced)
+            )
         );
     }
 
@@ -104,11 +106,12 @@ public class FenceRecordInterceptor {
      * @param entity          Target entity.
      */
     private void createTypedFenceRecord(FenceActionType fenceActionType, FenceEntity<?> entity) {
-        this.authorizationRepository.createFenceRecord(new FenceRecord(
-                        entity.getId().toString(),
-                        this.principal.getId().toString(),
-                        fenceActionType.name()
-                )
+        this.authorizationRepository.createFenceRecord(
+            new FenceRecord(
+                entity.getId().toString(),
+                this.principal.getId().toString(),
+                fenceActionType.name()
+            )
         );
     }
 
@@ -122,8 +125,8 @@ public class FenceRecordInterceptor {
         LocalDateTime now = LocalDateTime.now();
 
         return fenced.expirationUnit() != ChronoUnit.FOREVER ?
-                now.plus(fenced.expirationTime(), fenced.expirationUnit()) :
-                null;
+            now.plus(fenced.expirationTime(), fenced.expirationUnit()) :
+            null;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

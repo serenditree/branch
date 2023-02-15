@@ -18,16 +18,16 @@ public class PersistenceExceptionMapper implements ExceptionMapper<PersistenceEx
         Throwable rootCause = Maple.toRootCause(persistenceException);
         if (rootCause instanceof EntityNotFoundException || rootCause instanceof NoResultException) {
             return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .build();
+                .status(Response.Status.NOT_FOUND)
+                .build();
         } else if (rootCause instanceof EntityExistsException) {
             return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .build();
+                .status(Response.Status.BAD_REQUEST)
+                .build();
         } else {
             return Response
-                    .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .build();
+                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                .build();
         }
     }
 }

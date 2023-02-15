@@ -27,18 +27,18 @@ public class OutgoingWind implements OutgoingWindApi {
     @Override
     public void releaseSeedCreated(@Observes(during = TransactionPhase.AFTER_SUCCESS) Seed seed) {
         var metadata = OutgoingKafkaRecordMetadata
-                .<String>builder()
-                .withKey(seed.getId().toString())
-                .build();
+            .<String>builder()
+            .withKey(seed.getId().toString())
+            .build();
         this.seedCreatedChannel.send(Message.of(seed).addMetadata(metadata));
     }
 
     @Override
     public void releaseSeedDeleted(@Observes(during = TransactionPhase.AFTER_SUCCESS) ObjectId id) {
         var metadata = OutgoingKafkaRecordMetadata
-                .<String>builder()
-                .withKey(id.toString())
-                .build();
+            .<String>builder()
+            .withKey(id.toString())
+            .build();
         this.seedDeletedChannel.send(Message.of(id.toString()).addMetadata(metadata));
     }
 }

@@ -65,15 +65,15 @@ class SeedLeafTest {
         seed.setUserId(fencePrincipal.getId());
 
         created = given()
-                .contentType(ContentType.JSON)
-                .header(fenceHeader)
-                .body(seed, ObjectMapperType.JSONB)
-                .when()
-                .post("create")
-                .then()
-                .statusCode(Status.CREATED.getStatusCode())
-                .extract()
-                .as(Seed.class, ObjectMapperType.JSONB);
+            .contentType(ContentType.JSON)
+            .header(fenceHeader)
+            .body(seed, ObjectMapperType.JSONB)
+            .when()
+            .post("create")
+            .then()
+            .statusCode(Status.CREATED.getStatusCode())
+            .extract()
+            .as(Seed.class, ObjectMapperType.JSONB);
 
         assertThat(created, not(nullValue()));
         assertThat(created.getId(), not(nullValue()));
@@ -96,13 +96,13 @@ class SeedLeafTest {
     @Order(2)
     void retrieveById() {
         Seed retrieved = given()
-                .pathParam("id", created.getId().toString())
-                .when()
-                .get("{id}")
-                .then()
-                .statusCode(Status.OK.getStatusCode())
-                .extract()
-                .as(Seed.class, ObjectMapperType.JSONB);
+            .pathParam("id", created.getId().toString())
+            .when()
+            .get("{id}")
+            .then()
+            .statusCode(Status.OK.getStatusCode())
+            .extract()
+            .as(Seed.class, ObjectMapperType.JSONB);
 
         assertThat(retrieved, not(nullValue()));
         assertThat(retrieved.getId(), not(nullValue()));
@@ -121,11 +121,11 @@ class SeedLeafTest {
     @Order(5)
     void retrieveByIdNotFound() {
         given()
-                .pathParam("id", created.getId().toString())
-                .when()
-                .get("{id}")
-                .then()
-                .statusCode(Status.NOT_FOUND.getStatusCode());
+            .pathParam("id", created.getId().toString())
+            .when()
+            .get("{id}")
+            .then()
+            .statusCode(Status.NOT_FOUND.getStatusCode());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,21 +137,21 @@ class SeedLeafTest {
     void retrieveByFilter() {
         SeedFilter filter = new SeedFilter();
         filter.setBounds(
-                new LngLatBounds(
-                        new LngLat(16.25537239065008, 48.193954482542836),
-                        new LngLat(16.46445594777859, 48.22369800478231)
-                )
+            new LngLatBounds(
+                new LngLat(16.25537239065008, 48.193954482542836),
+                new LngLat(16.46445594777859, 48.22369800478231)
+            )
         );
 
         given()
-                .contentType(ContentType.JSON)
-                .body(filter, ObjectMapperType.JSONB)
-                .when()
-                .post("retrieve")
-                .then()
-                .statusCode(Status.OK.getStatusCode())
-                .contentType(ContentType.JSON)
-                .body("$", iterableWithSize(1));
+            .contentType(ContentType.JSON)
+            .body(filter, ObjectMapperType.JSONB)
+            .when()
+            .post("retrieve")
+            .then()
+            .statusCode(Status.OK.getStatusCode())
+            .contentType(ContentType.JSON)
+            .body("$", iterableWithSize(1));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,13 +162,13 @@ class SeedLeafTest {
     @Order(2)
     void retrieveTags() {
         given()
-                .pathParam("name", "ipsum")
-                .when()
-                .get("retrieve/tags/{name}")
-                .then()
-                .statusCode(Status.OK.getStatusCode())
-                .contentType(ContentType.JSON)
-                .body("$", containsInAnyOrder("ipsum", "loripsum"));
+            .pathParam("name", "ipsum")
+            .when()
+            .get("retrieve/tags/{name}")
+            .then()
+            .statusCode(Status.OK.getStatusCode())
+            .contentType(ContentType.JSON)
+            .body("$", containsInAnyOrder("ipsum", "loripsum"));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,12 +180,12 @@ class SeedLeafTest {
     @Order(3)
     void water(Header header, Status status) {
         given()
-                .header(header)
-                .pathParam("id", created.getId().toString())
-                .when()
-                .get("water/{id}")
-                .then()
-                .statusCode(status.getStatusCode());
+            .header(header)
+            .pathParam("id", created.getId().toString())
+            .when()
+            .get("water/{id}")
+            .then()
+            .statusCode(status.getStatusCode());
     }
 
     @ParameterizedTest
@@ -193,19 +193,19 @@ class SeedLeafTest {
     @Order(3)
     void prune(Header header, Status status) {
         given()
-                .header(header)
-                .pathParam("id", created.getId().toString())
-                .when()
-                .get("prune/{id}")
-                .then()
-                .statusCode(status.getStatusCode());
+            .header(header)
+            .pathParam("id", created.getId().toString())
+            .when()
+            .get("prune/{id}")
+            .then()
+            .statusCode(status.getStatusCode());
     }
 
     static Stream<Arguments> waterPruneSource() {
         return Stream.of(
-                Arguments.of(fenceHeader, Status.OK),
-                Arguments.of(fenceHeader, Status.FORBIDDEN),
-                Arguments.of(Authenticator.NOOP_HEADER, Status.UNAUTHORIZED)
+            Arguments.of(fenceHeader, Status.OK),
+            Arguments.of(fenceHeader, Status.FORBIDDEN),
+            Arguments.of(Authenticator.NOOP_HEADER, Status.UNAUTHORIZED)
         );
     }
 
@@ -218,20 +218,20 @@ class SeedLeafTest {
     @Order(4)
     void delete(Header header, String id, Status status) {
         given()
-                .header(header)
-                .pathParam("id", id)
-                .when()
-                .delete("delete/{id}")
-                .then()
-                .statusCode(status.getStatusCode());
+            .header(header)
+            .pathParam("id", id)
+            .when()
+            .delete("delete/{id}")
+            .then()
+            .statusCode(status.getStatusCode());
     }
 
     static Stream<Arguments> deleteSource() {
         return Stream.of(
-                Arguments.of(Authenticator.NOOP_HEADER, created.getId().toString(), Status.UNAUTHORIZED),
-                Arguments.of(fenceHeader, new ObjectId().toString(), Status.FORBIDDEN),
-                Arguments.of(fenceHeader, created.getId().toString(), Status.OK),
-                Arguments.of(fenceHeader, created.getId().toString(), Status.FORBIDDEN)
+            Arguments.of(Authenticator.NOOP_HEADER, created.getId().toString(), Status.UNAUTHORIZED),
+            Arguments.of(fenceHeader, new ObjectId().toString(), Status.FORBIDDEN),
+            Arguments.of(fenceHeader, created.getId().toString(), Status.OK),
+            Arguments.of(fenceHeader, created.getId().toString(), Status.FORBIDDEN)
         );
     }
 }

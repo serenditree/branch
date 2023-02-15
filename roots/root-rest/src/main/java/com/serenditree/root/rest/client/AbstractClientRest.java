@@ -23,26 +23,26 @@ public abstract class AbstractClientRest<T> {
     protected T post(T request, String target) {
 
         return this.client
-                .target(target)
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.json(request), this.entityType);
+            .target(target)
+            .request(MediaType.APPLICATION_JSON_TYPE)
+            .post(Entity.json(request), this.entityType);
     }
 
     protected List<T> post(List<T> request, String target) {
 
         return this.client
-                .target(target)
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.json(request), new GenericType<List<T>>() {
-                });
+            .target(target)
+            .request(MediaType.APPLICATION_JSON_TYPE)
+            .post(Entity.json(request), new GenericType<List<T>>() {
+            });
     }
 
     protected void delete(String id, String target) {
 
         this.client
-                .target(target)
-                .path(id)
-                .request()
-                .delete();
+            .target(target)
+            .path(id)
+            .request()
+            .delete();
     }
 }

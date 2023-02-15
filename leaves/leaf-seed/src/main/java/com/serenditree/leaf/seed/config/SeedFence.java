@@ -28,12 +28,12 @@ public abstract class SeedFence extends FenceDecorator implements SeedServiceApi
     public Seed create(Seed seed) {
         if (seed.getParent() != null && seed.isTrail()) {
             this.authorizationService.assertThat(
-                    FenceRecordAssertion.fluentBuilder()
-                            .setUserId(this.principal.getId().toString())
-                            .setEntityId(seed.getParent().toString())
-                            .setActionType(FenceActionType.CRUD)
-                            .setRecordRequired(true)
-                            .build()
+                FenceRecordAssertion.fluentBuilder()
+                    .setUserId(this.principal.getId().toString())
+                    .setEntityId(seed.getParent().toString())
+                    .setActionType(FenceActionType.CRUD)
+                    .setRecordRequired(true)
+                    .build()
             );
         }
 

@@ -84,10 +84,10 @@ public class FenceFilter implements ContainerRequestFilter {
             this.containerRequestContext = containerRequestContext;
             this.resourceMethod = this.resourceInfo.getResourceMethod();
             this.secure = this.containerRequestContext
-                    .getUriInfo()
-                    .getBaseUri()
-                    .getScheme()
-                    .equals("https");
+                .getUriInfo()
+                .getBaseUri()
+                .getScheme()
+                .equals("https");
 
             final String request = "Request [" + containerRequestContext.getUriInfo().getPath() + "]";
             LOGGER.fine(() -> request + " secure: " + secure);
@@ -111,15 +111,15 @@ public class FenceFilter implements ContainerRequestFilter {
             throw e;
         } catch (Exception e) {
             LOGGER.severe(() ->
-                    "Unexpected error during authentication and authorization. Exception: " +
-                            e.getMessage() +
-                            "; Root cause: " +
-                            Maple.toRootCause(e).getMessage()
+                              "Unexpected error during authentication and authorization. Exception: " +
+                              e.getMessage() +
+                              "; Root cause: " +
+                              Maple.toRootCause(e).getMessage()
             );
 
             this.abortWith(
-                    Response.Status.INTERNAL_SERVER_ERROR,
-                    "Unexpected error during authentication and authorization."
+                Response.Status.INTERNAL_SERVER_ERROR,
+                "Unexpected error during authentication and authorization."
             );
         }
     }
@@ -163,9 +163,9 @@ public class FenceFilter implements ContainerRequestFilter {
             this.signIn(notAuthenticatedUser);
         } else {
             LOGGER.warning(() ->
-                    "Unauthenticated user tried to access matched resource [" +
-                            this.resourceMethod.getDeclaringClass().getSimpleName() + "::" +
-                            this.resourceMethod.getName() + "]."
+                               "Unauthenticated user tried to access matched resource [" +
+                               this.resourceMethod.getDeclaringClass().getSimpleName() + "::" +
+                               this.resourceMethod.getName() + "]."
             );
 
             this.abortWith(Response.Status.UNAUTHORIZED, "Authentication required.");
@@ -188,23 +188,24 @@ public class FenceFilter implements ContainerRequestFilter {
             }
         } else {
             if (this.authorizationService.isAuthorized(
-                    authenticatedUser,
-                    this.resourceMethod.getAnnotation(Fenced.class),
-                    this.resourceMethod,
-                    this.containerRequestContext.getUriInfo(),
-                    this.containerRequestContext)) {
+                authenticatedUser,
+                this.resourceMethod.getAnnotation(Fenced.class),
+                this.resourceMethod,
+                this.containerRequestContext.getUriInfo(),
+                this.containerRequestContext
+            )) {
                 // Authorization ok
                 LOGGER.fine(() ->
-                        "Authenticated user is authorized for matched resource [" +
+                                "Authenticated user is authorized for matched resource [" +
                                 this.resourceMethod.getDeclaringClass().getSimpleName() + "::" +
                                 this.resourceMethod.getName() + "]."
                 );
             } else {
                 // Authorization failed
                 LOGGER.warning(() ->
-                        "Authenticated user is not authorized for matched resource [" +
-                                this.resourceMethod.getDeclaringClass().getSimpleName() + "::" +
-                                this.resourceMethod.getName() + "]."
+                                   "Authenticated user is not authorized for matched resource [" +
+                                   this.resourceMethod.getDeclaringClass().getSimpleName() + "::" +
+                                   this.resourceMethod.getName() + "]."
                 );
                 this.abortWith(Response.Status.FORBIDDEN, "User is not authorized to request the desired resource.");
             }
@@ -259,16 +260,16 @@ public class FenceFilter implements ContainerRequestFilter {
 
     private void verify(final FencePrincipal authenticatedUser) {
         FencePrincipal oidcUser = this.authenticationService.authenticate(
-                this.createOidcPrincipal(this.containerRequestContext.getHeaders())
+            this.createOidcPrincipal(this.containerRequestContext.getHeaders())
         );
         try {
             this.authenticationService.verify(authenticatedUser, oidcUser);
         } catch (PersistenceException e) {
             // TODO Name PersistenceUnits again and flush or move to PersistenceExceptionMapper
             if (Maple.toCausalChain(e).contains(SQLIntegrityConstraintViolationException.class)) {
-                final String message = "User " + authenticatedUser.getId()
-                        + " is already verified or tried to use existing subject: "
-                        + Maple.toRootCause(e).getMessage();
+                final String message = "User " + authenticatedUser.getId() +
+                                       " is already verified or tried to use existing subject: " +
+                                       Maple.toRootCause(e).getMessage();
                 LOGGER.severe(message);
                 this.abortWith(Response.Status.BAD_REQUEST, message);
             } else {
@@ -294,11 +295,11 @@ public class FenceFilter implements ContainerRequestFilter {
         }
 
         return new Principal(
-                id,
-                headers.getFirst(FenceHeaders.USERNAME),
-                headers.getFirst(FenceHeaders.PASSWORD),
-                headers.getFirst(HttpHeaders.AUTHORIZATION),
-                headers.getFirst(FenceHeaders.EMAIL)
+            id,
+            headers.getFirst(FenceHeaders.USERNAME),
+            headers.getFirst(FenceHeaders.PASSWORD),
+            headers.getFirst(HttpHeaders.AUTHORIZATION),
+            headers.getFirst(FenceHeaders.EMAIL)
         );
     }
 
@@ -334,9 +335,9 @@ public class FenceFilter implements ContainerRequestFilter {
      */
     private void abortWith(final Response.Status status, final String message) {
         this.containerRequestContext.abortWith(
-                Response.status(status)
-                        .entity(new ApiResponse(message))
-                        .build()
+            Response.status(status)
+                .entity(new ApiResponse(message))
+                .build()
         );
     }
 }

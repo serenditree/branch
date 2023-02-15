@@ -32,8 +32,8 @@ class MapleTest {
 
     static Stream<Arguments> mapListSource() {
         return Stream.of(
-                Arguments.of(INTEGER_LIST, everyItem(any(String.class))),
-                Arguments.of(OBJECT_LIST, everyItem(any(String.class)))
+            Arguments.of(INTEGER_LIST, everyItem(any(String.class))),
+            Arguments.of(OBJECT_LIST, everyItem(any(String.class)))
         );
     }
 

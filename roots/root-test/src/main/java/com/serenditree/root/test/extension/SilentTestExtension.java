@@ -25,9 +25,9 @@ public class SilentTestExtension implements BeforeTestExecutionCallback, AfterTe
         Optional<Method> testMethod = extensionContext.getTestMethod();
         if (testMethod.isPresent() && testMethod.get().isAnnotationPresent(SilentTest.class)) {
             LogManager
-                    .getLogManager()
-                    .getLogger("")
-                    .setLevel(Level.WARNING);
+                .getLogManager()
+                .getLogger("")
+                .setLevel(Level.WARNING);
         }
     }
 
@@ -39,8 +39,8 @@ public class SilentTestExtension implements BeforeTestExecutionCallback, AfterTe
     @Override
     public void afterTestExecution(ExtensionContext extensionContext) {
         LogManager
-                .getLogManager()
-                .getLogger("")
-                .setLevel(Level.INFO);
+            .getLogManager()
+            .getLogger("")
+            .setLevel(Level.INFO);
     }
 }

@@ -11,11 +11,11 @@ class FenceRecordAssertionTest {
     @Test
     void buildValidAssertion() {
         FenceRecordAssertion assertion1 = FenceRecordAssertion.fluentBuilder()
-                .setUserId("test1")
-                .setEntityId("test2")
-                .setActionType(FenceActionType.CRUD)
-                .setRecordRequired(true)
-                .build();
+            .setUserId("test1")
+            .setEntityId("test2")
+            .setActionType(FenceActionType.CRUD)
+            .setRecordRequired(true)
+            .build();
 
         assertEquals("test1", assertion1.getUserId());
         assertEquals("test2", assertion1.getEntityId());
@@ -24,12 +24,12 @@ class FenceRecordAssertionTest {
         assertEquals(-1, assertion1.getRecordCount());
 
         FenceRecordAssertion assertion2 = FenceRecordAssertion.fluentBuilder()
-                .setUserId("test3")
-                .setEntityId("test4")
-                .setActionType(FenceActionType.METHOD)
-                .setRecordRequired(false)
-                .setRecordCount(2)
-                .build();
+            .setUserId("test3")
+            .setEntityId("test4")
+            .setActionType(FenceActionType.METHOD)
+            .setRecordRequired(false)
+            .setRecordCount(2)
+            .build();
 
         assertEquals("test3", assertion2.getUserId());
         assertEquals("test4", assertion2.getEntityId());
@@ -42,16 +42,16 @@ class FenceRecordAssertionTest {
     @SuppressWarnings("java:S5778")
     void buildInvalidAssertionUserIdBlank() {
         assertEquals(
-                FenceRecordException.Reason.INVALID_USER_ID,
-                assertThrows(
-                        FenceRecordException.class,
-                        () -> FenceRecordAssertion.fluentBuilder()
-                                .setUserId(" ")
-                                .setEntityId("test")
-                                .setActionType(FenceActionType.CRUD)
-                                .setRecordRequired(true)
-                                .build()
-                ).getReason()
+            FenceRecordException.Reason.INVALID_USER_ID,
+            assertThrows(
+                FenceRecordException.class,
+                () -> FenceRecordAssertion.fluentBuilder()
+                    .setUserId(" ")
+                    .setEntityId("test")
+                    .setActionType(FenceActionType.CRUD)
+                    .setRecordRequired(true)
+                    .build()
+            ).getReason()
         );
     }
 
@@ -59,16 +59,16 @@ class FenceRecordAssertionTest {
     @SuppressWarnings("java:S5778")
     void buildInvalidAssertionUserIdNull() {
         assertEquals(
-                FenceRecordException.Reason.INVALID_USER_ID,
-                assertThrows(
-                        FenceRecordException.class,
-                        () -> FenceRecordAssertion.fluentBuilder()
-                                .setUserId(null)
-                                .setEntityId("test")
-                                .setActionType(FenceActionType.CRUD)
-                                .setRecordRequired(true)
-                                .build()
-                ).getReason()
+            FenceRecordException.Reason.INVALID_USER_ID,
+            assertThrows(
+                FenceRecordException.class,
+                () -> FenceRecordAssertion.fluentBuilder()
+                    .setUserId(null)
+                    .setEntityId("test")
+                    .setActionType(FenceActionType.CRUD)
+                    .setRecordRequired(true)
+                    .build()
+            ).getReason()
         );
     }
 
@@ -76,16 +76,16 @@ class FenceRecordAssertionTest {
     @SuppressWarnings("java:S5778")
     void buildInvalidAssertionEntityIdBlank() {
         assertEquals(
-                FenceRecordException.Reason.INVALID_ENTITY_ID,
-                assertThrows(
-                        FenceRecordException.class,
-                        () -> FenceRecordAssertion.fluentBuilder()
-                                .setUserId("test")
-                                .setEntityId("")
-                                .setActionType(FenceActionType.CRUD)
-                                .setRecordRequired(true)
-                                .build()
-                ).getReason()
+            FenceRecordException.Reason.INVALID_ENTITY_ID,
+            assertThrows(
+                FenceRecordException.class,
+                () -> FenceRecordAssertion.fluentBuilder()
+                    .setUserId("test")
+                    .setEntityId("")
+                    .setActionType(FenceActionType.CRUD)
+                    .setRecordRequired(true)
+                    .build()
+            ).getReason()
         );
     }
 
@@ -93,16 +93,16 @@ class FenceRecordAssertionTest {
     @SuppressWarnings("java:S5778")
     void buildInvalidAssertionEntityIdNull() {
         assertEquals(
-                FenceRecordException.Reason.INVALID_ENTITY_ID,
-                assertThrows(
-                        FenceRecordException.class,
-                        () -> FenceRecordAssertion.fluentBuilder()
-                                .setUserId("test")
-                                .setEntityId(null)
-                                .setActionType(FenceActionType.CRUD)
-                                .setRecordRequired(true)
-                                .build()
-                ).getReason()
+            FenceRecordException.Reason.INVALID_ENTITY_ID,
+            assertThrows(
+                FenceRecordException.class,
+                () -> FenceRecordAssertion.fluentBuilder()
+                    .setUserId("test")
+                    .setEntityId(null)
+                    .setActionType(FenceActionType.CRUD)
+                    .setRecordRequired(true)
+                    .build()
+            ).getReason()
         );
     }
 
@@ -129,35 +129,35 @@ class FenceRecordAssertionTest {
         FenceRecordAssertionBuilder assertionBuilder = FenceRecordAssertion.sequentialBuilder();
 
         assertEquals(
-                FenceRecordException.Reason.INVALID_USER_ID,
-                assertThrows(FenceRecordException.class, assertionBuilder::build).getReason()
+            FenceRecordException.Reason.INVALID_USER_ID,
+            assertThrows(FenceRecordException.class, assertionBuilder::build).getReason()
         );
 
         assertionBuilder.setUserId("test1");
 
         assertEquals(
-                FenceRecordException.Reason.INVALID_ENTITY_ID,
-                assertThrows(FenceRecordException.class, assertionBuilder::build).getReason()
+            FenceRecordException.Reason.INVALID_ENTITY_ID,
+            assertThrows(FenceRecordException.class, assertionBuilder::build).getReason()
         );
 
         assertionBuilder.setEntityId("test2");
 
         assertEquals(
-                FenceRecordException.Reason.INVALID_ACTION_TYPE,
-                assertThrows(FenceRecordException.class, assertionBuilder::build).getReason()
+            FenceRecordException.Reason.INVALID_ACTION_TYPE,
+            assertThrows(FenceRecordException.class, assertionBuilder::build).getReason()
         );
 
         assertionBuilder.setActionType(FenceActionType.METHOD);
 
         assertEquals(
-                FenceRecordException.Reason.INVALID_REQUIREMENT,
-                assertThrows(FenceRecordException.class, assertionBuilder::build).getReason()
+            FenceRecordException.Reason.INVALID_REQUIREMENT,
+            assertThrows(FenceRecordException.class, assertionBuilder::build).getReason()
         );
 
         FenceRecordAssertion assertion = assertionBuilder
-                .setRecordRequired(true)
-                .setRecordCount(2)
-                .build();
+            .setRecordRequired(true)
+            .setRecordCount(2)
+            .build();
 
         assertEquals("test1", assertion.getUserId());
         assertEquals("test2", assertion.getEntityId());
@@ -169,8 +169,8 @@ class FenceRecordAssertionTest {
     @Test
     void fenceRecordExceptionIsSecurityException() {
         assertThrows(
-                SecurityException.class,
-                FenceRecordAssertion.sequentialBuilder()::build
+            SecurityException.class,
+            FenceRecordAssertion.sequentialBuilder()::build
         );
     }
 }

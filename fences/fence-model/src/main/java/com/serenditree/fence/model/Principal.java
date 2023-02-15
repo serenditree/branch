@@ -89,8 +89,8 @@ public class Principal implements FencePrincipal {
     @JsonbTransient
     public boolean isInRole(RoleType role) {
         return this.roleTypes
-                .stream()
-                .anyMatch(r -> r.ordinal() >= role.ordinal());
+            .stream()
+            .anyMatch(r -> r.ordinal() >= role.ordinal());
     }
 
     @Override

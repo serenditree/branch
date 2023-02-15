@@ -69,11 +69,11 @@ public class TupleMatcher<T> extends TypeSafeDiagnosingMatcher<Iterable<T>> {
     @Override
     public void describeTo(Description description) {
         description
-                .appendText(this.getClass().getSimpleName())
-                .appendText(" at index ")
-                .appendValue(this.index)
-                .appendText(" expects: ")
-                .appendDescriptionOf(this.matcher);
+            .appendText(this.getClass().getSimpleName())
+            .appendText(" at index ")
+            .appendValue(this.index)
+            .appendText(" expects: ")
+            .appendDescriptionOf(this.matcher);
     }
 
     /**
@@ -85,17 +85,17 @@ public class TupleMatcher<T> extends TypeSafeDiagnosingMatcher<Iterable<T>> {
 
         if (iterable == null) {
             description.appendText("Tuple is ")
-                    .appendValue(null)
-                    .appendText(".");
+                .appendValue(null)
+                .appendText(".");
         } else {
             final List<T> tuple = this.toList(iterable);
             if (tuple.isEmpty()) {
                 description.appendText("Tuple is empty.");
             } else if (Math.abs(this.index) >= tuple.size()) {
                 description
-                        .appendText("Tuple is too small. Its size is ")
-                        .appendValue(tuple.size())
-                        .appendText(".");
+                    .appendText("Tuple is too small. Its size is ")
+                    .appendValue(tuple.size())
+                    .appendText(".");
             } else {
                 T item = tuple.get(this.calculateIndex(tuple));
 

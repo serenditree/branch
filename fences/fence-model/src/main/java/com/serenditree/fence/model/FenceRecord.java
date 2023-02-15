@@ -17,35 +17,35 @@ import java.util.UUID;
  */
 @Entity
 @Table(
-        indexes = {
-                @Index(name = FenceRecord.USER_REFERENCE, columnList = FenceRecord.USER_REFERENCE),
-                @Index(name = FenceRecord.ENTITY_REFERENCE, columnList = FenceRecord.ENTITY_REFERENCE),
-                @Index(name = FenceRecord.ACTION_REFERENCE, columnList = FenceRecord.ACTION_REFERENCE),
-                @Index(name = FenceRecord.EXPIRATION_REFERENCE, columnList = FenceRecord.EXPIRATION_REFERENCE)
-        }
+    indexes = {
+        @Index(name = FenceRecord.USER_REFERENCE, columnList = FenceRecord.USER_REFERENCE),
+        @Index(name = FenceRecord.ENTITY_REFERENCE, columnList = FenceRecord.ENTITY_REFERENCE),
+        @Index(name = FenceRecord.ACTION_REFERENCE, columnList = FenceRecord.ACTION_REFERENCE),
+        @Index(name = FenceRecord.EXPIRATION_REFERENCE, columnList = FenceRecord.EXPIRATION_REFERENCE)
+    }
 )
 @NamedQuery(
-        name = FenceRecord.RETRIEVE,
-        query = "SELECT r FROM FenceRecord r " +
-                "WHERE r.userId = :" + FenceRecord.USER_REFERENCE +
-                " AND r.entityId = :" + FenceRecord.ENTITY_REFERENCE +
-                " AND r.action = :" + FenceRecord.ACTION_REFERENCE +
-                " ORDER BY r.expiration DESC"
+    name = FenceRecord.RETRIEVE,
+    query = "SELECT r FROM FenceRecord r " +
+            "WHERE r.userId = :" + FenceRecord.USER_REFERENCE +
+            " AND r.entityId = :" + FenceRecord.ENTITY_REFERENCE +
+            " AND r.action = :" + FenceRecord.ACTION_REFERENCE +
+            " ORDER BY r.expiration DESC"
 )
 @NamedQuery(
-        name = FenceRecord.RETRIEVE_BY_ENTITY,
-        query = "SELECT r FROM FenceRecord r " +
-                "WHERE r." + FenceRecord.ENTITY_REFERENCE + " = :" + FenceRecord.ENTITY_REFERENCE
+    name = FenceRecord.RETRIEVE_BY_ENTITY,
+    query = "SELECT r FROM FenceRecord r " +
+            "WHERE r." + FenceRecord.ENTITY_REFERENCE + " = :" + FenceRecord.ENTITY_REFERENCE
 )
 @NamedQuery(
-        name = FenceRecord.DELETE_BY_ENTITY,
-        query = "DELETE FROM FenceRecord " +
-                "WHERE " + FenceRecord.ENTITY_REFERENCE + " = :" + FenceRecord.ENTITY_REFERENCE
+    name = FenceRecord.DELETE_BY_ENTITY,
+    query = "DELETE FROM FenceRecord " +
+            "WHERE " + FenceRecord.ENTITY_REFERENCE + " = :" + FenceRecord.ENTITY_REFERENCE
 )
 @NamedQuery(
-        name = FenceRecord.DELETE_BY_EXPIRATION,
-        query = "DELETE FROM FenceRecord " +
-                "WHERE " + FenceRecord.EXPIRATION_REFERENCE + " < :" + FenceRecord.EXPIRATION_REFERENCE
+    name = FenceRecord.DELETE_BY_EXPIRATION,
+    query = "DELETE FROM FenceRecord " +
+            "WHERE " + FenceRecord.EXPIRATION_REFERENCE + " < :" + FenceRecord.EXPIRATION_REFERENCE
 )
 public class FenceRecord extends AbstractEntity implements FenceEntity<UUID> {
 

@@ -84,7 +84,7 @@ public class AuthenticationService implements AuthenticationServiceApi {
 
         // Retrieve stored user information!
         FencePrincipal persistenceUser = this.authenticationAwareService
-                .retrievePrincipalByUsername(clientUser.getUsername());
+            .retrievePrincipalByUsername(clientUser.getUsername());
 
         // Check password!
         if (this.passwordService.verify(persistenceUser.getPassword(), clientUser.getPassword())) {
@@ -153,7 +153,7 @@ public class AuthenticationService implements AuthenticationServiceApi {
 
     @Inject
     public void setAuthenticationAwareServiceInstance(
-            Instance<AuthenticationAwareServiceApi> authenticationAwareServiceInstance) {
+        Instance<AuthenticationAwareServiceApi> authenticationAwareServiceInstance) {
         this.authenticationAwareServiceInstance = authenticationAwareServiceInstance;
     }
 
@@ -165,14 +165,14 @@ public class AuthenticationService implements AuthenticationServiceApi {
     void init() {
         if (this.authenticationAwareServiceInstance.isAmbiguous()) {
             throw new IllegalStateException(
-                    "Found more than one implementation of " + AuthenticationAwareServiceApi.class.getName()
+                "Found more than one implementation of " + AuthenticationAwareServiceApi.class.getName()
             );
 
         } else if (this.authenticationAwareServiceInstance.isResolvable()) {
             this.authenticationAwareService = this.authenticationAwareServiceInstance.get();
 
             LOGGER.fine(() ->
-                    "Constructed AuthenticationService with " + AuthenticationAwareServiceApi.class.getName()
+                            "Constructed AuthenticationService with " + AuthenticationAwareServiceApi.class.getName()
             );
 
         } else {

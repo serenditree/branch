@@ -30,10 +30,10 @@ public class Authenticator {
         principal.setUsername(principal.getPassword().substring(1, 20));
 
         try (Response response = CLIENT.target("http://localhost:8081/api/v1/user/sign-up")
-                .request()
-                .header(FenceHeaders.USERNAME, principal.getUsername())
-                .header(FenceHeaders.PASSWORD, principal.getPassword())
-                .post(EMPTY_ENTITY)) {
+            .request()
+            .header(FenceHeaders.USERNAME, principal.getUsername())
+            .header(FenceHeaders.PASSWORD, principal.getPassword())
+            .post(EMPTY_ENTITY)) {
 
             principal.setId(Long.parseLong(response.getHeaderString(FenceHeaders.ID)));
             principal.setToken(response.getHeaderString(HttpHeaders.AUTHORIZATION));
@@ -48,10 +48,10 @@ public class Authenticator {
 
     public static void cleanup(FencePrincipal principal) {
         try (Response response = CLIENT.target("http://localhost:8081/api/v1/user/delete/{id}")
-                .resolveTemplate("id", principal.getId())
-                .request()
-                .header(HttpHeaders.AUTHORIZATION, principal.getToken())
-                .delete()) {
+            .resolveTemplate("id", principal.getId())
+            .request()
+            .header(HttpHeaders.AUTHORIZATION, principal.getToken())
+            .delete()) {
 
             if (response.getStatus() != Response.Status.OK.getStatusCode()) {
                 throw new AssertionError("Cleanup failed!");

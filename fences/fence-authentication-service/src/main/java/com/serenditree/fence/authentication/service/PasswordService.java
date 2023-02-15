@@ -30,10 +30,10 @@ public class PasswordService implements PasswordServiceApi {
             COST_R_ITERATIONS = 2;
         } else {
             COST_R_ITERATIONS = Argon2Helper.findIterations(
-                    ARGON_2,
-                    MAX_EXECUTION_TIME_MILLISECONDS,
-                    COST_N_MEMORY,
-                    COST_P_PARALLELISM
+                ARGON_2,
+                MAX_EXECUTION_TIME_MILLISECONDS,
+                COST_N_MEMORY,
+                COST_P_PARALLELISM
             );
         }
     }
@@ -55,10 +55,10 @@ public class PasswordService implements PasswordServiceApi {
             char[] plainTextCharArray = plainText.toCharArray();
             try {
                 hash = ARGON_2.hash(
-                        PasswordService.COST_R_ITERATIONS,
-                        PasswordService.COST_N_MEMORY,
-                        PasswordService.COST_P_PARALLELISM,
-                        plainTextCharArray
+                    PasswordService.COST_R_ITERATIONS,
+                    PasswordService.COST_N_MEMORY,
+                    PasswordService.COST_P_PARALLELISM,
+                    plainTextCharArray
                 );
             } finally {
                 ARGON_2.wipeArray(plainTextCharArray);

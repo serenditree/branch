@@ -34,10 +34,11 @@ public class PollLeafInternal extends AbstractEndpointRest {
     public Response create(final List<Poll> polls) {
 
         return this.buildResponse(
-                this.pollService.create(polls),
-                this.notNullNotEmpty,
-                Response.Status.CREATED,
-                Response.Status.INTERNAL_SERVER_ERROR);
+            this.pollService.create(polls),
+            this.notNullNotEmpty,
+            Response.Status.CREATED,
+            Response.Status.INTERNAL_SERVER_ERROR
+        );
     }
 
     @DELETE
@@ -48,11 +49,12 @@ public class PollLeafInternal extends AbstractEndpointRest {
     public Response deleteBySeed(@PathParam("id") String seedId) {
 
         return this.buildFenceResponse(
-                this.pollService.deleteBySeed(seedId),
-                result -> result > 0,
-                seedId,
-                Response.Status.ACCEPTED,
-                Response.Status.NOT_FOUND);
+            this.pollService.deleteBySeed(seedId),
+            result -> result > 0,
+            seedId,
+            Response.Status.ACCEPTED,
+            Response.Status.NOT_FOUND
+        );
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

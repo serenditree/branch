@@ -20,23 +20,23 @@ public class SeedPolicies implements PolicyEnforcerApi {
     public static final String TEST = "testPolicy";
 
     private static final Map<String, FencePolicy> POLICIES = Map.of(
-            SeedPolicies.TEST,
-            (body, userId) -> {
-                Optional<FenceRecordAssertion> assertion = Optional.empty();
+        SeedPolicies.TEST,
+        (body, userId) -> {
+            Optional<FenceRecordAssertion> assertion = Optional.empty();
 
-                if (body.get("parent") != null && body.get("trail") != null && body.getBoolean("trail")) {
-                    assertion = Optional.of(
-                            FenceRecordAssertion.fluentBuilder()
-                                    .setUserId(userId)
-                                    .setEntityId(body.get("parent"))
-                                    .setActionType(FenceActionType.CRUD)
-                                    .setRecordRequired(true)
-                                    .build()
-                    );
-                }
-
-                return assertion;
+            if (body.get("parent") != null && body.get("trail") != null && body.getBoolean("trail")) {
+                assertion = Optional.of(
+                    FenceRecordAssertion.fluentBuilder()
+                        .setUserId(userId)
+                        .setEntityId(body.get("parent"))
+                        .setActionType(FenceActionType.CRUD)
+                        .setRecordRequired(true)
+                        .build()
+                );
             }
+
+            return assertion;
+        }
     );
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,8 +46,8 @@ public class SeedPolicies implements PolicyEnforcerApi {
     @Override
     public List<FencePolicy> getPolicies(String... policies) {
         return Arrays
-                .stream(policies)
-                .map(POLICIES::get)
-                .collect(Collectors.toList());
+            .stream(policies)
+            .map(POLICIES::get)
+            .collect(Collectors.toList());
     }
 }

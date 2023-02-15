@@ -19,14 +19,15 @@ public class LoggedLifecycle {
         LOGGER.info("Serenditree is starting...");
         if (ConfigProvider.getConfig().getOptionalValue("serenditree.log.config", String.class).isPresent()) {
             StreamSupport.stream(ConfigProvider.getConfig().getPropertyNames().spliterator(), false)
-                    .sorted()
-                    .forEach(property -> {
-                        if (StringUtils.startsWithIgnoreCase(property, "serenditree") ||
-                                StringUtils.startsWithIgnoreCase(property, "quarkus"))
-                            LOGGER.fine(() -> property + ": " + ConfigProvider.getConfig()
-                                    .getConfigValue(property)
-                                    .getValue());
-                    });
+                .sorted()
+                .forEach(property -> {
+                    if (StringUtils.startsWithIgnoreCase(property, "serenditree") ||
+                        StringUtils.startsWithIgnoreCase(property, "quarkus")) {
+                        LOGGER.fine(() -> property + ": " + ConfigProvider.getConfig()
+                            .getConfigValue(property)
+                            .getValue());
+                    }
+                });
         }
     }
 

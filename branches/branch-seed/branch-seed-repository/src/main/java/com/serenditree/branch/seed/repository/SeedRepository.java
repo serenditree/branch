@@ -16,16 +16,16 @@ import javax.persistence.NonUniqueResultException;
 
 @Dependent
 @Retry(
-        abortOn = {
-                EntityExistsException.class,
-                EntityNotFoundException.class,
-                NonUniqueResultException.class,
-                NoResultException.class
-        }
+    abortOn = {
+        EntityExistsException.class,
+        EntityNotFoundException.class,
+        NonUniqueResultException.class,
+        NoResultException.class
+    }
 )
 public class SeedRepository extends AbstractSeedRepository<Seed> implements
-        SeedRepositoryApi,
-        PanacheMongoRepository<Seed> {
+    SeedRepositoryApi,
+    PanacheMongoRepository<Seed> {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // CDI

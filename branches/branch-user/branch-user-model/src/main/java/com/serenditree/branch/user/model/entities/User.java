@@ -24,22 +24,22 @@ import java.util.Set;
 @Entity
 @Cacheable
 @Table(
-        indexes = {
-                @Index(name = User.USERNAME_REFERENCE, columnList = User.USERNAME_REFERENCE, unique = true),
-                @Index(name = User.EMAIL_REFERENCE, columnList = User.EMAIL_REFERENCE, unique = true)
-        }
+    indexes = {
+        @Index(name = User.USERNAME_REFERENCE, columnList = User.USERNAME_REFERENCE, unique = true),
+        @Index(name = User.EMAIL_REFERENCE, columnList = User.EMAIL_REFERENCE, unique = true)
+    }
 )
 @NamedQuery(
-        name = User.RETRIEVE_BY_USERNAME,
-        query = "SELECT u " +
-                "FROM User u " +
-                "WHERE u.username = :" + User.USERNAME_REFERENCE
+    name = User.RETRIEVE_BY_USERNAME,
+    query = "SELECT u " +
+            "FROM User u " +
+            "WHERE u.username = :" + User.USERNAME_REFERENCE
 )
 @NamedQuery(
-        name = User.RETRIEVE_BY_SUBSTRING,
-        query = "SELECT u " +
-                "FROM User u " +
-                "WHERE lower(u.username) LIKE :" + User.SUBSTRING_REFERENCE
+    name = User.RETRIEVE_BY_SUBSTRING,
+    query = "SELECT u " +
+            "FROM User u " +
+            "WHERE lower(u.username) LIKE :" + User.SUBSTRING_REFERENCE
 )
 public class User extends AbstractTimestampedFenceEntity<Long> implements FenceUser<Role>, FenceEntity<Long> {
 

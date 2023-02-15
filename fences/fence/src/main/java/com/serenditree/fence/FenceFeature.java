@@ -43,11 +43,11 @@ public class FenceFeature implements DynamicFeature {
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
         featureContext.register(new FenceFilter(
-                resourceInfo,
-                this.authenticationService,
-                this.authorizationService,
-                this.authenticationEvent,
-                this.forceHttps.get()
+            resourceInfo,
+            this.authenticationService,
+            this.authorizationService,
+            this.authenticationEvent,
+            this.forceHttps.get()
         ));
     }
 

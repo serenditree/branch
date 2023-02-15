@@ -11,26 +11,26 @@ import java.util.List;
  */
 @Entity
 @Table(
-        indexes = {
-                @Index(name = Poll.SEED_REFERENCE, columnList = Poll.SEED_REFERENCE)
-        }
+    indexes = {
+        @Index(name = Poll.SEED_REFERENCE, columnList = Poll.SEED_REFERENCE)
+    }
 )
 @NamedQuery(
-        name = Poll.RETRIEVE_BY_SEED,
-        query = "SELECT p " +
-                "FROM Poll p " +
-                "WHERE p.seedId = :" + Poll.SEED_REFERENCE
+    name = Poll.RETRIEVE_BY_SEED,
+    query = "SELECT p " +
+            "FROM Poll p " +
+            "WHERE p.seedId = :" + Poll.SEED_REFERENCE
 )
 @NamedQuery(
-        name = Poll.VOTE,
-        query = "UPDATE PollOption p " +
-                "SET p.votes = p.votes + 1 " +
-                "WHERE p.id = :" + Poll.OPTION_REFERENCE
+    name = Poll.VOTE,
+    query = "UPDATE PollOption p " +
+            "SET p.votes = p.votes + 1 " +
+            "WHERE p.id = :" + Poll.OPTION_REFERENCE
 )
 @NamedQuery(
-        name = Poll.DELETE_BY_SEED,
-        query = "DELETE FROM Poll " +
-                "WHERE seedId = :" + Poll.SEED_REFERENCE
+    name = Poll.DELETE_BY_SEED,
+    query = "DELETE FROM Poll " +
+            "WHERE seedId = :" + Poll.SEED_REFERENCE
 )
 public class Poll extends AbstractTimestampedFenceEntity<Long> implements FenceEntity<Long> {
 
@@ -70,10 +70,10 @@ public class Poll extends AbstractTimestampedFenceEntity<Long> implements FenceE
     private String title;
 
     @OneToMany(
-            mappedBy = "poll",
-            fetch = FetchType.EAGER,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            orphanRemoval = true
+        mappedBy = "poll",
+        fetch = FetchType.EAGER,
+        cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+        orphanRemoval = true
     )
     private List<PollOption> options;
 

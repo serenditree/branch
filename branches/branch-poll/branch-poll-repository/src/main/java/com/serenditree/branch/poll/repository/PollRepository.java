@@ -18,12 +18,12 @@ import java.util.List;
  */
 @Dependent
 @Retry(
-        abortOn = {
-                EntityExistsException.class,
-                EntityNotFoundException.class,
-                NonUniqueResultException.class,
-                NoResultException.class
-        }
+    abortOn = {
+        EntityExistsException.class,
+        EntityNotFoundException.class,
+        NonUniqueResultException.class,
+        NoResultException.class
+    }
 )
 public class PollRepository implements PollRepositoryApi {
 
@@ -37,8 +37,8 @@ public class PollRepository implements PollRepositoryApi {
     public List<Poll> retrieveBySeed(String seedId) {
 
         return this.getEntityManager().createNamedQuery(Poll.RETRIEVE_BY_SEED, Poll.class)
-                .setParameter(Poll.SEED_REFERENCE, seedId)
-                .getResultList();
+            .setParameter(Poll.SEED_REFERENCE, seedId)
+            .getResultList();
     }
 
     /**
@@ -52,8 +52,8 @@ public class PollRepository implements PollRepositoryApi {
     @Override
     public FenceResponse vote(Long pollId, Long optionId) {
         int result = this.getEntityManager().createNamedQuery(Poll.VOTE)
-                .setParameter(Poll.OPTION_REFERENCE, optionId)
-                .executeUpdate();
+            .setParameter(Poll.OPTION_REFERENCE, optionId)
+            .executeUpdate();
 
         return result == 1 ? new FenceResponse(pollId) : new FenceResponse(null);
     }
@@ -68,7 +68,7 @@ public class PollRepository implements PollRepositoryApi {
     public Integer deleteBySeed(String seedId) {
 
         return this.getEntityManager().createNamedQuery(Poll.DELETE_BY_SEED)
-                .setParameter(Poll.SEED_REFERENCE, seedId)
-                .executeUpdate();
+            .setParameter(Poll.SEED_REFERENCE, seedId)
+            .executeUpdate();
     }
 }

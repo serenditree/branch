@@ -72,7 +72,10 @@ public class UserLeaf extends AbstractEndpointRest {
     public Response verifyCallback(@PathParam("country") String country, @QueryParam("id") Long id) {
 
         return this.buildRedirect("/user/settings?oidc="
-                + this.tokenService.buildVerificationToken(id, country + this.idToken.getSubject()));
+                                  + this.tokenService.buildVerificationToken(
+            id,
+            country + this.idToken.getSubject()
+        ));
     }
 
     @GET
@@ -82,9 +85,10 @@ public class UserLeaf extends AbstractEndpointRest {
     public Response retrieveByUsername(final @PathParam("username") String username) {
 
         return this.buildCacheResponse(
-                this.userService.retrieveByUsername(username),
-                Objects::nonNull,
-                Response.Status.NOT_FOUND);
+            this.userService.retrieveByUsername(username),
+            Objects::nonNull,
+            Response.Status.NOT_FOUND
+        );
     }
 
     @GET
@@ -94,30 +98,32 @@ public class UserLeaf extends AbstractEndpointRest {
     public Response retrieveBySubstring(final @PathParam("substring") String substring) {
 
         return this.buildCacheResponse(
-                this.userService.retrieveBySubstring(substring),
-                this.notNullNotEmpty,
-                Response.Status.NOT_FOUND);
+            this.userService.retrieveBySubstring(substring),
+            this.notNullNotEmpty,
+            Response.Status.NOT_FOUND
+        );
     }
 
     @DELETE
     @Path("delete/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Fenced(
-            rolesAllowed = {RoleType.USER},
-            actionBased = true,
-            recordRequired = true,
-            recordType = FenceActionType.CRUD,
-            createOrDeleteRecord = true
+        rolesAllowed = {RoleType.USER},
+        actionBased = true,
+        recordRequired = true,
+        recordType = FenceActionType.CRUD,
+        createOrDeleteRecord = true
     )
     @Transactional
     public Response delete(final @PathParam("id") Long id) {
 
         return this.buildFenceResponse(
-                this.userService.delete(id),
-                result -> result.getId() != null,
-                id.toString(),
-                Response.Status.OK,
-                Response.Status.NOT_FOUND);
+            this.userService.delete(id),
+            result -> result.getId() != null,
+            id.toString(),
+            Response.Status.OK,
+            Response.Status.NOT_FOUND
+        );
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

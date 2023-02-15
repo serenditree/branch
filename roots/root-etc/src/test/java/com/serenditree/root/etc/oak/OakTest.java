@@ -18,12 +18,12 @@ class OakTest {
 
     static Stream<Arguments> passwordSource() {
         return Stream.of(
-                Arguments.of(true, "JdWlSV,PSIB}1rQ=]U@iS"),
-                Arguments.of(true, "rand-word-list-is-good"),
-                Arguments.of(true, "rand-word-list-good"),
-                Arguments.of(false, "is-bad"),
-                Arguments.of(false, "Jd,1*****"),
-                Arguments.of(true, "Jd,1******")
+            Arguments.of(true, "JdWlSV,PSIB}1rQ=]U@iS"),
+            Arguments.of(true, "rand-word-list-is-good"),
+            Arguments.of(true, "rand-word-list-good"),
+            Arguments.of(false, "is-bad"),
+            Arguments.of(false, "Jd,1*****"),
+            Arguments.of(true, "Jd,1******")
         );
     }
 
@@ -35,20 +35,20 @@ class OakTest {
 
     static Stream<Arguments> emailSource() {
         return Stream.of(
-                Arguments.of(true, "name@domain.com"),
-                Arguments.of(true, "name1@domain.com"),
-                Arguments.of(true, "first.last@domain.com"),
-                Arguments.of(true, "first-last@domain.com"),
-                Arguments.of(true, "first_last@domain.com"),
-                Arguments.of(true, "first.last1@domain.com"),
-                Arguments.of(true, "first.last@domain.sub.domain"),
-                Arguments.of(false, "first#last@domain.com"),
-                Arguments.of(false, ".@domain.com"),
-                Arguments.of(false, "-@domain.com"),
-                Arguments.of(false, "_@domain.com"),
-                Arguments.of(false, "name@domain"),
-                Arguments.of(false, "domain.com"),
-                Arguments.of(false, "@domain.com")
+            Arguments.of(true, "name@domain.com"),
+            Arguments.of(true, "name1@domain.com"),
+            Arguments.of(true, "first.last@domain.com"),
+            Arguments.of(true, "first-last@domain.com"),
+            Arguments.of(true, "first_last@domain.com"),
+            Arguments.of(true, "first.last1@domain.com"),
+            Arguments.of(true, "first.last@domain.sub.domain"),
+            Arguments.of(false, "first#last@domain.com"),
+            Arguments.of(false, ".@domain.com"),
+            Arguments.of(false, "-@domain.com"),
+            Arguments.of(false, "_@domain.com"),
+            Arguments.of(false, "name@domain"),
+            Arguments.of(false, "domain.com"),
+            Arguments.of(false, "@domain.com")
         );
     }
 }

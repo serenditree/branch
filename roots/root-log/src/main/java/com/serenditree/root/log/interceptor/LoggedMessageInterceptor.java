@@ -25,9 +25,8 @@ public class LoggedMessageInterceptor {
         if (invocationContext.getMethod().isAnnotationPresent(Incoming.class)) {
             Message<?> message = (Message) invocationContext.getParameters()[0];
             LOGGER.fine(() ->
-                    invocationContext.getMethod().getDeclaringClass().getSimpleName() + "::" +
-                            invocationContext.getMethod().getName() +
-                            " [" + message.getPayload() + "]"
+                            invocationContext.getMethod().getDeclaringClass().getSimpleName() + "::" +
+                            invocationContext.getMethod().getName() + " [" + message.getPayload() + "]"
             );
         }
 

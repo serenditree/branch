@@ -67,8 +67,8 @@ public abstract class AbstractEndpointRest {
     @Open
     public Response retrieveApiDescription() {
         return Response
-                .ok(this.buildApiDescription())
-                .build();
+            .ok(this.buildApiDescription())
+            .build();
     }
 
     @GET
@@ -80,8 +80,8 @@ public abstract class AbstractEndpointRest {
                                             @PathParam("action") String action) {
         LOGGER.severe("Retrieval of auth information not handled in filter");
         return Response
-                .serverError()
-                .build();
+            .serverError()
+            .build();
     }
 
     @GET
@@ -109,9 +109,9 @@ public abstract class AbstractEndpointRest {
 
             if (responseBuilder == null) {
                 responseBuilder = Response
-                        .status(success)
-                        .entity(result)
-                        .tag(entityTag);
+                    .status(success)
+                    .entity(result)
+                    .tag(entityTag);
             }
             responseBuilder.cacheControl(this.cacheControl);
         } else {
@@ -137,8 +137,8 @@ public abstract class AbstractEndpointRest {
 
         if (predicate.test(result)) {
             responseBuilder = Response
-                    .status(success)
-                    .entity(result);
+                .status(success)
+                .entity(result);
         } else {
             responseBuilder = Response.status(error);
             if (result != null) {
@@ -163,14 +163,14 @@ public abstract class AbstractEndpointRest {
 
     protected Response buildRedirect(final String path) {
         URI redirect = URI.create(""
-                + StringUtils.removeEnd(this.host, "/")
-                + "/"
-                + StringUtils.removeStart(path, "/")
+                                  + StringUtils.removeEnd(this.host, "/")
+                                  + "/"
+                                  + StringUtils.removeStart(path, "/")
         );
 
         return Response
-                .seeOther(redirect)
-                .build();
+            .seeOther(redirect)
+            .build();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -193,11 +193,11 @@ public abstract class AbstractEndpointRest {
         FencePrincipal principal = this.getPrincipal();
 
         return Response
-                .status(status)
-                .header(HttpHeaders.AUTHORIZATION, principal.getToken())
-                .header(FenceHeaders.ID, principal.getId())
-                .header(FenceHeaders.USERNAME, principal.getUsername())
-                .build();
+            .status(status)
+            .header(HttpHeaders.AUTHORIZATION, principal.getToken())
+            .header(FenceHeaders.ID, principal.getId())
+            .header(FenceHeaders.USERNAME, principal.getUsername())
+            .build();
     }
 
     protected <E> Response buildFenceResponse(E result,
@@ -207,8 +207,8 @@ public abstract class AbstractEndpointRest {
                                               Response.Status error) {
 
         return this.buildResponseBuilder(result, predicate, success, error)
-                .entity(new FenceResponse(entityId))
-                .build();
+            .entity(new FenceResponse(entityId))
+            .build();
 
     }
 
@@ -219,8 +219,8 @@ public abstract class AbstractEndpointRest {
     private Response buildEcho(final int status, final HttpHeaders httpHeaders) {
         Response.ResponseBuilder responseBuilder = Response.status(status);
         httpHeaders.getRequestHeaders().entrySet().stream()
-                .flatMap(entry -> entry.getValue().stream().map(value -> Pair.of(entry.getKey(), value)))
-                .forEach(pair -> responseBuilder.header(pair.getKey(), pair.getValue()));
+            .flatMap(entry -> entry.getValue().stream().map(value -> Pair.of(entry.getKey(), value)))
+            .forEach(pair -> responseBuilder.header(pair.getKey(), pair.getValue()));
 
         return responseBuilder.build();
     }
@@ -253,17 +253,17 @@ public abstract class AbstractEndpointRest {
 
     private Map<String, String> getApi() {
         return Arrays.stream(this.getClass().getMethods())
-                .filter(m -> m.isAnnotationPresent(Path.class))
-                .collect(
-                        Collectors.toMap(
-                                Method::getName,
-                                m -> AbstractEndpointRest.getHttpMethod(m) + m.getAnnotation(Path.class).value(),
-                                (m1, m2) -> {
-                                    throw new IllegalStateException("Overloading API is not allowed.");
-                                },
-                                TreeMap::new
-                        )
-                );
+            .filter(m -> m.isAnnotationPresent(Path.class))
+            .collect(
+                Collectors.toMap(
+                    Method::getName,
+                    m -> AbstractEndpointRest.getHttpMethod(m) + m.getAnnotation(Path.class).value(),
+                    (m1, m2) -> {
+                        throw new IllegalStateException("Overloading API is not allowed.");
+                    },
+                    TreeMap::new
+                )
+            );
     }
 
     private ApiDescription buildApiDescription() {

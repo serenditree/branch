@@ -39,10 +39,11 @@ public class GardenLeaf extends AbstractEndpointRest {
     public Response create(final Garden garden) {
 
         return this.buildCacheResponse(
-                this.gardenService.create(garden),
-                Objects::nonNull,
-                Response.Status.CREATED,
-                Response.Status.INTERNAL_SERVER_ERROR);
+            this.gardenService.create(garden),
+            Objects::nonNull,
+            Response.Status.CREATED,
+            Response.Status.INTERNAL_SERVER_ERROR
+        );
     }
 
     @GET
@@ -52,9 +53,10 @@ public class GardenLeaf extends AbstractEndpointRest {
     public Response retrieveById(final @PathParam("id") ObjectId id) {
 
         return this.buildCacheResponse(
-                this.gardenService.retrieveById(id),
-                Objects::nonNull,
-                Response.Status.NOT_FOUND);
+            this.gardenService.retrieveById(id),
+            Objects::nonNull,
+            Response.Status.NOT_FOUND
+        );
     }
 
     @POST
@@ -65,30 +67,32 @@ public class GardenLeaf extends AbstractEndpointRest {
     public Response retrieveByFilter(final SeedFilter filter) {
 
         return this.buildCacheResponse(
-                this.gardenService.retrieveByFilter(filter),
-                this.notNullNotEmpty,
-                Response.Status.NOT_FOUND);
+            this.gardenService.retrieveByFilter(filter),
+            this.notNullNotEmpty,
+            Response.Status.NOT_FOUND
+        );
     }
 
     @DELETE
     @Path("delete/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Fenced(
-            rolesAllowed = {RoleType.USER},
-            actionBased = true,
-            recordRequired = true,
-            recordType = FenceActionType.CRUD,
-            createOrDeleteRecord = true
+        rolesAllowed = {RoleType.USER},
+        actionBased = true,
+        recordRequired = true,
+        recordType = FenceActionType.CRUD,
+        createOrDeleteRecord = true
     )
     @Transactional(Transactional.TxType.NEVER)
     public Response delete(final @PathParam("id") ObjectId id) {
 
         return this.buildFenceResponse(
-                this.gardenService.delete(id),
-                result -> result.getId() != null,
-                id.toString(),
-                Response.Status.ACCEPTED,
-                Response.Status.NOT_FOUND);
+            this.gardenService.delete(id),
+            result -> result.getId() != null,
+            id.toString(),
+            Response.Status.ACCEPTED,
+            Response.Status.NOT_FOUND
+        );
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -40,9 +40,9 @@ public class Maple {
 
         if (from != null) {
             to = from
-                    .stream()
-                    .map(mapItem)
-                    .collect(Collectors.toList());
+                .stream()
+                .map(mapItem)
+                .collect(Collectors.toList());
         }
 
         return to;
@@ -77,9 +77,9 @@ public class Maple {
 
         if (from != null) {
             to = from
-                    .stream()
-                    .map(mapItem)
-                    .collect(Collectors.toSet());
+                .stream()
+                .map(mapItem)
+                .collect(Collectors.toSet());
         }
 
         return to;
@@ -115,9 +115,9 @@ public class Maple {
 
         if (from != null) {
             to = from
-                    .stream()
-                    .map(mapItem)
-                    .collect(Collectors.toList());
+                .stream()
+                .map(mapItem)
+                .collect(Collectors.toList());
         }
 
         return to;
@@ -206,7 +206,8 @@ public class Maple {
             } catch (JsonbException e) {
                 json = object.toString();
                 LOGGER.warning(() ->
-                        "Could not map object to json. Object::toString method is used instead: " + e.getMessage()
+                                   "Could not map object to json. Object::toString method is used instead: " +
+                                   e.getMessage()
                 );
             }
         }

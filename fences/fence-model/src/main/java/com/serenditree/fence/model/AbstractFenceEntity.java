@@ -9,8 +9,8 @@ import java.util.List;
 
 @MappedSuperclass
 public abstract class AbstractFenceEntity<P>
-        extends AbstractEntity
-        implements FenceEntity<P> {
+    extends AbstractEntity
+    implements FenceEntity<P> {
     @JsonbTransient
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = FenceRecord.ENTITY_REFERENCE, insertable = false, updatable = false)

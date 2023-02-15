@@ -33,20 +33,20 @@ public class LoggedLeafInterceptor {
         Object response;
 
         if (LOGGER.isLoggable(Level.FINE) &&
-                invocationContext.getMethod().getModifiers() == Modifier.PUBLIC) {
+            invocationContext.getMethod().getModifiers() == Modifier.PUBLIC) {
             final String declaringClass = invocationContext
-                    .getMethod()
-                    .getDeclaringClass()
-                    .getSimpleName();
+                .getMethod()
+                .getDeclaringClass()
+                .getSimpleName();
             final String method = invocationContext
-                    .getMethod()
-                    .getName();
+                .getMethod()
+                .getName();
             final String methodSignature = declaringClass + "::" + method;
 
             final boolean isVoid = invocationContext
-                    .getMethod()
-                    .getReturnType()
-                    .equals(Void.TYPE);
+                .getMethod()
+                .getReturnType()
+                .equals(Void.TYPE);
 
             this.before(methodSignature, invocationContext.getParameters());
             response = invocationContext.proceed();
@@ -70,9 +70,9 @@ public class LoggedLeafInterceptor {
 
         if (parameters != null && parameters.length > 0) {
             message += Arrays
-                    .stream(parameters)
-                    .map(parameter -> parameter == null ? "null" : parameter.toString())
-                    .collect(Collectors.joining("], [", " with parameters: [", "]"));
+                .stream(parameters)
+                .map(parameter -> parameter == null ? "null" : parameter.toString())
+                .collect(Collectors.joining("], [", " with parameters: [", "]"));
         }
 
         LOGGER.fine(message);
@@ -108,7 +108,7 @@ public class LoggedLeafInterceptor {
                                    final Collection<T> collection,
                                    final Response.StatusType status) {
         LOGGER.fine(() ->
-                AFTER + method +
+                        AFTER + method +
                         " Status: " + status +
                         " Results: " + collection.size()
         );
@@ -116,14 +116,14 @@ public class LoggedLeafInterceptor {
 
     private <T> void logCollection(final String method, final Collection<T> collection) {
         LOGGER.fine(() ->
-                AFTER + method +
+                        AFTER + method +
                         " Results: " + collection.size()
         );
     }
 
     private void logObject(final String method, final Object returnValue, final Response.StatusType status) {
         LOGGER.fine(() ->
-                AFTER + method +
+                        AFTER + method +
                         " Status: " + status +
                         " Result: " + returnValue
         );
@@ -131,7 +131,7 @@ public class LoggedLeafInterceptor {
 
     private void logObject(final String method, final Object returnValue) {
         LOGGER.fine(() ->
-                AFTER + method +
+                        AFTER + method +
                         " Result: " + returnValue
         );
     }

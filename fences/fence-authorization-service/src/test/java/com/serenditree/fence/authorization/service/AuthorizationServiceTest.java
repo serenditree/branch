@@ -73,17 +73,18 @@ class AuthorizationServiceTest {
 
         List<FenceRecord> records = Collections.singletonList(this.fenceRecord);
         when(this.authorizationRepository.retrieveFenceRecords(anyString(), anyString(), anyString()))
-                .thenReturn(records);
+            .thenReturn(records);
 
         AuthorizationServiceApi authorizationService = new AuthorizationService();
         authorizationService.setAuthorizationRepository(this.authorizationRepository);
 
         boolean authorized = authorizationService.isAuthorized(
-                this.authenticatedUser,
-                this.fenced,
-                this.getClass().getMethods()[0],
-                this.uriInfo,
-                this.containerRequestContext);
+            this.authenticatedUser,
+            this.fenced,
+            this.getClass().getMethods()[0],
+            this.uriInfo,
+            this.containerRequestContext
+        );
 
         assertTrue(authorized);
     }
@@ -104,17 +105,18 @@ class AuthorizationServiceTest {
         when(this.uriInfo.getPathParameters(anyBoolean())).thenReturn(this.parameters);
 
         when(this.authorizationRepository.retrieveFenceRecords(anyString(), anyString(), anyString()))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
 
         AuthorizationServiceApi authorizationService = new AuthorizationService();
         authorizationService.setAuthorizationRepository(this.authorizationRepository);
 
         boolean authorized = authorizationService.isAuthorized(
-                this.authenticatedUser,
-                this.fenced,
-                this.getClass().getMethods()[0],
-                this.uriInfo,
-                this.containerRequestContext);
+            this.authenticatedUser,
+            this.fenced,
+            this.getClass().getMethods()[0],
+            this.uriInfo,
+            this.containerRequestContext
+        );
 
         assertTrue(authorized);
     }
@@ -132,11 +134,12 @@ class AuthorizationServiceTest {
         authorizationService.setAuthorizationRepository(this.authorizationRepository);
 
         boolean authorized = authorizationService.isAuthorized(
-                this.authenticatedUser,
-                this.fenced,
-                this.getClass().getMethods()[0],
-                this.uriInfo,
-                this.containerRequestContext);
+            this.authenticatedUser,
+            this.fenced,
+            this.getClass().getMethods()[0],
+            this.uriInfo,
+            this.containerRequestContext
+        );
 
         assertFalse(authorized);
     }

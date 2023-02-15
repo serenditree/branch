@@ -35,8 +35,8 @@ public class Oak {
     }
 
     private static final PolicyFactory HTML_SECURITY_POLICY = new HtmlPolicyBuilder()
-            .withPreprocessor(HtmlSecurityEventReceiver::new)
-            .toFactory();
+        .withPreprocessor(HtmlSecurityEventReceiver::new)
+        .toFactory();
 
     /**
      * Checks input for tags and protects against XSS;
@@ -75,12 +75,13 @@ public class Oak {
      * Pattern that matches a password which consists of numbers, uppercase, lowercase and special characters or a
      * word list or an Argon2 hash.
      */
-    public static final String PASSWORD_PATTERN_STRING = "(((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\\da-zA-Z]).+"
-            + ")|("
-            + WORD_LIST_PATTERN_STRING
-            + ")|("
-            + HASHED_PASSWORD_PATTERN_STRING
-            + "))";
+    public static final String PASSWORD_PATTERN_STRING =
+        "(((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\\da-zA-Z]).+" +
+        ")|(" +
+        WORD_LIST_PATTERN_STRING +
+        ")|(" +
+        HASHED_PASSWORD_PATTERN_STRING +
+        "))";
 
     /**
      * Checks if the passwords' entropy is high enough.

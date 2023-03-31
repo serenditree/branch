@@ -162,10 +162,10 @@ public abstract class AbstractEndpointRest {
     }
 
     protected Response buildRedirect(final String path) {
-        URI redirect = URI.create(""
-                                  + StringUtils.removeEnd(this.host, "/")
-                                  + "/"
-                                  + StringUtils.removeStart(path, "/")
+        URI redirect = URI.create(
+            StringUtils.removeEnd(this.host, "/")
+            + "/"
+            + StringUtils.removeStart(path, "/")
         );
 
         return Response

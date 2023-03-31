@@ -71,11 +71,10 @@ public class UserLeaf extends AbstractEndpointRest {
     @Open
     public Response verifyCallback(@PathParam("country") String country, @QueryParam("id") Long id) {
 
-        return this.buildRedirect("/user/settings?oidc="
-                                  + this.tokenService.buildVerificationToken(
-            id,
-            country + this.idToken.getSubject()
-        ));
+        return this.buildRedirect(
+            "/user/settings?oidc="
+            + this.tokenService.buildVerificationToken(id, country + this.idToken.getSubject())
+        );
     }
 
     @GET

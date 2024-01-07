@@ -4,17 +4,16 @@ import com.serenditree.fence.annotation.FencedContext;
 import com.serenditree.fence.authentication.service.api.AuthenticationServiceApi;
 import com.serenditree.fence.authorization.service.api.AuthorizationServiceApi;
 import com.serenditree.fence.model.FenceContext;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.event.Event;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Priorities;
+import jakarta.ws.rs.container.DynamicFeature;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.ext.Provider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-
-import javax.annotation.Priority;
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.ext.Provider;
 
 /**
  * Registers security filters for all requests and enables CDI in request filter.

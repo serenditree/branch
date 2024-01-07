@@ -1,9 +1,8 @@
 package com.serenditree.branch.poll.model.entities;
 
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
-
-import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.*;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.*;
 
 /**
  * An entity representing an option users can vote for.

@@ -1,8 +1,8 @@
 package com.serenditree.root.data.generic.model.entities;
 
 import com.serenditree.root.etc.maple.Maple;
+import jakarta.persistence.MappedSuperclass;
 
-import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 
 /**

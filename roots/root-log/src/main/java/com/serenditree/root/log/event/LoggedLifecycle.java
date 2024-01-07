@@ -2,11 +2,11 @@ package com.serenditree.root.log.event;
 
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 import java.util.logging.Logger;
 import java.util.stream.StreamSupport;
 

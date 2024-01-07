@@ -7,14 +7,14 @@ import com.serenditree.fence.model.FenceRecord;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.FenceActionType;
 import com.serenditree.fence.model.enums.RoleType;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.UriInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
 import java.util.List;
 

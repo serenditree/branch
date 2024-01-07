@@ -1,6 +1,7 @@
 package com.serenditree.root.data.generic.model.converter;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;

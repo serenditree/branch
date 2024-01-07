@@ -2,9 +2,8 @@ package com.serenditree.fence.authentication.service;
 
 import com.serenditree.fence.authentication.service.api.VerificationServiceApi;
 import com.serenditree.fence.model.FenceIdRecord;
-
-import javax.enterprise.context.Dependent;
-import javax.transaction.Transactional;
+import jakarta.enterprise.context.Dependent;
+import jakarta.transaction.Transactional;
 
 @Dependent
 public class VerificationService implements VerificationServiceApi {

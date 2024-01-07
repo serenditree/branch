@@ -3,15 +3,15 @@ package com.serenditree.branch.seed.model.entities;
 import com.serenditree.branch.poll.model.entities.Poll;
 import com.serenditree.branch.seed.model.serializer.ObjectIdDeserializer;
 import com.serenditree.branch.seed.model.serializer.ObjectIdSerializer;
+import jakarta.json.bind.annotation.JsonbTypeDeserializer;
+import jakarta.json.bind.annotation.JsonbTypeSerializer;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 
-import javax.json.bind.annotation.JsonbTypeDeserializer;
-import javax.json.bind.annotation.JsonbTypeSerializer;
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity

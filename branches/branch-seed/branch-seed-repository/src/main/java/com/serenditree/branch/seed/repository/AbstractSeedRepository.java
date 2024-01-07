@@ -9,11 +9,11 @@ import com.serenditree.fence.model.FenceResponse;
 import com.serenditree.root.data.nativ.api.NativeQueryBuilderApi;
 import com.serenditree.root.data.nativ.model.Update;
 import io.quarkus.mongodb.panache.PanacheMongoRepository;
+import jakarta.inject.Inject;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;

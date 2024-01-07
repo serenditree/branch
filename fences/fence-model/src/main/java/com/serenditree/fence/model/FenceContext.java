@@ -3,12 +3,11 @@ package com.serenditree.fence.model;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.RoleType;
 import com.serenditree.root.etc.maple.Maple;
-
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.SecurityContext;
 
 /**
  * Custom {@link SecurityContext} for the propagation of security information from
- * {@link javax.ws.rs.container.ContainerRequestFilter}.
+ * {@link jakarta.ws.rs.container.ContainerRequestFilter}.
  */
 public class FenceContext implements SecurityContext {
 

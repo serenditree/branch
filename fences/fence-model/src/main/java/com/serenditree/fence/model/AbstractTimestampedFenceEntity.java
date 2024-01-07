@@ -2,9 +2,9 @@ package com.serenditree.fence.model;
 
 import com.serenditree.fence.model.api.FenceEntity;
 import com.serenditree.root.data.generic.model.entities.AbstractTimestampedEntity;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.*;
 
-import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.*;
 import java.util.List;
 
 @MappedSuperclass

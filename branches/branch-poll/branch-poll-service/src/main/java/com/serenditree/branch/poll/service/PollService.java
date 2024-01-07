@@ -5,9 +5,9 @@ import com.serenditree.branch.poll.model.entities.Poll;
 import com.serenditree.branch.poll.repository.api.PollRepositoryApi;
 import com.serenditree.branch.poll.service.api.PollServiceApi;
 import com.serenditree.fence.model.FenceResponse;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 

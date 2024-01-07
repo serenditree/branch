@@ -3,9 +3,9 @@ package com.serenditree.fence.annotation;
 import com.serenditree.fence.model.FenceRecord;
 import com.serenditree.fence.model.enums.FenceActionType;
 import com.serenditree.fence.model.enums.RoleType;
+import jakarta.enterprise.util.Nonbinding;
+import jakarta.interceptor.InterceptorBinding;
 
-import javax.enterprise.util.Nonbinding;
-import javax.interceptor.InterceptorBinding;
 import java.lang.annotation.*;
 import java.time.temporal.ChronoUnit;
 

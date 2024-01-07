@@ -7,14 +7,14 @@ import com.serenditree.branch.seed.model.filter.SortingType;
 import com.serenditree.root.data.geo.model.LngLatBounds;
 import com.serenditree.root.data.nativ.api.NativeQueryBuilderApi;
 import com.serenditree.root.data.nativ.model.Update;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;

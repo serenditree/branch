@@ -3,10 +3,10 @@ package com.serenditree.fence.extras.scheduler;
 import com.serenditree.fence.authorization.repository.api.AuthorizationRepositoryApi;
 import io.quarkus.scheduler.Scheduled;
 import io.quarkus.scheduler.ScheduledExecution;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.logging.Logger;
 
 @ApplicationScoped

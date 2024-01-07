@@ -3,10 +3,10 @@ package com.serenditree.branch.poll.service.client;
 import com.serenditree.branch.poll.model.entities.Poll;
 import com.serenditree.branch.poll.service.api.PollServiceClientApi;
 import com.serenditree.root.rest.client.AbstractClientRest;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 import java.util.List;
 
 /**

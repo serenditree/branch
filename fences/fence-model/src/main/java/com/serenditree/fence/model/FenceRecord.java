@@ -5,10 +5,10 @@ import com.serenditree.fence.model.api.FenceEntity;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.FenceActionType;
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

@@ -6,13 +6,13 @@ import com.serenditree.fence.FenceDecorator;
 import com.serenditree.fence.model.FenceRecordAssertion;
 import com.serenditree.fence.model.enums.FenceActionType;
 import com.serenditree.root.etc.oak.Oak;
+import jakarta.annotation.Priority;
+import jakarta.decorator.Decorator;
+import jakarta.decorator.Delegate;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.interceptor.Interceptor;
 
-import javax.annotation.Priority;
-import javax.decorator.Decorator;
-import javax.decorator.Delegate;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import javax.interceptor.Interceptor;
 import java.util.logging.Logger;
 
 @Decorator

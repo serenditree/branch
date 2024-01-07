@@ -11,10 +11,10 @@ import com.serenditree.fence.model.Principal;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.RoleType;
 import com.serenditree.root.etc.maple.Maple;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Dependent

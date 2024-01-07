@@ -1,8 +1,8 @@
 package com.serenditree.branch.seed.model.entities;
 
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
+import jakarta.persistence.Embeddable;
 
-import javax.persistence.Embeddable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;

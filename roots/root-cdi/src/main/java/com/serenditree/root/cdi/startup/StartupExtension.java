@@ -1,10 +1,10 @@
 package com.serenditree.root.cdi.startup;
 
 import com.serenditree.root.cdi.startup.annotation.Startup;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.*;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;

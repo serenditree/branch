@@ -1,9 +1,9 @@
 package com.serenditree.root.data.geo.model;
 
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.Size;
 
-import javax.persistence.Embeddable;
-import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**

@@ -11,13 +11,13 @@ import com.serenditree.fence.model.enums.RoleType;
 import com.serenditree.root.rest.cache.annotation.CacheControlConfig;
 import com.serenditree.root.rest.cache.annotation.CustomCacheControl;
 import com.serenditree.root.rest.transfer.ApiDescription;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Arrays;

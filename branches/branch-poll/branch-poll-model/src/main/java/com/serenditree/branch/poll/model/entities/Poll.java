@@ -2,8 +2,8 @@ package com.serenditree.branch.poll.model.entities;
 
 import com.serenditree.fence.model.AbstractTimestampedFenceEntity;
 import com.serenditree.fence.model.api.FenceEntity;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.List;
 
 /**

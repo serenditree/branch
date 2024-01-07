@@ -8,10 +8,10 @@ import com.serenditree.fence.annotation.FencedContext;
 import com.serenditree.fence.model.FenceResponse;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.root.etc.oak.Oak;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 import java.util.List;
 
 @Dependent

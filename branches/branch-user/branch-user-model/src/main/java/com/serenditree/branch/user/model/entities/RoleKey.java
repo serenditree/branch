@@ -1,8 +1,8 @@
 package com.serenditree.branch.user.model.entities;
 
 import com.serenditree.fence.model.enums.RoleType;
+import jakarta.annotation.Generated;
 
-import javax.annotation.Generated;
 import java.io.Serializable;
 
 public class RoleKey implements Serializable {

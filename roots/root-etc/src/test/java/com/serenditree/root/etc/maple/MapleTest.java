@@ -50,7 +50,7 @@ class MapleTest {
 
     @Test
     void prettyJsonTest() {
-        assertEquals("\n{\n    \"key\": \"value\"\n}", Maple.prettyJson(OBJECT));
+        assertEquals("{\n    \"key\": \"value\"\n}", Maple.prettyJson(OBJECT));
     }
 
     @Test

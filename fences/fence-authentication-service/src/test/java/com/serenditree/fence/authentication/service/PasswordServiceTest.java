@@ -1,10 +1,9 @@
 package com.serenditree.fence.authentication.service;
 
 import com.serenditree.fence.authentication.service.api.PasswordServiceApi;
+import jakarta.ws.rs.BadRequestException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import javax.ws.rs.BadRequestException;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,9 +1,8 @@
 package com.serenditree.fence.model;
 
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 @Entity
 public class FenceIdRecord extends AbstractEntity {

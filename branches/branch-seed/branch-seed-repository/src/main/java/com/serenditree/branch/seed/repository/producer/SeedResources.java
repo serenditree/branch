@@ -5,10 +5,9 @@ import com.serenditree.branch.seed.repository.qualifier.SeedBound;
 import com.serenditree.branch.seed.repository.query.GardenNativeQueryBuilder;
 import com.serenditree.branch.seed.repository.query.SeedNativeQueryBuilder;
 import com.serenditree.root.data.nativ.api.NativeQueryBuilderApi;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Produces;
 
 @ApplicationScoped
 public class SeedResources {

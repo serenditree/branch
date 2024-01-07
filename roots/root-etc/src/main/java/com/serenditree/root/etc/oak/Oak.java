@@ -1,11 +1,11 @@
 package com.serenditree.root.etc.oak;
 
+import jakarta.ws.rs.BadRequestException;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.HtmlStreamEventReceiver;
 import org.owasp.html.HtmlStreamEventReceiverWrapper;
 import org.owasp.html.PolicyFactory;
 
-import javax.ws.rs.BadRequestException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

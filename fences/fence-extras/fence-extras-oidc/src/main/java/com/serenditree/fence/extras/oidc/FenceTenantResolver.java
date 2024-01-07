@@ -3,11 +3,11 @@ package com.serenditree.fence.extras.oidc;
 
 import io.quarkus.oidc.TenantResolver;
 import io.vertx.ext.web.RoutingContext;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

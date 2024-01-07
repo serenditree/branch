@@ -9,18 +9,18 @@ import com.serenditree.fence.model.FenceRecordAssertion;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.FenceActionType;
 import io.restassured.path.json.JsonPath;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -113,7 +113,7 @@ public class AuthorizationService implements AuthorizationServiceApi {
      * Method to check authorization without touching the target resource. Don't use for real authorization checks!
      * ID is not verified.
      *
-     * @param uriInfo Needed for the extraction of the values annotated with {@link javax.ws.rs.PathParam}.
+     * @param uriInfo Needed for the extraction of the values annotated with {@link jakarta.ws.rs.PathParam}.
      * @return Boolean flag that indicates whether a user is authorized to access a certain resource.
      * @apiNote Don't use for real authorization checks! ID is not verified.
      */

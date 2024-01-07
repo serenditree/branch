@@ -5,13 +5,13 @@ import com.serenditree.branch.user.model.entities.User;
 import com.serenditree.branch.user.repository.api.UserRepositoryApi;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.RoleType;
+import jakarta.enterprise.context.Dependent;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
 import org.eclipse.microprofile.faulttolerance.Retry;
 
-import javax.enterprise.context.Dependent;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import java.util.List;
 
 @Dependent

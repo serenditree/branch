@@ -4,13 +4,13 @@ package com.serenditree.branch.poll.repository;
 import com.serenditree.branch.poll.model.entities.Poll;
 import com.serenditree.branch.poll.repository.api.PollRepositoryApi;
 import com.serenditree.fence.model.FenceResponse;
+import jakarta.enterprise.context.Dependent;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
 import org.eclipse.microprofile.faulttolerance.Retry;
 
-import javax.enterprise.context.Dependent;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import java.util.List;
 
 /**

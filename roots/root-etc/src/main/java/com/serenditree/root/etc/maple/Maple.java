@@ -1,10 +1,11 @@
 package com.serenditree.root.etc.maple;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
-import javax.json.bind.JsonbException;
-import javax.ws.rs.InternalServerErrorException;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbConfig;
+import jakarta.json.bind.JsonbException;
+import jakarta.ws.rs.InternalServerErrorException;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

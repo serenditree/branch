@@ -3,8 +3,7 @@ package com.serenditree.fence;
 import com.serenditree.fence.annotation.FencedContext;
 import com.serenditree.fence.authorization.service.api.AuthorizationServiceApi;
 import com.serenditree.fence.model.api.FencePrincipal;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public abstract class FenceDecorator {
 

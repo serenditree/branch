@@ -1,9 +1,8 @@
 package com.serenditree.root.data.geo.model;
 
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
-
-import javax.json.bind.annotation.JsonbProperty;
-import javax.json.bind.annotation.JsonbTransient;
+import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbTransient;
 
 
 public class LngLatBounds extends AbstractEntity {

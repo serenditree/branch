@@ -4,9 +4,9 @@ import com.serenditree.fence.authorization.service.api.PolicyEnforcerApi;
 import com.serenditree.fence.model.FenceRecordAssertion;
 import com.serenditree.fence.model.api.FencePolicy;
 import com.serenditree.fence.model.enums.FenceActionType;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Alternative;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Alternative;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

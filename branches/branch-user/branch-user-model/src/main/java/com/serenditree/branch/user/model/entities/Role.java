@@ -4,8 +4,7 @@ package com.serenditree.branch.user.model.entities;
 import com.serenditree.fence.model.api.FenceRole;
 import com.serenditree.fence.model.enums.RoleType;
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 
 @Entity

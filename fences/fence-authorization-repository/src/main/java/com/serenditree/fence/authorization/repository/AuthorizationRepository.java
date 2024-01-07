@@ -3,9 +3,9 @@ package com.serenditree.fence.authorization.repository;
 
 import com.serenditree.fence.authorization.repository.api.AuthorizationRepositoryApi;
 import com.serenditree.fence.model.FenceRecord;
+import jakarta.enterprise.context.Dependent;
+import jakarta.transaction.Transactional;
 
-import javax.enterprise.context.Dependent;
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;

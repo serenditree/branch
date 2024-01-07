@@ -5,12 +5,12 @@ import com.serenditree.branch.seed.model.entities.Seed;
 import com.serenditree.root.log.annotation.Logged;
 import com.serenditree.root.log.interceptor.LoggedMessageInterceptor;
 import io.smallrye.reactive.messaging.annotations.Blocking;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 import java.util.concurrent.CompletionStage;
 import java.util.logging.Logger;
 

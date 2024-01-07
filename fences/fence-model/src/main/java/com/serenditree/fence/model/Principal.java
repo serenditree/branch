@@ -3,8 +3,8 @@ package com.serenditree.fence.model;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.RoleType;
 import com.serenditree.root.etc.maple.Maple;
+import jakarta.json.bind.annotation.JsonbTransient;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.security.auth.Subject;
 import java.util.ArrayList;
 import java.util.List;

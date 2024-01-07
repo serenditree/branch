@@ -1,6 +1,6 @@
 package com.serenditree.root.data.generic.model.validation;
 
-import javax.validation.groups.Default;
+import jakarta.validation.groups.Default;
 
 public interface ValidationGroups {
     interface Post extends Default {

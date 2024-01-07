@@ -8,15 +8,15 @@ import com.serenditree.fence.model.api.FenceUser;
 import com.serenditree.fence.model.enums.RoleType;
 import com.serenditree.root.data.generic.model.validation.ValidationGroups;
 import com.serenditree.root.etc.oak.Oak;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.json.bind.annotation.JsonbTypeDeserializer;
+import jakarta.json.bind.annotation.JsonbTypeSerializer;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
-import javax.json.bind.annotation.JsonbTransient;
-import javax.json.bind.annotation.JsonbTypeDeserializer;
-import javax.json.bind.annotation.JsonbTypeSerializer;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -152,7 +152,6 @@ public class User extends AbstractTimestampedFenceEntity<Long> implements FenceU
     }
 
     @Override
-    @Transient
     public Set<Role> getRoles() {
         return roles;
     }

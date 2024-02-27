@@ -15,13 +15,11 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public abstract class AbstractSeedRepository<E extends AbstractSeed>
     implements AbstractSeedRepositoryApi<E>, PanacheMongoRepository<E> {
 
-    @Inject
     @ConfigProperty(name = "quarkus.mongodb.database")
     String database;
 
@@ -77,7 +75,7 @@ public abstract class AbstractSeedRepository<E extends AbstractSeed>
                     .spliterator(),
                 false
             )
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override
@@ -95,7 +93,7 @@ public abstract class AbstractSeedRepository<E extends AbstractSeed>
                 false
             )
             .map(document -> document.get("tag").toString())
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override

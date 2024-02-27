@@ -13,7 +13,6 @@ import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -102,7 +101,6 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
 
     protected boolean unwind;
 
-    @ConfigProperty(name = "serenditree.seed.water.retention", defaultValue = "21")
     protected int retention;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,17 +316,7 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // NUTRITION AGGREGATES
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            if (this.sort == SORT_BY_WATER) {
-                this.pipeline.add(Aggregates.unwind(WATER_EXPRESSION));
-                this.pipeline.add(Aggregates.match(Objects.requireNonNull(fromFilter)));
-                this.includedFields.add(Accumulators.sum(TOTAL_WATER, WATER_EXPRESSION + ".value"));
-                this.pipeline.add(Aggregates.group("$_id", this.includedFields));
-            } else if (this.sort == SORT_BY_NUBITS) {
-                this.pipeline.add(Aggregates.unwind(NUBITS_EXPRESSION));
-                this.pipeline.add(Aggregates.match(Objects.requireNonNull(fromFilter)));
-                this.includedFields.add(Accumulators.sum(TOTAL_NUBITS, NUBITS_EXPRESSION + ".value"));
-                this.pipeline.add(Aggregates.group("$_id", this.includedFields));
-            }
+            this.setNutritionAggregates(fromFilter);
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // SORT
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -363,6 +351,20 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     @Override
     public String toString() {
         return this.toJson(this.pipeline, true);
+    }
+
+    private void setNutritionAggregates(final Bson fromFilter) {
+        if (this.sort == SORT_BY_WATER) {
+            this.pipeline.add(Aggregates.unwind(WATER_EXPRESSION));
+            this.pipeline.add(Aggregates.match(Objects.requireNonNull(fromFilter)));
+            this.includedFields.add(Accumulators.sum(TOTAL_WATER, WATER_EXPRESSION + ".value"));
+            this.pipeline.add(Aggregates.group("$_id", this.includedFields));
+        } else if (this.sort == SORT_BY_NUBITS) {
+            this.pipeline.add(Aggregates.unwind(NUBITS_EXPRESSION));
+            this.pipeline.add(Aggregates.match(Objects.requireNonNull(fromFilter)));
+            this.includedFields.add(Accumulators.sum(TOTAL_NUBITS, NUBITS_EXPRESSION + ".value"));
+            this.pipeline.add(Aggregates.group("$_id", this.includedFields));
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

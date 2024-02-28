@@ -15,6 +15,9 @@ public class Nutrition extends AbstractEntity {
 
     private LocalDateTime added;
 
+    public Nutrition() {
+    }
+
     public Nutrition(int value) {
         this.value = value;
         // Avoid linking nutrition with fence records by time.

@@ -37,7 +37,7 @@
     <maven.required>3.6.2</maven.required>
     <maven.home/>
 
-    <version.quarkus>3.6.4</version.quarkus>
+    <version.quarkus>3.7.4</version.quarkus>
     <quarkus.package.output-directory>${serenditree.name}</quarkus.package.output-directory>
     <quarkus.config.locations>${serenditree.config}</quarkus.config.locations>
 
@@ -61,12 +61,12 @@
     <version.apache.commons.io>2.15.1</version.apache.commons.io>
     <version.apache.commons.lang>3.14.0</version.apache.commons.lang>
     <version.argon2>2.11</version.argon2>
-    <version.jose4j>0.9.4</version.jose4j>
+    <version.jose4j>0.9.5</version.jose4j>
     <version.owasp>20220608.1</version.owasp>
 
     <version.hamcrest>2.1</version.hamcrest>
-    <version.jayway.jsonpath>2.8.0</version.jayway.jsonpath>
-    <version.mockito>5.8.0</version.mockito>
+    <version.jayway.jsonpath>2.9.0</version.jayway.jsonpath>
+    <version.mockito>5.10.0</version.mockito>
     <version.rest-assured>5.4.0</version.rest-assured>
     <version.awaitility>4.2.0</version.awaitility>
   </properties>
@@ -145,19 +145,15 @@
     <!-- REST -->
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy</artifactId>
+      <artifactId>quarkus-resteasy-reactive</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-jsonb</artifactId>
+      <artifactId>quarkus-resteasy-reactive-jsonb</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest-client-jsonb</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-jsonb</artifactId>
+      <artifactId>quarkus-rest-client-reactive-jsonb</artifactId>
     </dependency>
     <!-- DATA -->
     <dependency>

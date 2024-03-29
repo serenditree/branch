@@ -37,7 +37,7 @@
     <maven.required>3.6.2</maven.required>
     <maven.home/>
 
-    <version.quarkus>3.7.4</version.quarkus>
+    <version.quarkus>3.9.1</version.quarkus>
     <quarkus.package.output-directory>${serenditree.name}</quarkus.package.output-directory>
     <quarkus.config.locations>${serenditree.config}</quarkus.config.locations>
 
@@ -145,15 +145,15 @@
     <!-- REST -->
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-reactive</artifactId>
+      <artifactId>quarkus-rest</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-reactive-jsonb</artifactId>
+      <artifactId>quarkus-rest-jsonb</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest-client-reactive-jsonb</artifactId>
+      <artifactId>quarkus-rest-client-jsonb</artifactId>
     </dependency>
     <!-- DATA -->
     <dependency>
@@ -191,11 +191,11 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-reactive-messaging</artifactId>
+      <artifactId>quarkus-messaging</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-reactive-messaging-kafka</artifactId>
+      <artifactId>quarkus-messaging-kafka</artifactId>
     </dependency>
     <!-- CONFIG -->
     <dependency>

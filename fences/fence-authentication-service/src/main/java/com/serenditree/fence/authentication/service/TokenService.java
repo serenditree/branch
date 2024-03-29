@@ -218,7 +218,7 @@ public class TokenService implements TokenServiceApi {
         JsonWebEncryption jwe = new JsonWebEncryption();
 
         jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.DIRECT);
-        jwe.setEncryptionMethodHeaderParameter(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
+        jwe.setEncryptionMethodHeaderParameter(ContentEncryptionAlgorithmIdentifiers.AES_256_CBC_HMAC_SHA_512);
         jwe.setKey(TokenService.JWK.getKey());
         jwe.setKeyIdHeaderValue(TokenService.JWK.getKeyId());
         jwe.setContentTypeHeaderValue(TokenService.JWE_CONTENT_TYPE);

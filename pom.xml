@@ -287,7 +287,9 @@
               <maven.home>${maven.home}</maven.home>
             </systemPropertyVariables>
             <environmentVariables>
-              <SERENDITREE_JSON_WEB_KEY>9SYiJgVsBJscfJ/1HjElV2YN0m0CwULyE2rg4k6kCdw=</SERENDITREE_JSON_WEB_KEY>
+              <SERENDITREE_JSON_WEB_KEY>
+                HjT/+C7Zoj/4NcdDZ4tCY2lcNOocfnQwKY1kaXXmuBnG7lvr34MA0Lm5ftuq/nk4bZyjVZi0PqtuqPb9x5oEQw==
+              </SERENDITREE_JSON_WEB_KEY>
             </environmentVariables>
           </configuration>
         </plugin>

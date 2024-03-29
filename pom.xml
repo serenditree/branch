@@ -42,33 +42,33 @@
     <quarkus.config.locations>${serenditree.config}</quarkus.config.locations>
 
     <version.maven.antrun.plugin>3.1.0</version.maven.antrun.plugin>
-    <version.maven.clean.plugin>3.2.0</version.maven.clean.plugin>
-    <version.maven.compiler.plugin>3.10.1</version.maven.compiler.plugin>
-    <version.maven.dependency.plugin>3.1.2</version.maven.dependency.plugin>
-    <version.maven.deploy.plugin>3.0.0</version.maven.deploy.plugin>
+    <version.maven.clean.plugin>3.3.2</version.maven.clean.plugin>
+    <version.maven.compiler.plugin>3.13.0</version.maven.compiler.plugin>
+    <version.maven.dependency.plugin>3.6.1</version.maven.dependency.plugin>
+    <version.maven.deploy.plugin>3.1.1</version.maven.deploy.plugin>
     <version.maven.enforcer.plugin>3.4.1</version.maven.enforcer.plugin>
-    <version.maven.exec.plugin>3.0.0</version.maven.exec.plugin>
-    <version.maven.failsafe.plugin>3.2.3</version.maven.failsafe.plugin>
-    <version.maven.install.plugin>3.0.1</version.maven.install.plugin>
+    <version.maven.exec.plugin>3.2.0</version.maven.exec.plugin>
+    <version.maven.failsafe.plugin>3.2.5</version.maven.failsafe.plugin>
+    <version.maven.install.plugin>3.1.1</version.maven.install.plugin>
     <version.maven.jandex.plugin>1.2.3</version.maven.jandex.plugin>
     <version.maven.quarkus.plugin>${version.quarkus}</version.maven.quarkus.plugin>
-    <version.maven.resources.plugin>3.2.0</version.maven.resources.plugin>
-    <version.maven.site.plugin>4.0.0-M2</version.maven.site.plugin>
-    <version.maven.surefire.plugin>3.2.3</version.maven.surefire.plugin>
-    <version.maven.jar.plugin>3.2.2</version.maven.jar.plugin>
-    <version.versions.maven.plugin>2.11.0</version.versions.maven.plugin>
+    <version.maven.resources.plugin>3.3.1</version.maven.resources.plugin>
+    <version.maven.site.plugin>4.0.0-M13</version.maven.site.plugin>
+    <version.maven.surefire.plugin>3.2.5</version.maven.surefire.plugin>
+    <version.maven.jar.plugin>3.3.0</version.maven.jar.plugin>
+    <version.versions.maven.plugin>2.16.2</version.versions.maven.plugin>
 
-    <version.apache.commons.io>2.15.1</version.apache.commons.io>
+    <version.apache.commons.io>2.16.0</version.apache.commons.io>
     <version.apache.commons.lang>3.14.0</version.apache.commons.lang>
     <version.argon2>2.11</version.argon2>
-    <version.jose4j>0.9.5</version.jose4j>
+    <version.jose4j>0.9.6</version.jose4j>
     <version.owasp>20220608.1</version.owasp>
 
     <version.hamcrest>2.1</version.hamcrest>
     <version.jayway.jsonpath>2.9.0</version.jayway.jsonpath>
-    <version.mockito>5.10.0</version.mockito>
+    <version.mockito>5.11.0</version.mockito>
     <version.rest-assured>5.4.0</version.rest-assured>
-    <version.awaitility>4.2.0</version.awaitility>
+    <version.awaitility>4.2.1</version.awaitility>
   </properties>
 
   <dependencyManagement>
@@ -521,6 +521,32 @@
                 <phase>validate</phase>
                 <goals>
                   <goal>display-property-updates</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>update</id>
+      <properties>
+        <verbose>true</verbose>
+        <allowMajorUpdates>false</allowMajorUpdates>
+      </properties>
+      <build>
+        <defaultGoal>validate</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>versions-maven-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <phase>validate</phase>
+                <goals>
+                  <goal>update-properties</goal>
                 </goals>
               </execution>
             </executions>

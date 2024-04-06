@@ -7,7 +7,8 @@ import com.serenditree.fence.model.api.FenceEntity;
 import com.serenditree.fence.model.api.FenceUser;
 import com.serenditree.fence.model.enums.RoleType;
 import com.serenditree.root.data.generic.model.validation.ValidationGroups;
-import com.serenditree.root.etc.oak.Oak;
+import com.serenditree.root.etc.oak.OakPassword;
+import com.serenditree.root.etc.oak.OakEmail;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.annotation.JsonbTypeSerializer;
@@ -65,10 +66,10 @@ public class User extends AbstractTimestampedFenceEntity<Long> implements FenceU
     private String username;
 
     @Size(min = 10)
-    @Pattern(regexp = Oak.PASSWORD_PATTERN_STRING)
+    @Pattern(regexp = OakPassword.PASSWORD_PATTERN_STRING)
     private String password;
 
-    @Pattern(regexp = Oak.EMAIL_PATTERN_STRING, flags = Pattern.Flag.CASE_INSENSITIVE)
+    @Pattern(regexp = OakEmail.EMAIL_PATTERN_STRING, flags = Pattern.Flag.CASE_INSENSITIVE)
     @Column(name = EMAIL_REFERENCE)
     private String email;
 

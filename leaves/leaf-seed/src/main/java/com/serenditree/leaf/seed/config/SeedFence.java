@@ -5,7 +5,7 @@ import com.serenditree.branch.seed.service.api.SeedServiceApi;
 import com.serenditree.fence.FenceDecorator;
 import com.serenditree.fence.model.FenceRecordAssertion;
 import com.serenditree.fence.model.enums.FenceActionType;
-import com.serenditree.root.etc.oak.Oak;
+import com.serenditree.root.etc.oak.OakHtml;
 import jakarta.annotation.Priority;
 import jakarta.decorator.Decorator;
 import jakarta.decorator.Delegate;
@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import jakarta.interceptor.Interceptor;
 
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Decorator
 @Priority(Interceptor.Priority.APPLICATION + 100)
@@ -38,11 +39,28 @@ public abstract class SeedFence extends FenceDecorator implements SeedServiceApi
         }
 
         LOGGER.fine(() -> "Applying fence-decoration with principal " + this.principal.getId());
-        seed.setText(Oak.html(seed.getText()));
+        this.sanitize(seed);
         seed.setUserId(this.principal.getId());
         seed.setUsername(this.principal.getUsername());
 
         return this.seedService.create(seed);
+    }
+
+    /**
+     * Checks if there are HTML tags present.
+     *
+     * @param seed Seed from user input.
+     */
+    private void sanitize(final Seed seed) {
+        seed.setTitle(OakHtml.sanitize(seed.getTitle()));
+        seed.setText(OakHtml.sanitize(seed.getText()));
+        if (seed.getTags() != null && !seed.getTags().isEmpty()) {
+            seed.setTags(
+                seed.getTags().stream()
+                    .map(OakHtml::sanitize)
+                    .collect(Collectors.toSet())
+            );
+        }
     }
 
     @Inject

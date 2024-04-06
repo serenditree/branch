@@ -1,7 +1,7 @@
 package com.serenditree.fence.authentication.service;
 
 import com.serenditree.fence.authentication.service.api.PasswordServiceApi;
-import com.serenditree.root.etc.oak.Oak;
+import com.serenditree.root.etc.oak.OakPassword;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import de.mkammerer.argon2.Argon2Helper;
@@ -50,7 +50,7 @@ public class PasswordService implements PasswordServiceApi {
 
         String hash;
 
-        if (Oak.password(plainText)) {
+        if (OakPassword.password(plainText)) {
             char[] plainTextCharArray = plainText.toCharArray();
             try {
                 hash = ARGON_2.hash(

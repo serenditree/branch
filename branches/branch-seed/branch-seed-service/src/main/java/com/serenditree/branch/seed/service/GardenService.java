@@ -7,7 +7,7 @@ import com.serenditree.branch.seed.service.api.GardenServiceApi;
 import com.serenditree.fence.annotation.FencedContext;
 import com.serenditree.fence.model.FenceResponse;
 import com.serenditree.fence.model.api.FencePrincipal;
-import com.serenditree.root.etc.oak.Oak;
+import com.serenditree.root.etc.oak.OakHtml;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
@@ -24,7 +24,7 @@ public class GardenService implements GardenServiceApi {
     @Override
     public Garden create(Garden garden) {
         // TODO move to fence decorator
-        garden.setText(Oak.html(garden.getText()));
+        garden.setText(OakHtml.sanitize(garden.getText()));
         garden.setUserId(this.principal.getId());
         garden.setUsername(this.principal.getUsername());
         garden.prePersist();

@@ -8,29 +8,12 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class OakTest {
-
-    @ParameterizedTest
-    @MethodSource("passwordSource")
-    void passwordTest(boolean expected, String plaintext) {
-        assertEquals(expected, Oak.password(plaintext));
-    }
-
-    static Stream<Arguments> passwordSource() {
-        return Stream.of(
-            Arguments.of(true, "JdWlSV,PSIB}1rQ=]U@iS"),
-            Arguments.of(true, "rand-word-list-is-good"),
-            Arguments.of(true, "rand-word-list-good"),
-            Arguments.of(false, "is-bad"),
-            Arguments.of(false, "Jd,1*****"),
-            Arguments.of(true, "Jd,1******")
-        );
-    }
+class OakEmailTest {
 
     @ParameterizedTest
     @MethodSource("emailSource")
     void emailTest(boolean expected, String email) {
-        assertEquals(expected, Oak.email(email));
+        assertEquals(expected, OakEmail.email(email));
     }
 
     static Stream<Arguments> emailSource() {

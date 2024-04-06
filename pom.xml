@@ -37,7 +37,7 @@
     <maven.required>3.6.2</maven.required>
     <maven.home/>
 
-    <version.quarkus>3.9.1</version.quarkus>
+    <version.quarkus>3.9.2</version.quarkus>
     <quarkus.package.output-directory>${serenditree.name}</quarkus.package.output-directory>
     <quarkus.config.locations>${serenditree.config}</quarkus.config.locations>
 
@@ -51,7 +51,7 @@
     <version.maven.failsafe.plugin>3.2.5</version.maven.failsafe.plugin>
     <version.maven.install.plugin>3.1.1</version.maven.install.plugin>
     <version.maven.jandex.plugin>1.2.3</version.maven.jandex.plugin>
-    <version.maven.quarkus.plugin>${version.quarkus}</version.maven.quarkus.plugin>
+    <version.maven.quarkus.plugin>3.9.2</version.maven.quarkus.plugin>
     <version.maven.resources.plugin>3.3.1</version.maven.resources.plugin>
     <version.maven.site.plugin>4.0.0-M13</version.maven.site.plugin>
     <version.maven.surefire.plugin>3.2.5</version.maven.surefire.plugin>
@@ -62,7 +62,7 @@
     <version.apache.commons.lang>3.14.0</version.apache.commons.lang>
     <version.argon2>2.11</version.argon2>
     <version.jose4j>0.9.6</version.jose4j>
-    <version.owasp>20220608.1</version.owasp>
+    <version.owasp>20240325.1</version.owasp>
 
     <version.hamcrest>2.1</version.hamcrest>
     <version.jayway.jsonpath>2.9.0</version.jayway.jsonpath>

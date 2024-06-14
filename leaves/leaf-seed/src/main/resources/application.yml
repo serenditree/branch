@@ -9,6 +9,7 @@ quarkus:
     hosts:
       - root-seed-0.root-seed-headless:27017
       - root-seed-1.root-seed-headless:27017
+      - root-seed-2.root-seed-headless:27017
   log:
     category:
       "org.mongodb.driver":

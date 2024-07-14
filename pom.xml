@@ -37,7 +37,7 @@
     <maven.required>3.6.2</maven.required>
     <maven.home/>
 
-    <version.quarkus>3.12.0</version.quarkus>
+    <version.quarkus>3.12.2</version.quarkus>
     <quarkus.package.output-directory>${serenditree.name}</quarkus.package.output-directory>
     <quarkus.config.locations>${serenditree.config}</quarkus.config.locations>
 
@@ -48,15 +48,15 @@
     <version.maven.deploy.plugin>3.1.2</version.maven.deploy.plugin>
     <version.maven.enforcer.plugin>3.5.0</version.maven.enforcer.plugin>
     <version.maven.exec.plugin>3.3.0</version.maven.exec.plugin>
-    <version.maven.failsafe.plugin>3.3.0</version.maven.failsafe.plugin>
+    <version.maven.failsafe.plugin>3.3.1</version.maven.failsafe.plugin>
     <version.maven.install.plugin>3.1.2</version.maven.install.plugin>
     <version.maven.jandex.plugin>1.2.3</version.maven.jandex.plugin>
-    <version.maven.quarkus.plugin>3.12.0</version.maven.quarkus.plugin>
+    <version.maven.quarkus.plugin>3.12.2</version.maven.quarkus.plugin>
     <version.maven.resources.plugin>3.3.1</version.maven.resources.plugin>
     <version.maven.site.plugin>4.0.0-M15</version.maven.site.plugin>
-    <version.maven.surefire.plugin>3.3.0</version.maven.surefire.plugin>
+    <version.maven.surefire.plugin>3.3.1</version.maven.surefire.plugin>
     <version.maven.jar.plugin>3.4.2</version.maven.jar.plugin>
-    <version.versions.maven.plugin>2.16.2</version.versions.maven.plugin>
+    <version.versions.maven.plugin>2.17.0</version.versions.maven.plugin>
 
     <version.apache.commons.io>2.16.1</version.apache.commons.io>
     <version.apache.commons.lang>3.14.0</version.apache.commons.lang>

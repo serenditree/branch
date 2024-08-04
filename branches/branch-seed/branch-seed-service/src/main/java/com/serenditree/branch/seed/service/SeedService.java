@@ -14,12 +14,18 @@ import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Dependent
 public class SeedService implements SeedServiceApi {
+
+    private static final Logger LOGGER = Logger.getLogger(SeedService.class.getName());
 
     private FencePrincipal principal;
 
@@ -38,19 +44,25 @@ public class SeedService implements SeedServiceApi {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
+    @SuppressWarnings("java:S2139")
     public Seed create(Seed seed) {
         seed.prePersist();
         this.seedRepository.persist(seed);
 
-        if (seed.getPolls() != null && !seed.getPolls().isEmpty()) {
-            for (Poll poll : seed.getPolls()) {
-                poll.setUserId(this.principal.getId());
-                poll.setSeedId(seed.getId().toString());
+        try {
+            if (seed.getPolls() != null && !seed.getPolls().isEmpty()) {
+                for (Poll poll : seed.getPolls()) {
+                    poll.setUserId(this.principal.getId());
+                    poll.setSeedId(seed.getId().toString());
+                }
+                seed.setPolls(this.pollServiceClient.create(seed.getPolls()));
             }
-            seed.setPolls(this.pollServiceClient.create(seed.getPolls()));
+            this.onCreation.fire(seed);
+        } catch (ProcessingException e) {
+            this.seedRepository.delete(seed);
+            LOGGER.severe(() -> "Error creating polls: " + e.getMessage());
+            throw new WebApplicationException("Error creating polls.", e, Response.Status.BAD_GATEWAY);
         }
-
-        this.onCreation.fire(seed);
 
         return seed;
     }

@@ -13,4 +13,4 @@ quarkus:
   log:
     category:
       "org.mongodb.driver":
-        level: INFO
+        level: WARN

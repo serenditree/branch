@@ -194,10 +194,10 @@
       <artifactId>quarkus-messaging-kafka</artifactId>
     </dependency>
     <!-- TELEMETRY -->
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-opentelemetry</artifactId>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>io.quarkus</groupId>-->
+<!--      <artifactId>quarkus-opentelemetry</artifactId>-->
+<!--    </dependency>-->
     <!-- CONFIG -->
     <dependency>
       <groupId>io.quarkus</groupId>

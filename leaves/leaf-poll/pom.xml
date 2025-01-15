@@ -54,7 +54,7 @@
                 <resource>
                   <directory>../..</directory>
                   <includes>
-                    <include>${serenditree.config}</include>
+                    <include>${serenditree.config.global}</include>
                   </includes>
                 </resource>
               </resources>

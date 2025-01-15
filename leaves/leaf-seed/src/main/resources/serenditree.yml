@@ -1,3 +1,4 @@
+# edit only at project root
 serenditree:
   log:
     level: INFO

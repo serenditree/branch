@@ -1,5 +1,7 @@
 # see serenditree.yml in project root
 quarkus:
+  smallrye-openapi:
+    path: /api/v1/seed/openapi
   mongodb:
     credentials:
       username: ${serenditree.root.seed.user}

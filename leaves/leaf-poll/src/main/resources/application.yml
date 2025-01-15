@@ -1,1 +1,4 @@
 # see serenditree.yml in project root
+quarkus:
+  smallrye-openapi:
+    path: /api/v1/poll/openapi

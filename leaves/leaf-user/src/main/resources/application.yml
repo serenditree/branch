@@ -1,5 +1,7 @@
 # see serenditree.yml in project root
 quarkus:
+  smallrye-openapi:
+    path: /api/v1/user/openapi
   oidc:
     at:
       auth-server-url: ~

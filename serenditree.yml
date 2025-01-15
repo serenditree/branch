@@ -1,3 +1,4 @@
+# edit only at project root
 serenditree:
   log:
     level: INFO
@@ -29,8 +30,6 @@ quarkus:
       generation: none
     log:
       jdbc-warnings: true
-  smallrye-openapi:
-    path: /api/v1/openapi
   log:
     category:
       "io.smallrye.health":

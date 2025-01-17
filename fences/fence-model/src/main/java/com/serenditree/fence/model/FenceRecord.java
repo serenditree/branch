@@ -18,10 +18,7 @@ import java.util.UUID;
 @Entity
 @Table(
     indexes = {
-        @Index(name = FenceRecord.USER_REFERENCE, columnList = FenceRecord.USER_REFERENCE),
-        @Index(name = FenceRecord.ENTITY_REFERENCE, columnList = FenceRecord.ENTITY_REFERENCE),
-        @Index(name = FenceRecord.ACTION_REFERENCE, columnList = FenceRecord.ACTION_REFERENCE),
-        @Index(name = FenceRecord.EXPIRATION_REFERENCE, columnList = FenceRecord.EXPIRATION_REFERENCE)
+        @Index(name = "idx_fence_record", columnList = FenceRecord.IDX_FENCE_RECORD),
     }
 )
 @NamedQuery(
@@ -49,10 +46,17 @@ import java.util.UUID;
 )
 public class FenceRecord extends AbstractEntity implements FenceEntity<UUID> {
 
+    public static final String ID_REFERENCE = "_id";
     public static final String USER_REFERENCE = "userId";
     public static final String ENTITY_REFERENCE = "entityId";
     public static final String ACTION_REFERENCE = "action";
     public static final String EXPIRATION_REFERENCE = "expiration";
+
+    public static final String IDX_FENCE_RECORD = ID_REFERENCE + "," +
+                                                  USER_REFERENCE + "," +
+                                                  ENTITY_REFERENCE + "," +
+                                                  ACTION_REFERENCE + "," +
+                                                  EXPIRATION_REFERENCE;
 
     public static final String RETRIEVE = "FenceRecord.retrieve";
     public static final String RETRIEVE_BY_ENTITY = "FenceRecord.retrieveByEntity";
@@ -62,7 +66,7 @@ public class FenceRecord extends AbstractEntity implements FenceEntity<UUID> {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)", name = "_id")
+    @Column(columnDefinition = "BINARY(16)", name = ID_REFERENCE)
     private UUID id;
 
     @NotNull

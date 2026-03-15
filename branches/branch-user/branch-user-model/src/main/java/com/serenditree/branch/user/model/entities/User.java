@@ -1,20 +1,24 @@
 package com.serenditree.branch.user.model.entities;
 
-import com.serenditree.branch.user.model.serializer.RoleSetSerializer;
+import com.serenditree.branch.user.model.serde.RoleSetDeserializer;
+import com.serenditree.branch.user.model.serde.RoleSetSerializer;
 import com.serenditree.fence.model.AbstractTimestampedFenceEntity;
 import com.serenditree.fence.model.api.FenceEntity;
 import com.serenditree.fence.model.api.FenceUser;
 import com.serenditree.fence.model.enums.RoleType;
 import com.serenditree.root.data.generic.model.validation.ValidationGroups;
-import com.serenditree.root.etc.oak.Oak;
+import com.serenditree.root.util.oak.OakPassword;
+import com.serenditree.root.util.oak.OakEmail;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.json.bind.annotation.JsonbTypeDeserializer;
+import jakarta.json.bind.annotation.JsonbTypeSerializer;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.json.bind.annotation.JsonbTransient;
-import javax.json.bind.annotation.JsonbTypeSerializer;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,31 +26,40 @@ import java.util.Set;
 @Entity
 @Cacheable
 @Table(
-        indexes = {
-                @Index(name = User.USERNAME_REFERENCE, columnList = User.USERNAME_REFERENCE, unique = true),
-                @Index(name = User.EMAIL_REFERENCE, columnList = User.EMAIL_REFERENCE, unique = true)
-        }
+    indexes = {
+        @Index(name = User.USERNAME_REFERENCE, columnList = User.USERNAME_REFERENCE, unique = true),
+        @Index(name = User.EMAIL_REFERENCE, columnList = User.EMAIL_REFERENCE, unique = true)
+    }
 )
 @NamedQuery(
-        name = User.RETRIEVE_BY_USERNAME,
-        query = "SELECT u " +
-                "FROM User u " +
-                "WHERE u.username = :" + User.USERNAME_REFERENCE
+    name = User.RETRIEVE_BY_USERNAME,
+    query = "SELECT u " +
+            "FROM User u " +
+            "WHERE u.username = :" + User.USERNAME_REFERENCE,
+    hints = @QueryHint(name = "org.hibernate.cacheable", value = "true")
 )
 @NamedQuery(
-        name = User.RETRIEVE_BY_SUBSTRING,
-        query = "SELECT u " +
-                "FROM User u " +
-                "WHERE lower(u.username) LIKE :" + User.SUBSTRING_REFERENCE
+    name = User.RETRIEVE_BY_SUBSTRING,
+    query = "SELECT u " +
+            "FROM User u " +
+            "WHERE lower(u.username) LIKE :" + User.SUBSTRING_REFERENCE,
+    hints = @QueryHint(name = "org.hibernate.cacheable", value = "true")
+)
+@NamedQuery(
+    name = User.DELETE_BY_ID,
+    query = "DELETE FROM User " +
+            "WHERE " + User.ID_REFERENCE + " = :" + User.ID_REFERENCE
 )
 public class User extends AbstractTimestampedFenceEntity<Long> implements FenceUser<Role>, FenceEntity<Long> {
 
+    public static final String ID_REFERENCE = "id";
     public static final String USERNAME_REFERENCE = "username";
     public static final String SUBSTRING_REFERENCE = "sub";
     public static final String EMAIL_REFERENCE = "email";
 
     public static final String RETRIEVE_BY_USERNAME = "User.retrieveByUsername";
     public static final String RETRIEVE_BY_SUBSTRING = "User.retrieveBySubstring";
+    public static final String DELETE_BY_ID = "User.deleteById";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // PERSISTENT
@@ -63,10 +76,10 @@ public class User extends AbstractTimestampedFenceEntity<Long> implements FenceU
     private String username;
 
     @Size(min = 10)
-    @Pattern(regexp = Oak.PASSWORD_PATTERN_STRING)
+    @Pattern(regexp = OakPassword.PASSWORD_PATTERN_STRING)
     private String password;
 
-    @Pattern(regexp = Oak.EMAIL_PATTERN_STRING, flags = Pattern.Flag.CASE_INSENSITIVE)
+    @Pattern(regexp = OakEmail.EMAIL_PATTERN_STRING, flags = Pattern.Flag.CASE_INSENSITIVE)
     @Column(name = EMAIL_REFERENCE)
     private String email;
 
@@ -75,6 +88,8 @@ public class User extends AbstractTimestampedFenceEntity<Long> implements FenceU
     @NotNull(groups = ValidationGroups.Put.class)
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JsonbTypeSerializer(RoleSetSerializer.class)
+    @JsonbTypeDeserializer(RoleSetDeserializer.class)
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private Set<Role> roles;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +164,6 @@ public class User extends AbstractTimestampedFenceEntity<Long> implements FenceU
     }
 
     @Override
-    @Transient
     public Set<Role> getRoles() {
         return roles;
     }

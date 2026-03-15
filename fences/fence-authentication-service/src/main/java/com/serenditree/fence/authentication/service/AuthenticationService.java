@@ -3,17 +3,18 @@ package com.serenditree.fence.authentication.service;
 import com.serenditree.fence.authentication.service.api.*;
 import com.serenditree.fence.authorization.repository.api.AuthorizationRepositoryApi;
 import com.serenditree.fence.model.FenceRecord;
+import com.serenditree.fence.model.Principal;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.RoleType;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotAuthorizedException;
-import java.util.logging.Logger;
+import com.serenditree.root.util.oak.OakHtml;
+import io.quarkus.logging.Log;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotAuthorizedException;
 
 /**
  * Service for the initial and/or repeated authentication of clients. If the context provides an implementation of
@@ -21,8 +22,6 @@ import java.util.logging.Logger;
  */
 @Dependent
 public class AuthenticationService implements AuthenticationServiceApi {
-
-    private static final Logger LOGGER = Logger.getLogger(AuthenticationService.class.getName());
 
     private TokenServiceApi tokenService;
 
@@ -62,6 +61,7 @@ public class AuthenticationService implements AuthenticationServiceApi {
     @Transactional
     public FencePrincipal signUp(final FencePrincipal clientUser) {
         this.assertAuthenticationAwareness();
+        OakHtml.sanitize(clientUser.getUsername());
 
         FencePrincipal persistenceUser = this.authenticationAwareService.signUp(clientUser);
         persistenceUser.setToken(this.tokenService.buildToken(persistenceUser));
@@ -83,15 +83,17 @@ public class AuthenticationService implements AuthenticationServiceApi {
         this.assertAuthenticationAwareness();
 
         // Retrieve stored user information!
+        Log.debugv("Retrieving user {0} from persistence...", clientUser.getUsername());
         FencePrincipal persistenceUser = this.authenticationAwareService
-                .retrievePrincipalByUsername(clientUser.getUsername());
+            .retrievePrincipalByUsername(clientUser.getUsername());
 
         // Check password!
+        Log.debug("Checking password...");
         if (this.passwordService.verify(persistenceUser.getPassword(), clientUser.getPassword())) {
-            LOGGER.fine("User with corresponding password found. Creating token...");
+            Log.debug("User with corresponding password found. Creating token...");
             persistenceUser.setToken(this.tokenService.buildToken(persistenceUser));
         } else {
-            LOGGER.warning(() -> "User found but provided password is wrong: " + clientUser);
+            Log.warnv("User found but provided password is wrong: {0}", clientUser);
             // TODO remember login attempt
             throw new BadRequestException("Wrong password.");
         }
@@ -108,13 +110,14 @@ public class AuthenticationService implements AuthenticationServiceApi {
             this.authenticationAwareService.verify(principal);
         } else {
             final String message = "User " + principal.getId() + " tried to use a stolen OIDC verification token.";
-            LOGGER.severe(message);
+            Log.warn(message);
             throw new NotAuthorizedException(message);
         }
-        principal.addRole(RoleType.HUMAN);
-        principal.setToken(this.tokenService.buildToken(principal));
+        FencePrincipal updatedPrincipal = new Principal(principal);
+        updatedPrincipal.addRole(RoleType.HUMAN);
+        updatedPrincipal.setToken(this.tokenService.buildToken(updatedPrincipal));
 
-        return principal;
+        return updatedPrincipal;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +156,7 @@ public class AuthenticationService implements AuthenticationServiceApi {
 
     @Inject
     public void setAuthenticationAwareServiceInstance(
-            Instance<AuthenticationAwareServiceApi> authenticationAwareServiceInstance) {
+        Instance<AuthenticationAwareServiceApi> authenticationAwareServiceInstance) {
         this.authenticationAwareServiceInstance = authenticationAwareServiceInstance;
     }
 
@@ -165,18 +168,14 @@ public class AuthenticationService implements AuthenticationServiceApi {
     void init() {
         if (this.authenticationAwareServiceInstance.isAmbiguous()) {
             throw new IllegalStateException(
-                    "Found more than one implementation of " + AuthenticationAwareServiceApi.class.getName()
+                "Found more than one implementation of " + AuthenticationAwareServiceApi.class.getName()
             );
 
         } else if (this.authenticationAwareServiceInstance.isResolvable()) {
             this.authenticationAwareService = this.authenticationAwareServiceInstance.get();
-
-            LOGGER.fine(() ->
-                    "Constructed AuthenticationService with " + AuthenticationAwareServiceApi.class.getName()
-            );
-
+            Log.debugv("Constructed AuthenticationService with {0}", AuthenticationAwareServiceApi.class.getName());
         } else {
-            LOGGER.fine("Constructed token-only AuthenticationService");
+            Log.debug("Constructed token-only AuthenticationService");
         }
     }
 }

@@ -5,25 +5,25 @@ import com.serenditree.branch.user.model.entities.User;
 import com.serenditree.branch.user.repository.api.UserRepositoryApi;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.RoleType;
+import jakarta.enterprise.context.Dependent;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
 import org.eclipse.microprofile.faulttolerance.Retry;
 
-import javax.enterprise.context.Dependent;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import java.util.List;
 
 @Dependent
 @Retry(
-        maxRetries = 4,
-        delay = 420L,
-        abortOn = {
-                EntityExistsException.class,
-                EntityNotFoundException.class,
-                NonUniqueResultException.class,
-                NoResultException.class
-        }
+    maxRetries = 4,
+    delay = 420L,
+    abortOn = {
+        EntityExistsException.class,
+        EntityNotFoundException.class,
+        NonUniqueResultException.class,
+        NoResultException.class
+    }
 )
 public class UserRepository implements UserRepositoryApi {
 
@@ -44,14 +44,21 @@ public class UserRepository implements UserRepositoryApi {
     @Override
     public User retrieveByUsername(String username) {
         return this.getEntityManager().createNamedQuery(User.RETRIEVE_BY_USERNAME, User.class)
-                .setParameter(User.USERNAME_REFERENCE, username)
-                .getSingleResult();
+            .setParameter(User.USERNAME_REFERENCE, username)
+            .getSingleResult();
     }
 
     @Override
     public List<User> retrieveBySubstring(String substring) {
         return this.getEntityManager().createNamedQuery(User.RETRIEVE_BY_SUBSTRING, User.class)
-                .setParameter(User.SUBSTRING_REFERENCE, substring + "%")
-                .getResultList();
+            .setParameter(User.SUBSTRING_REFERENCE, substring + "%")
+            .getResultList();
+    }
+
+    @Override
+    public boolean deleteById(Long id) {
+        return this.getEntityManager().createNamedQuery(User.DELETE_BY_ID)
+                   .setParameter(User.ID_REFERENCE, id)
+                   .executeUpdate() > 0;
     }
 }

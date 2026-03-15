@@ -1,122 +1,88 @@
 package com.serenditree.branch.seed.model.entities;
 
-import com.serenditree.branch.seed.model.serializer.ObjectIdDeserializer;
-import com.serenditree.branch.seed.model.serializer.ObjectIdSerializer;
 import com.serenditree.fence.model.AbstractTimestampedFenceEntity;
 import com.serenditree.fence.model.api.FenceEntity;
-import com.serenditree.root.data.generic.model.validation.ValidationGroups;
 import com.serenditree.root.data.geo.model.LngLat;
-import org.bson.types.ObjectId;
+import com.serenditree.root.data.geo.model.LonLat;
+import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbTransient;
 
-import javax.json.bind.annotation.JsonbTransient;
-import javax.json.bind.annotation.JsonbTypeDeserializer;
-import javax.json.bind.annotation.JsonbTypeSerializer;
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
-@MappedSuperclass
-public abstract class AbstractSeed extends AbstractTimestampedFenceEntity<ObjectId> implements FenceEntity<ObjectId> {
+public abstract class AbstractSeed extends AbstractTimestampedFenceEntity<String> implements FenceEntity<String> {
 
-    @Id
-    @Null(groups = ValidationGroups.Post.class)
-    @NotNull(groups = ValidationGroups.Put.class)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonbTypeSerializer(ObjectIdSerializer.class)
-    @JsonbTypeDeserializer(ObjectIdDeserializer.class)
-    protected ObjectId id;
+    public static final String FIELD_ID = "id";
+    public static final String FIELD_GEO_POINT = "geoPoint";
+    public static final String FIELD_TITLE = "title";
+    public static final String FIELD_TEXT = "text";
+    public static final String FIELD_USER_ID = "userId";
+    public static final String FIELD_TAGS = "tags";
+    public static final String FIELD_PARENT_ID = "parentId";
+    public static final String FIELD_CREATED = "created";
 
-    @Version
-    protected Integer version;
+    @JsonbProperty(FIELD_ID)
+    protected String id;
 
-    @NotNull
-    @Embedded
     protected LngLat location;
 
-    @NotBlank
+    @JsonbTransient
+    protected LonLat geoPoint;
+
+    @JsonbProperty(FIELD_TITLE)
     protected String title;
 
-    @NotBlank
-    @Lob
+    @JsonbProperty(FIELD_TEXT)
     protected String text;
 
-    @NotBlank
     protected String username;
 
-    @NotNull
+    @JsonbProperty(FIELD_USER_ID)
     protected Long userId;
 
-    @NotNull
-    protected boolean anonymous = false;
-
-    @ElementCollection(fetch = FetchType.EAGER)
+    @JsonbProperty(FIELD_TAGS)
     protected Set<String> tags;
 
-    @JsonbTypeSerializer(ObjectIdSerializer.class)
-    @JsonbTypeDeserializer(ObjectIdDeserializer.class)
-    private ObjectId parent;
+    @JsonbProperty(FIELD_PARENT_ID)
+    protected String parentId;
 
     @JsonbTransient
-    @ElementCollection(fetch = FetchType.LAZY)
-    @OrderColumn(name = "order", nullable = false, updatable = false)
     protected List<Nutrition> water;
 
     @JsonbTransient
-    @ElementCollection(fetch = FetchType.LAZY)
-    @OrderColumn(name = "order", nullable = false, updatable = false)
     protected List<Nutrition> nubits;
 
-    public void water() {
-        this.water.add(new Nutrition(1));
-        this.setModified();
-    }
+    protected boolean anonymous = false;
 
-    public void prune() {
-        this.water.add(new Nutrition(-1));
-        this.setModified();
-    }
-
-    public void nubit(int value) {
-        if (value < 1) {
-            throw new IllegalArgumentException("nubit must be greater than zero");
-        }
-        this.nubits.add(new Nutrition(value));
-        this.setModified();
-    }
-
-    /**
-     * Lifecycle hook that guarantees that {@link Nutrition} containers are initialized before the entity
-     * is persisted for the first time.
-     */
-    @PrePersist
     @Override
     public void prePersist() {
         super.prePersist();
+        super.setModified();
+        this.id = UUID.randomUUID().toString();
+        this.geoPoint = new LonLat(this.location.getLng(), this.location.getLat());
+        this.initWater();
+        this.initNubit();
+    }
+
+    protected void initWater() {
         this.water = new ArrayList<>();
-        this.water();
+        this.water.add(new Nutrition(1));
+    }
+
+    protected void initNubit() {
         this.nubits = new ArrayList<>();
         this.nubits.add(new Nutrition(0));
     }
 
     @Override
-    public ObjectId getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(ObjectId id) {
+    public void setId(String id) {
         this.id = id;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
     }
 
     public LngLat getLocation() {
@@ -125,6 +91,14 @@ public abstract class AbstractSeed extends AbstractTimestampedFenceEntity<Object
 
     public void setLocation(LngLat location) {
         this.location = location;
+    }
+
+    public LonLat getGeoPoint() {
+        return geoPoint;
+    }
+
+    public void setGeoPoint(LonLat geoPoint) {
+        this.geoPoint = geoPoint;
     }
 
     public String getTitle() {
@@ -159,14 +133,6 @@ public abstract class AbstractSeed extends AbstractTimestampedFenceEntity<Object
         this.userId = userId;
     }
 
-    public boolean isAnonymous() {
-        return anonymous;
-    }
-
-    public void setAnonymous(boolean anonymous) {
-        this.anonymous = anonymous;
-    }
-
     public Set<String> getTags() {
         return tags;
     }
@@ -175,19 +141,19 @@ public abstract class AbstractSeed extends AbstractTimestampedFenceEntity<Object
         this.tags = tags;
     }
 
-    public ObjectId getParent() {
-        return parent;
+    public String getParentId() {
+        return parentId;
     }
 
-    public void setParent(ObjectId parent) {
-        this.parent = parent;
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public List<Nutrition> getWater() {
         return water;
     }
 
-    private void setWater(List<Nutrition> water) {
+    public void setWater(List<Nutrition> water) {
         this.water = water;
     }
 
@@ -195,7 +161,15 @@ public abstract class AbstractSeed extends AbstractTimestampedFenceEntity<Object
         return nubits;
     }
 
-    private void setNubits(List<Nutrition> nubits) {
+    public void setNubits(List<Nutrition> nubits) {
         this.nubits = nubits;
+    }
+
+    public boolean isAnonymous() {
+        return anonymous;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        this.anonymous = anonymous;
     }
 }

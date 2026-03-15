@@ -4,14 +4,14 @@ import com.serenditree.branch.seed.model.entities.Garden;
 import com.serenditree.branch.seed.model.filter.SeedFilter;
 import com.serenditree.branch.seed.repository.api.GardenRepositoryApi;
 import com.serenditree.branch.seed.service.api.GardenServiceApi;
-import com.serenditree.fence.annotation.FencedContext;
 import com.serenditree.fence.model.FenceResponse;
-import com.serenditree.fence.model.api.FencePrincipal;
-import com.serenditree.root.etc.oak.Oak;
-import org.bson.types.ObjectId;
+import io.quarkus.logging.Log;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
+import java.io.IOException;
 import java.util.List;
 
 @Dependent
@@ -19,49 +19,68 @@ public class GardenService implements GardenServiceApi {
 
     private GardenRepositoryApi gardenRepository;
 
-    private FencePrincipal principal;
-
     @Override
     public Garden create(Garden garden) {
-        // TODO move to fence decorator
-        garden.setText(Oak.html(garden.getText()));
-        garden.setUserId(this.principal.getId());
-        garden.setUsername(this.principal.getUsername());
         garden.prePersist();
 
-        this.gardenRepository.persist(garden);
+        try {
+            this.gardenRepository.persist(garden);
+        } catch (IOException e) {
+            Log.errorv("Error while persisting garden {0}.", garden.getId());
+            throw new WebApplicationException(e, Response.Status.BAD_GATEWAY);
+        }
 
         return garden;
     }
 
     @Override
-    public Garden retrieveById(ObjectId id) {
-        return this.gardenRepository.findById(id);
+    public Garden retrieveById(String id) {
+        try {
+            return this.gardenRepository.retrieveById(id);
+        } catch (IOException e) {
+            Log.errorv("Error during retrieval of garden {0}.", id);
+            throw new WebApplicationException(e, Response.Status.BAD_GATEWAY);
+        }
     }
 
     @Override
     public List<Garden> retrieveByFilter(SeedFilter filter) {
-        return this.gardenRepository.retrieveByFilter(filter);
+        try {
+            return this.gardenRepository.retrieveByFilter(filter);
+        } catch (IOException e) {
+            Log.errorv("Error during garden-retrieval by filter {0}.", filter);
+            throw new WebApplicationException(e, Response.Status.BAD_GATEWAY);
+        }
     }
 
     @Override
     public List<String> retrieveTags(String name) {
-        return this.gardenRepository.retrieveTags(name);
+        try {
+            return this.gardenRepository.retrieveTags(name);
+        } catch (IOException e) {
+            Log.errorv("Error during garden-tag [{0}] retrieval.", name);
+            throw new WebApplicationException(e, Response.Status.BAD_GATEWAY);
+        }
     }
 
     @Override
-    public FenceResponse water(ObjectId id) {
+    public FenceResponse water(String id) throws IOException {
         return this.gardenRepository.water(id);
     }
 
     @Override
-    public FenceResponse prune(ObjectId id) {
+    public FenceResponse prune(String id) throws IOException {
         return this.gardenRepository.prune(id);
     }
 
     @Override
-    public FenceResponse delete(ObjectId id) {
-        this.gardenRepository.deleteById(id);
+    public FenceResponse delete(String id) {
+        try {
+            this.gardenRepository.deleteById(id);
+        } catch (IOException e) {
+            Log.errorv("Could not delete garden {0}.", id);
+            throw new WebApplicationException(e, Response.Status.BAD_GATEWAY);
+        }
 
         return new FenceResponse(id);
     }
@@ -73,10 +92,5 @@ public class GardenService implements GardenServiceApi {
     @Inject
     public void setGardenRepository(GardenRepositoryApi gardenRepository) {
         this.gardenRepository = gardenRepository;
-    }
-
-    @Inject
-    public void setPrincipal(@FencedContext FencePrincipal principal) {
-        this.principal = principal;
     }
 }

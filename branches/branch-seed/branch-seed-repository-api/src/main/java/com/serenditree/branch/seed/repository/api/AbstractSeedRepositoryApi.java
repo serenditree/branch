@@ -3,25 +3,29 @@ package com.serenditree.branch.seed.repository.api;
 import com.serenditree.branch.seed.model.entities.AbstractSeed;
 import com.serenditree.branch.seed.model.filter.SeedFilter;
 import com.serenditree.fence.model.FenceResponse;
-import com.serenditree.root.data.nativ.api.NativeQueryBuilderApi;
-import io.quarkus.mongodb.panache.PanacheMongoRepository;
-import org.bson.types.ObjectId;
 
+import java.io.IOException;
 import java.util.List;
 
-public interface AbstractSeedRepositoryApi<E extends AbstractSeed> extends PanacheMongoRepository<E> {
+public interface AbstractSeedRepositoryApi<E extends AbstractSeed> {
 
-    List<E> retrieveByFilter(SeedFilter filter);
+    void persist(E seed) throws IOException;
 
-    List<String> retrieveTags(String name);
+    E retrieveById(String id) throws IOException;
 
-    FenceResponse water(ObjectId id);
+    List<E> retrieveByFilter(SeedFilter filter) throws IOException;
 
-    FenceResponse prune(ObjectId id);
+    List<String> retrieveTags(String name) throws IOException;
 
-    FenceResponse nubit(ObjectId id, int value);
+    FenceResponse water(String id) throws IOException;
 
-    void setNativeQueryBuilder(NativeQueryBuilderApi nativeQueryBuilder);
+    FenceResponse prune(String id) throws IOException;
+
+    FenceResponse nubit(String id, int value) throws IOException;
+
+    boolean deleteById(String id) throws IOException;
 
     Class<E> getEntityType();
+
+    String getIndex();
 }

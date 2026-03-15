@@ -4,17 +4,17 @@ import com.serenditree.fence.annotation.FencedContext;
 import com.serenditree.fence.authentication.service.api.AuthenticationServiceApi;
 import com.serenditree.fence.authorization.service.api.AuthorizationServiceApi;
 import com.serenditree.fence.model.FenceContext;
+import io.opentelemetry.api.trace.Tracer;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.event.Event;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Priorities;
+import jakarta.ws.rs.container.DynamicFeature;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.ext.Provider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-
-import javax.annotation.Priority;
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.ext.Provider;
 
 /**
  * Registers security filters for all requests and enables CDI in request filter.
@@ -24,15 +24,39 @@ import javax.ws.rs.ext.Provider;
 @Priority(Priorities.AUTHENTICATION)
 public class FenceFeature implements DynamicFeature {
 
-    @Inject
-    @ConfigProperty(name = "serenditree.force.https", defaultValue = "false")
     Instance<Boolean> forceHttps;
 
-    private AuthenticationServiceApi authenticationService;
+    private final AuthenticationServiceApi authenticationService;
 
-    private AuthorizationServiceApi authorizationService;
+    private final AuthorizationServiceApi authorizationService;
 
-    private Event<FenceContext> authenticationEvent;
+    private final Event<FenceContext> authenticationEvent;
+
+    private final Tracer fenceTracer;
+
+    /**
+     * Constructor for the FenceFeature class. Initializes dependencies required for the security feature configuration.
+     *
+     * @param forceHttps            Instance managing configuration property for enforcing HTTPS communication.
+     * @param authenticationService Service responsible for managing authentication processes.
+     * @param authorizationService  Service responsible for handling authorization logic.
+     * @param authenticationEvent   CDI event used for propagating security context during authentication.
+     * @param fenceTracer           Tracer tool for monitoring and tracing security-related requests.
+     */
+    @Inject
+    public FenceFeature(
+        @ConfigProperty(name = "serenditree.force.https", defaultValue = "false") Instance<Boolean> forceHttps,
+        AuthenticationServiceApi authenticationService,
+        AuthorizationServiceApi authorizationService,
+        @FencedContext Event<FenceContext> authenticationEvent,
+        Tracer fenceTracer
+    ) {
+        this.forceHttps = forceHttps;
+        this.authenticationService = authenticationService;
+        this.authorizationService = authorizationService;
+        this.authenticationEvent = authenticationEvent;
+        this.fenceTracer = fenceTracer;
+    }
 
     /**
      * Registers a {@link FenceFilter} for all requests.
@@ -43,30 +67,12 @@ public class FenceFeature implements DynamicFeature {
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext featureContext) {
         featureContext.register(new FenceFilter(
-                resourceInfo,
-                this.authenticationService,
-                this.authorizationService,
-                this.authenticationEvent,
-                this.forceHttps.get()
+            resourceInfo,
+            this.authenticationService,
+            this.authorizationService,
+            this.authenticationEvent,
+            this.fenceTracer,
+            this.forceHttps.get()
         ));
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // CDI
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    @Inject
-    public void setAuthenticationService(AuthenticationServiceApi authenticationService) {
-        this.authenticationService = authenticationService;
-    }
-
-    @Inject
-    public void setAuthorizationService(AuthorizationServiceApi authorizationService) {
-        this.authorizationService = authorizationService;
-    }
-
-    @Inject
-    public void setAuthenticationEvent(@FencedContext Event<FenceContext> authenticationEvent) {
-        this.authenticationEvent = authenticationEvent;
     }
 }

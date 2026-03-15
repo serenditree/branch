@@ -18,9 +18,16 @@
   </modules>
 
   <properties>
-    <serenditree.java>11</serenditree.java>
-    <serenditree.encoding>UTF-8</serenditree.encoding>
+    <serenditree.name>serenditree</serenditree.name>
+    <serenditree.config.global>serenditree.yml</serenditree.config.global>
+    <serenditree.config.locations>${serenditree.config.global},branch.yml</serenditree.config.locations>
     <serenditree.cli>${env._ST_HOME_STEM}</serenditree.cli>
+    <serenditree.java>21</serenditree.java>
+    <serenditree.encoding>UTF-8</serenditree.encoding>
+
+    <serenditree.build>${maven.build.timestamp}</serenditree.build>
+    <serenditree.build.pod.down.after.all>true</serenditree.build.pod.down.after.all>
+    <serenditree.build.pod.down.after.each>false</serenditree.build.pod.down.after.each>
 
     <project.build.sourceEncoding>${serenditree.encoding}</project.build.sourceEncoding>
     <project.reporting.outputEncoding>${serenditree.encoding}</project.reporting.outputEncoding>
@@ -31,33 +38,38 @@
     <maven.required>3.6.2</maven.required>
     <maven.home/>
 
-    <version.quarkus>2.10.2.Final</version.quarkus>
+    <version.quarkus>3.19.1</version.quarkus>
+    <quarkus.package.output-directory>${serenditree.name}</quarkus.package.output-directory>
+    <quarkus.config.locations>${serenditree.config.locations}</quarkus.config.locations>
 
-    <version.maven.clean.plugin>3.1.0</version.maven.clean.plugin>
-    <version.maven.compiler.plugin>3.8.1</version.maven.compiler.plugin>
-    <version.maven.dependency.plugin>3.1.2</version.maven.dependency.plugin>
-    <version.maven.deploy.plugin>3.0.0-M1</version.maven.deploy.plugin>
-    <version.maven.enforcer.plugin>3.0.0-M3</version.maven.enforcer.plugin>
-    <version.maven.exec.plugin>3.0.0</version.maven.exec.plugin>
-    <version.maven.failsafe.plugin>3.0.0-M5</version.maven.failsafe.plugin>
-    <version.maven.install.plugin>3.0.0-M1</version.maven.install.plugin>
-    <version.maven.jandex.plugin>1.0.8</version.maven.jandex.plugin>
-    <version.maven.quarkus.plugin>${version.quarkus}</version.maven.quarkus.plugin>
-    <version.maven.resources.plugin>3.2.0</version.maven.resources.plugin>
-    <version.maven.site.plugin>3.9.1</version.maven.site.plugin>
-    <version.maven.surefire.plugin>3.0.0-M5</version.maven.surefire.plugin>
-    <version.versions.maven.plugin>2.8.1</version.versions.maven.plugin>
+    <version.maven.antrun.plugin>3.1.0</version.maven.antrun.plugin>
+    <version.maven.clean.plugin>3.4.1</version.maven.clean.plugin>
+    <version.maven.compiler.plugin>3.14.0</version.maven.compiler.plugin>
+    <version.maven.dependency.plugin>3.8.1</version.maven.dependency.plugin>
+    <version.maven.deploy.plugin>3.1.4</version.maven.deploy.plugin>
+    <version.maven.enforcer.plugin>3.5.0</version.maven.enforcer.plugin>
+    <version.maven.exec.plugin>3.5.0</version.maven.exec.plugin>
+    <version.maven.failsafe.plugin>3.5.2</version.maven.failsafe.plugin>
+    <version.maven.install.plugin>3.1.4</version.maven.install.plugin>
+    <version.maven.jandex.plugin>1.2.3</version.maven.jandex.plugin>
+    <version.maven.quarkus.plugin>3.19.1</version.maven.quarkus.plugin>
+    <version.maven.resources.plugin>3.3.1</version.maven.resources.plugin>
+    <version.maven.site.plugin>4.0.0-M16</version.maven.site.plugin>
+    <version.maven.surefire.plugin>3.5.2</version.maven.surefire.plugin>
+    <version.maven.jar.plugin>3.4.2</version.maven.jar.plugin>
+    <version.versions.maven.plugin>2.18.0</version.versions.maven.plugin>
 
-    <version.apache.commons.io>2.11.0</version.apache.commons.io>
-    <version.apache.commons.lang>3.12.0</version.apache.commons.lang>
+    <version.apache.commons.io>2.18.0</version.apache.commons.io>
+    <version.apache.commons.lang>3.17.0</version.apache.commons.lang>
     <version.argon2>2.11</version.argon2>
-    <version.jose4j>0.7.12</version.jose4j>
-    <version.owasp>20220608.1</version.owasp>
+    <version.jose4j>0.9.6</version.jose4j>
+    <version.owasp>20240325.1</version.owasp>
 
     <version.hamcrest>2.1</version.hamcrest>
-    <version.jayway.jsonpath>2.7.0</version.jayway.jsonpath>
-    <version.mockito>4.6.1</version.mockito>
-    <version.rest-assured>5.1.1</version.rest-assured>
+    <version.jayway.jsonpath>2.9.0</version.jayway.jsonpath>
+    <version.mockito>5.15.2</version.mockito>
+    <version.rest-assured>5.5.1</version.rest-assured>
+    <version.awaitility>4.3.0</version.awaitility>
   </properties>
 
   <dependencyManagement>
@@ -117,6 +129,11 @@
         <artifactId>json-path-assert</artifactId>
         <version>${version.jayway.jsonpath}</version>
       </dependency>
+      <dependency>
+        <groupId>org.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>${version.awaitility}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -129,19 +146,15 @@
     <!-- REST -->
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy</artifactId>
+      <artifactId>quarkus-rest</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-jsonb</artifactId>
+      <artifactId>quarkus-rest-jsonb</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest-client-jsonb</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-jsonb</artifactId>
     </dependency>
     <!-- DATA -->
     <dependency>
@@ -158,15 +171,7 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-jdbc-mariadb</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-mongodb-panache</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-mongodb-client</artifactId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
     </dependency>
     <!-- MICRO -->
     <dependency>
@@ -183,33 +188,30 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-metrics</artifactId>
+      <artifactId>quarkus-messaging</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-opentracing</artifactId>
+      <artifactId>quarkus-messaging-kafka</artifactId>
     </dependency>
+    <!-- TELEMETRY -->
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-reactive-messaging</artifactId>
+      <artifactId>quarkus-opentelemetry</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-reactive-messaging-kafka</artifactId>
+      <groupId>io.opentelemetry.instrumentation</groupId>
+      <artifactId>opentelemetry-jdbc</artifactId>
     </dependency>
     <!-- CONFIG -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-config-yaml</artifactId>
     </dependency>
+    <!-- SCHEDULER -->
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-logging-gelf</artifactId>
-    </dependency>
-    <!-- OIDC -->
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-oidc</artifactId>
+      <artifactId>quarkus-scheduler</artifactId>
     </dependency>
     <!-- UTILS -->
     <dependency>
@@ -240,6 +242,11 @@
     <dependency>
       <groupId>com.jayway.jsonpath</groupId>
       <artifactId>json-path-assert</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -282,7 +289,10 @@
               <maven.home>${maven.home}</maven.home>
             </systemPropertyVariables>
             <environmentVariables>
-              <SERENDITREE_JSON_WEB_KEY>9SYiJgVsBJscfJ/1HjElV2YN0m0CwULyE2rg4k6kCdw=</SERENDITREE_JSON_WEB_KEY>
+              <SERENDITREE_JSON_WEB_KEY>
+                HjT/+C7Zoj/4NcdDZ4tCY2lcNOocfnQwKY1kaXXmuBnG7lvr34MA0Lm5ftuq/nk4bZyjVZi0PqtuqPb9x5oEQw==
+              </SERENDITREE_JSON_WEB_KEY>
+              <SERENDITREE_LOG_PRETTY>false</SERENDITREE_LOG_PRETTY>
             </environmentVariables>
           </configuration>
         </plugin>
@@ -292,6 +302,7 @@
           <configuration>
             <skip>false</skip>
             <skipITs>false</skipITs>
+            <skipAfterFailureCount>1</skipAfterFailureCount>
             <includes>
               <include>**/integration/**</include>
             </includes>
@@ -316,9 +327,13 @@
           <version>${version.maven.enforcer.plugin}</version>
           <configuration>
             <rules>
+              <requireJavaVersion>
+                <version>${serenditree.java}</version>
+              </requireJavaVersion>
               <requireMavenVersion>
                 <version>${maven.required}</version>
               </requireMavenVersion>
+              <banDuplicatePomDependencyVersions/>
             </rules>
           </configuration>
           <executions>
@@ -331,12 +346,24 @@
           </executions>
         </plugin>
         <plugin>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>${version.maven.antrun.plugin}</version>
+        </plugin>
+        <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>${version.maven.clean.plugin}</version>
         </plugin>
         <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${version.maven.resources.plugin}</version>
+        </plugin>
+        <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${version.maven.compiler.plugin}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${version.maven.jar.plugin}</version>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
@@ -354,10 +381,6 @@
           <artifactId>maven-dependency-plugin</artifactId>
           <version>${version.maven.dependency.plugin}</version>
         </plugin>
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>${version.maven.resources.plugin}</version>
-        </plugin>
         <!-- UTILS -->
         <plugin>
           <groupId>org.jboss.jandex</groupId>
@@ -374,6 +397,11 @@
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>${version.maven.exec.plugin}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
           <version>${version.versions.maven.plugin}</version>
           <configuration>
@@ -385,13 +413,7 @@
     <!-- DEFAULT PLUGINS-->
     <plugins>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-      </plugin>
-      <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.jboss.jandex</groupId>
@@ -402,13 +424,12 @@
 
   <profiles>
     <profile>
-      <id>integration-test</id>
+      <id>integration</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
-            <version>${version.maven.exec.plugin}</version>
             <configuration>
               <executable>./cli.sh</executable>
               <workingDirectory>${serenditree.cli}</workingDirectory>
@@ -428,8 +449,11 @@
                 <configuration>
                   <arguments>
                     <argument>up</argument>
-                    <argument>root</argument>
-                    <argument>--expose</argument>
+                    <argument>--integration</argument>
+                    <argument>${serenditree.build}</argument>
+                    <argument>${project.basedir}</argument>
+                    <argument>${serenditree.build.pod.down.after.all}</argument>
+                    <argument>${serenditree.build.pod.down.after.each}</argument>
                   </arguments>
                 </configuration>
               </execution>
@@ -442,6 +466,11 @@
                 <configuration>
                   <arguments>
                     <argument>down</argument>
+                    <argument>--integration</argument>
+                    <argument>${serenditree.build}</argument>
+                    <argument>${project.basedir}::${project.artifactId}</argument>
+                    <argument>${serenditree.build.pod.down.after.all}</argument>
+                    <argument>${serenditree.build.pod.down.after.each}</argument>
                   </arguments>
                 </configuration>
               </execution>
@@ -471,7 +500,8 @@
         <quarkus.container-image.build>true</quarkus.container-image.build>
         <quarkus.native.container-build>true</quarkus.native.container-build>
         <quarkus.native.container-runtime>podman</quarkus.native.container-runtime>
-        <quarkus.package.type>native</quarkus.package.type>
+        <quarkus.native.enabled>true</quarkus.native.enabled>
+        <quarkus.package.jar.enabled>false</quarkus.package.jar.enabled>
       </properties>
       <build>
         <defaultGoal>package</defaultGoal>
@@ -479,7 +509,7 @@
     </profile>
 
     <profile>
-      <id>version-update</id>
+      <id>version</id>
       <properties>
         <verbose>true</verbose>
       </properties>
@@ -495,6 +525,58 @@
                 <phase>validate</phase>
                 <goals>
                   <goal>display-property-updates</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>update</id>
+      <properties>
+        <verbose>true</verbose>
+        <allowMajorUpdates>true</allowMajorUpdates>
+      </properties>
+      <build>
+        <defaultGoal>validate</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>versions-maven-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <phase>validate</phase>
+                <goals>
+                  <goal>update-properties</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>properties</id>
+      <build>
+        <defaultGoal>validate</defaultGoal>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <phase>validate</phase>
+                <configuration>
+                  <target>
+                    <echoproperties/>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
                 </goals>
               </execution>
             </executions>

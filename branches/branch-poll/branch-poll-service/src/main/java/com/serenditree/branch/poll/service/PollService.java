@@ -5,11 +5,12 @@ import com.serenditree.branch.poll.model.entities.Poll;
 import com.serenditree.branch.poll.repository.api.PollRepositoryApi;
 import com.serenditree.branch.poll.service.api.PollServiceApi;
 import com.serenditree.fence.model.FenceResponse;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Poll service.
@@ -20,7 +21,7 @@ public class PollService implements PollServiceApi {
     private PollRepositoryApi pollRepository;
 
     /**
-     * Persists all polls an returns them containing their IDs.
+     * Persists all polls and returns them containing their IDs.
      *
      * @param polls Transfer objects.
      * @return Persisted polls containing their IDs.
@@ -39,7 +40,7 @@ public class PollService implements PollServiceApi {
     /**
      * Retrieves a list of polls by seed.
      *
-     * @param seedId Id of the seed the poll belongs to.
+     * @param seedId ID of the seed the poll belongs to.
      * @return Polls associated with the given seed.
      */
     @Override
@@ -56,7 +57,7 @@ public class PollService implements PollServiceApi {
      * creation.
      */
     @Override
-    public FenceResponse vote(Long pollId, Long optionId) {
+    public FenceResponse vote(UUID pollId, Long optionId) {
         return this.pollRepository.vote(pollId, optionId);
     }
 

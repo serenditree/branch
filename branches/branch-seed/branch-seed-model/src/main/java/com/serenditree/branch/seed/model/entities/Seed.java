@@ -1,71 +1,42 @@
 package com.serenditree.branch.seed.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.serenditree.branch.poll.model.entities.Poll;
-import com.serenditree.branch.seed.model.serializer.ObjectIdDeserializer;
-import com.serenditree.branch.seed.model.serializer.ObjectIdSerializer;
-import org.bson.codecs.pojo.annotations.BsonIgnore;
-import org.bson.types.ObjectId;
+import jakarta.json.bind.annotation.JsonbProperty;
 
-import javax.json.bind.annotation.JsonbTypeDeserializer;
-import javax.json.bind.annotation.JsonbTypeSerializer;
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@Entity
-@Cacheable
+
 public class Seed extends AbstractSeed {
 
-    @NotNull
-    private int localAlignment;
+    public static final String FIELD_POLL = "poll";
+    public static final String FIELD_GARDEN_ID = "gardenId";
+    public static final String FIELD_TRAIL = "trail";
+    public static final String FIELD_TRAIL_ID = "trailId";
+    public static final String FIELD_LOCAL_ALIGNMENT = "localAlignment";
 
-    @NotNull
-    private boolean trail = false;
-
-    @JsonbTypeSerializer(ObjectIdSerializer.class)
-    @JsonbTypeDeserializer(ObjectIdDeserializer.class)
-    private ObjectId garden;
-
-    @NotNull
+    @JsonbProperty(FIELD_POLL)
     private boolean poll = false;
 
-    @Transient
-    @BsonIgnore
+    @JsonIgnore
     private List<Poll> polls;
 
-    /**
-     * Lifecycle hook that sets the poll flag correctly before the entity is persisted for the first time.
-     */
+    @JsonbProperty(FIELD_GARDEN_ID)
+    private String gardenId;
+
+    @JsonbProperty(FIELD_TRAIL)
+    private boolean trail = false;
+
+    @JsonbProperty(FIELD_TRAIL_ID)
+    private String trailId;
+
+    @JsonbProperty(FIELD_LOCAL_ALIGNMENT)
+    private int localAlignment;
+
     @Override
     public void prePersist() {
         super.prePersist();
         this.poll = this.polls != null && !this.polls.isEmpty();
-    }
-
-    public int getLocalAlignment() {
-        return localAlignment;
-    }
-
-    public void setLocalAlignment(int localAlignment) {
-        this.localAlignment = localAlignment;
-    }
-
-    public boolean isTrail() {
-        return trail;
-    }
-
-    public void setTrail(boolean trail) {
-        this.trail = trail;
-    }
-
-    public ObjectId getGarden() {
-        return garden;
-    }
-
-    public void setGarden(ObjectId garden) {
-        this.garden = garden;
     }
 
     public boolean isPoll() {
@@ -82,5 +53,37 @@ public class Seed extends AbstractSeed {
 
     public void setPolls(List<Poll> polls) {
         this.polls = polls;
+    }
+
+    public String getGardenId() {
+        return gardenId;
+    }
+
+    public void setGardenId(String gardenId) {
+        this.gardenId = gardenId;
+    }
+
+    public boolean isTrail() {
+        return trail;
+    }
+
+    public void setTrail(boolean trail) {
+        this.trail = trail;
+    }
+
+    public String getTrailId() {
+        return trailId;
+    }
+
+    public void setTrailId(String trailId) {
+        this.trailId = trailId;
+    }
+
+    public int getLocalAlignment() {
+        return localAlignment;
+    }
+
+    public void setLocalAlignment(int localAlignment) {
+        this.localAlignment = localAlignment;
     }
 }

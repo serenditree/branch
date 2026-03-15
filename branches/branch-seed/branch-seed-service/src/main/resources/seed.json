@@ -1,0 +1,145 @@
+{
+  "settings": {
+    "index": {
+      "max_ngram_diff": 3
+    },
+    "analysis": {
+      "tokenizer": {
+        "ngram_tokenizer": {
+          "type": "ngram",
+          "min_gram": 3,
+          "max_gram": 6,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        }
+      },
+      "analyzer": {
+        "default": {
+          "type": "standard"
+        },
+        "ngram_analyzer": {
+          "tokenizer": "ngram_tokenizer",
+          "filter": [
+            "lowercase"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword",
+        "index": true
+      },
+      "anonymous": {
+        "type": "boolean",
+        "index": true
+      },
+      "created": {
+        "type": "date",
+        "format": "iso8601",
+        "index": true
+      },
+      "gardenId": {
+        "type": "keyword",
+        "index": true
+      },
+      "localAlignment": {
+        "type": "short",
+        "index": true
+      },
+      "location": {
+        "type": "nested",
+        "properties": {
+          "lat": {
+            "type": "double"
+          },
+          "lng": {
+            "type": "double"
+          }
+        }
+      },
+      "geoPoint": {
+        "type": "geo_point",
+        "index": true
+      },
+      "modified": {
+        "type": "date",
+        "format": "iso8601"
+      },
+      "nubits": {
+        "type": "nested",
+        "properties": {
+          "added": {
+            "type": "date",
+            "format": "iso8601",
+            "index": true
+          },
+          "value": {
+            "type": "short"
+          }
+        }
+      },
+      "parentId": {
+        "type": "keyword",
+        "index": true
+      },
+      "poll": {
+        "type": "boolean",
+        "index": true
+      },
+      "tags": {
+        "type": "keyword",
+        "index": true,
+        "fields": {
+          "ngram": {
+            "type": "text",
+            "index": true,
+            "analyzer": "ngram_analyzer",
+            "search_analyzer": "standard"
+          }
+        }
+      },
+      "text": {
+        "type": "text",
+        "index": true
+      },
+      "title": {
+        "type": "text",
+        "index": true
+      },
+      "trail": {
+        "type": "boolean",
+        "index": true
+      },
+      "trailId": {
+        "type": "keyword",
+        "index": true
+      },
+      "userId": {
+        "type": "long",
+        "index": true
+      },
+      "username": {
+        "type": "keyword",
+        "index": true
+      },
+      "water": {
+        "type": "nested",
+        "properties": {
+          "added": {
+            "type": "date",
+            "format": "iso8601",
+            "index": true
+          },
+          "value": {
+            "type": "short"
+          }
+        }
+      }
+    }
+  }
+}

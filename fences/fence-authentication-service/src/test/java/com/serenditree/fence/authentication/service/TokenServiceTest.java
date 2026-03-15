@@ -21,8 +21,14 @@ class TokenServiceTest {
 
     @BeforeAll
     public static void beforeAll() {
-        assertEquals("9SYiJgVsBJscfJ/1HjElV2YN0m0CwULyE2rg4k6kCdw=", System.getenv("SERENDITREE_JSON_WEB_KEY"));
-        assertEquals("test", System.getProperty("serenditree.context"));
+        assertEquals(
+            "HjT/+C7Zoj/4NcdDZ4tCY2lcNOocfnQwKY1kaXXmuBnG7lvr34MA0Lm5ftuq/nk4bZyjVZi0PqtuqPb9x5oEQw==",
+            System.getenv("SERENDITREE_JSON_WEB_KEY")
+        );
+        assertEquals(
+            "test",
+            System.getProperty("serenditree.context")
+        );
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

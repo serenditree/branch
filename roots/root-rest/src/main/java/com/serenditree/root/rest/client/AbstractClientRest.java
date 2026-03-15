@@ -1,10 +1,11 @@
 package com.serenditree.root.rest.client;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
+
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
@@ -23,26 +24,26 @@ public abstract class AbstractClientRest<T> {
     protected T post(T request, String target) {
 
         return this.client
-                .target(target)
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.json(request), this.entityType);
+            .target(target)
+            .request(MediaType.APPLICATION_JSON_TYPE)
+            .post(Entity.json(request), this.entityType);
     }
 
     protected List<T> post(List<T> request, String target) {
 
         return this.client
-                .target(target)
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.json(request), new GenericType<List<T>>() {
-                });
+            .target(target)
+            .request(MediaType.APPLICATION_JSON_TYPE)
+            .post(Entity.json(request), new GenericType<List<T>>() {
+            });
     }
 
     protected void delete(String id, String target) {
 
         this.client
-                .target(target)
-                .path(id)
-                .request()
-                .delete();
+            .target(target)
+            .path(id)
+            .request()
+            .delete();
     }
 }

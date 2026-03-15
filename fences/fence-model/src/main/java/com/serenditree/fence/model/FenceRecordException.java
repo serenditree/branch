@@ -37,7 +37,7 @@ public class FenceRecordException extends SecurityException {
     @Override
     public String toString() {
         return "FenceRecordException{" +
-                "reason=" + reason +
-                '}';
+               "reason=" + reason +
+               '}';
     }
 }

@@ -1,9 +1,9 @@
 package com.serenditree.branch.poll.model.entities;
 
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
-
-import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.*;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * An entity representing an option users can vote for.
@@ -20,26 +20,11 @@ public class PollOption extends AbstractEntity {
     @JsonbTransient
     private Poll poll;
 
+    @NotNull
     private String text;
 
-    private Integer votes;
-
-    /**
-     * Empty constructor required by JPA.
-     */
-    public PollOption() {
-    }
-
-    /**
-     * Convenience constructor.
-     *
-     * @param text  Description of the option/choice.
-     * @param votes Votes for the option/choice.
-     */
-    public PollOption(String text, Integer votes) {
-        this.text = text;
-        this.votes = votes;
-    }
+    @NotNull
+    private Integer votes = 0;
 
     public Long getId() {
         return id;

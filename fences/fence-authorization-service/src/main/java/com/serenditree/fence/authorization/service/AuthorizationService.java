@@ -8,19 +8,20 @@ import com.serenditree.fence.model.FenceRecord;
 import com.serenditree.fence.model.FenceRecordAssertion;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.FenceActionType;
+import io.quarkus.logging.Log;
 import io.restassured.path.json.JsonPath;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -29,8 +30,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Checks if a request is allowed to proceed based on role- and action-base-authorization. Optional policies
@@ -40,8 +39,6 @@ import java.util.logging.Logger;
  */
 @Dependent
 public class AuthorizationService implements AuthorizationServiceApi {
-
-    private static final Logger LOGGER = Logger.getLogger(AuthorizationService.class.getName());
 
     @ConfigProperty(name = "serenditree.fence.policies.enabled", defaultValue = "false")
     boolean isPolicyEnforcerEnabled;
@@ -76,14 +73,14 @@ public class AuthorizationService implements AuthorizationServiceApi {
 
         // Request body policy enforcement.
         if (this.isPolicyEnforcerEnabled && authorized && fenced.policies().length > 0) {
-            LOGGER.fine("Policy enforcement initiated...");
+            Log.debug("Policy enforcement initiated...");
 
             authorized = this.applyPolicies(fenced.policies(), authenticatedUser.getId().toString());
         }
 
         // Action based authorization.
         if (authorized && fenced.actionBased()) {
-            LOGGER.fine("Action based authorization initiated...");
+            Log.debug("Action based authorization initiated...");
 
             String action;
             if (fenced.recordType() == FenceActionType.METHOD) {
@@ -98,11 +95,12 @@ public class AuthorizationService implements AuthorizationServiceApi {
             }
 
             authorized = this.isAuthorizedAssertion(
-                    authenticatedUser.getId().toString(),
-                    targetId,
-                    action,
-                    fenced.recordRequired(),
-                    fenced.recordCount());
+                authenticatedUser.getId().toString(),
+                targetId,
+                action,
+                fenced.recordRequired(),
+                fenced.recordCount()
+            );
         }
 
         return authorized;
@@ -112,21 +110,21 @@ public class AuthorizationService implements AuthorizationServiceApi {
      * Method to check authorization without touching the target resource. Don't use for real authorization checks!
      * ID is not verified.
      *
-     * @param uriInfo Needed for the extraction of the values annotated with {@link javax.ws.rs.PathParam}.
+     * @param uriInfo Needed for the extraction of the values annotated with {@link jakarta.ws.rs.PathParam}.
      * @return Boolean flag that indicates whether a user is authorized to access a certain resource.
      * @apiNote Don't use for real authorization checks! ID is not verified.
      */
     @Override
     public boolean isAuthorized(UriInfo uriInfo) {
-        LOGGER.fine("Simulating authorization...");
+        Log.debug("Simulating authorization...");
         MultivaluedMap<String, String> params = uriInfo.getPathParameters(true);
 
         return this.isAuthorizedAssertion(
-                params.getFirst("userId"),
-                params.getFirst("entityId"),
-                params.getFirst("action"),
-                false,
-                0
+            params.getFirst("userId"),
+            params.getFirst("entityId"),
+            params.getFirst("action"),
+            false,
+            0
         );
     }
 
@@ -159,39 +157,39 @@ public class AuthorizationService implements AuthorizationServiceApi {
      * @return Boolean flag that indicates whether a user is authorized to access a certain resource.
      */
     private boolean isAuthorizedAssertion(
-            final String userId,
-            final String entityId,
-            final String action,
-            final boolean recordRequired,
-            final int recordCount) {
+        final String userId,
+        final String entityId,
+        final String action,
+        final boolean recordRequired,
+        final int recordCount) {
 
-        LOGGER.fine(() ->
-                "Authorization check: " +
-                        "userId[" + userId + "], " +
-                        "entityId[" + entityId + "], " +
-                        "action[" + action + "], " +
-                        "recordRequired[" + recordRequired + "], " +
-                        "recordCount[" + recordCount + "]"
+        Log.debugv(
+            "Authorization check: userId[{0}], entityId[{1}], action[{2}], recordRequired[{3}], recordCount[{4}]",
+            userId,
+            entityId,
+            action,
+            recordRequired,
+            recordCount
         );
 
         List<FenceRecord> fenceRecords = this.authorizationRepository.retrieveFenceRecords(userId, entityId, action);
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("FenceRecords: " + fenceRecords.size());
-            fenceRecords.forEach(fenceRecord -> LOGGER.fine(fenceRecord.toString()));
+        if (Log.isDebugEnabled()) {
+            Log.debugv("FenceRecords: {0}", fenceRecords.size());
+            fenceRecords.forEach(fenceRecord -> Log.debug(fenceRecord.toString()));
         }
 
         boolean authorized = false;
 
         if (!fenceRecords.isEmpty()) {
             // Ordered by expiration date at query level.
-            FenceRecord fenceRecord = fenceRecords.get(0);
+            FenceRecord fenceRecord = fenceRecords.getFirst();
             if (recordRequired) {
                 authorized = fenceRecord.getExpiration() == null ||
-                        LocalDateTime.now().isBefore(fenceRecord.getExpiration());
+                             LocalDateTime.now().isBefore(fenceRecord.getExpiration());
             } else {
                 authorized = fenceRecord.getExpiration() != null &&
-                        LocalDateTime.now().isAfter(fenceRecord.getExpiration());
+                             LocalDateTime.now().isAfter(fenceRecord.getExpiration());
             }
         } else if (!recordRequired) {
             authorized = true;
@@ -210,11 +208,11 @@ public class AuthorizationService implements AuthorizationServiceApi {
      */
     private boolean isAuthorizedAssertion(FenceRecordAssertion fenceRecordAssertion) {
         return this.isAuthorizedAssertion(
-                fenceRecordAssertion.getUserId(),
-                fenceRecordAssertion.getEntityId(),
-                fenceRecordAssertion.getActionType().name(),
-                fenceRecordAssertion.isRecordRequired(),
-                fenceRecordAssertion.getRecordCount()
+            fenceRecordAssertion.getUserId(),
+            fenceRecordAssertion.getEntityId(),
+            fenceRecordAssertion.getActionType().name(),
+            fenceRecordAssertion.isRecordRequired(),
+            fenceRecordAssertion.getRecordCount()
         );
     }
 
@@ -222,15 +220,15 @@ public class AuthorizationService implements AuthorizationServiceApi {
      * Verifies if the user is in a role that authorizes her or him to access a certain resource.
      *
      * @param authenticatedUser Authenticated user who claims authorization.
-     * @param fenced            Information about the the resource the user claims to be authorized for.
+     * @param fenced            Information about the resource the user claims to be authorized for.
      * @return Boolean flag that indicates whether a user is authorized to access a certain resource based on its roles.
      */
     private boolean rolesAllowed(FencePrincipal authenticatedUser, Fenced fenced) {
         final boolean authorized = Arrays
-                .stream(fenced.rolesAllowed())
-                .anyMatch(authenticatedUser::isInRole);
+            .stream(fenced.rolesAllowed())
+            .anyMatch(authenticatedUser::isInRole);
 
-        LOGGER.fine(() -> "Authorized based on role: " + authorized);
+        Log.debugv("Authorized based on role: {0}", authorized);
 
         return authorized;
     }
@@ -239,7 +237,7 @@ public class AuthorizationService implements AuthorizationServiceApi {
      * Enforces the given policies - optionally against the provided user.
      *
      * @param policies Policies to apply.
-     * @param userId   Id of the user.
+     * @param userId   ID of the user.
      * @return Boolean flag to indicate if all policies passed.
      */
     private boolean applyPolicies(final String[] policies, final String userId) {
@@ -249,17 +247,17 @@ public class AuthorizationService implements AuthorizationServiceApi {
             final String body = IOUtils.toString(entityStream, Charset.defaultCharset());
             final JsonPath json = JsonPath.from(body);
 
-            LOGGER.fine(() -> "Starting enforcement of " + policies.length + " policies: " + Arrays.toString(policies));
-            LOGGER.fine(() -> "Request body: " + body);
-            LOGGER.fine(() -> "User id: " + userId);
+            Log.debugv("Starting enforcement of {0} policies: {1}", policies.length, Arrays.toString(policies));
+            Log.debugv("Request body: {0}", body);
+            Log.debugv("User id: {0}", userId);
 
             authorized = this.policyEnforcer
-                    .getPolicies(policies)
-                    .parallelStream()
-                    .map(fencePolicy -> fencePolicy.apply(json, userId))
-                    .filter(Optional::isPresent)
-                    .map(assertion -> this.isAuthorizedAssertion(assertion.get()))
-                    .reduce(true, (acc, curr) -> acc && curr);
+                .getPolicies(policies)
+                .parallelStream()
+                .map(fencePolicy -> fencePolicy.apply(json, userId))
+                .filter(Optional::isPresent)
+                .map(assertion -> this.isAuthorizedAssertion(assertion.get()))
+                .reduce(true, (acc, curr) -> acc && curr);
 
             this.containerRequestContext.setEntityStream(IOUtils.toInputStream(body, Charset.defaultCharset()));
         } catch (IOException e) {
@@ -290,13 +288,13 @@ public class AuthorizationService implements AuthorizationServiceApi {
     void init() {
         if (this.policyEnforcerInstance.isAmbiguous()) {
             throw new IllegalStateException(
-                    "Found more than one implementation of " + PolicyEnforcerApi.class.getName()
+                "Found more than one implementation of " + PolicyEnforcerApi.class.getName()
             );
         } else if (this.policyEnforcerInstance.isResolvable()) {
             this.policyEnforcer = this.policyEnforcerInstance.get();
         } else {
             this.policyEnforcer = null;
-            LOGGER.fine("No policy enforcer found.");
+            Log.debug("No policy enforcer found.");
         }
     }
 }

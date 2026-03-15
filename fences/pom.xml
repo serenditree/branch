@@ -3,15 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <groupId>com.serenditree</groupId>
+    <groupId>io.serenditree</groupId>
     <artifactId>branch</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-
   <artifactId>fences</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -25,5 +23,6 @@
     <module>fence-authorization-service</module>
     <module>fence-authorization-service-api</module>
     <module>fence-interceptor</module>
+    <module>fence-extras</module>
   </modules>
 </project>

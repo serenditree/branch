@@ -1,42 +1,61 @@
-# Only edit leaf-seed application.yml!
 serenditree:
   log:
     level: INFO
+    pretty: false
+    properties: false
   fence:
     verification:
+      enabled: true
       paths: /api/v1/user/verify/callback/*
       scopes: profile,openid
     policies:
       enabled: false
+    cleanup:
+      enabled: true
+    error: "Unhandled error during authentication and authorization."
   root:
     user:
-      user: user
-      password: password
+      user: ~
+      password: ~
     seed:
-      user: user
-      password: password
-
+      user: ~
+      password: ~
 quarkus:
+  application:
+    name: branch-user
   datasource:
-    db-kind: mariadb
+    db-kind: postgresql
     username: ${serenditree.root.user.user}
     password: ${serenditree.root.user.password}
     jdbc:
-      url: jdbc:mariadb://root-user:3306/serenditree
+      telemetry: true
+      url: jdbc:postgresql://root-user:5432/serenditree
   hibernate-orm:
-    database:
+    scripts:
       generation: none
+    jdbc:
+      statement-batch-size: 100
+      statement-fetch-size: 100
+    quote-identifiers:
+      strategy: all
     log:
       jdbc-warnings: true
-  mongodb:
-    credentials:
-      username: ${serenditree.root.seed.user}
-      password: ${serenditree.root.seed.password}
-      auth-mechanism: SCRAM-SHA-256
-    database: serenditree
-    hosts:
-      - root-seed-0.root-seed-headless:27017
-      - root-seed-1.root-seed-headless:27017
+  log:
+    console:
+      format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p traceId=%X{traceId}, parentId=%X{parentId}, spanId=%X{spanId}, sampled=%X{sampled} [%c{3.}] (%t) %s%e%n"
+    category:
+      "io.smallrye.health":
+        level: WARN
+      "io.opentelemetry":
+        level: WARN
+      "io.serenditree":
+        level: ${serenditree.log.level}
+  otel:
+    enabled: true
+    exporter:
+      otlp:
+        traces:
+          endpoint: ~
   oidc:
     at:
       auth-server-url: ~
@@ -53,20 +72,27 @@ quarkus:
       secret: ${quarkus.oidc.at.credentials.secret}
     authentication:
       scopes: ${quarkus.oidc.at.authentication.scopes}
-
+  smallrye-openapi:
+    path: /api/v1/user/openapi
+  swagger-ui:
+    always-include: false
+    path: /api/v1/user/swagger
+  shutdown:
+    timeout: 10
   http:
     auth:
       permission:
         authenticated:
           paths: ${serenditree.fence.verification.paths}
           policy: authenticated
-  log:
-    category:
-      "org.mongodb.driver":
-        level: INFO
-      "io.smallrye.health":
-        level: WARN
-      "com.serenditree":
-        level: ${serenditree.log.level}
-  shutdown:
-    timeout: 10
+mp:
+  messaging:
+    outgoing:
+      user-deleted:
+        bootstrap:
+          servers: root-wind:9092
+        connector: smallrye-kafka
+        key:
+          serializer: org.apache.kafka.common.serialization.LongSerializer
+        value:
+          serializer: org.apache.kafka.common.serialization.LongSerializer

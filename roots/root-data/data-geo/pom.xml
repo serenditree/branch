@@ -6,23 +6,23 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.serenditree</groupId>
+    <groupId>io.serenditree</groupId>
     <artifactId>root-data</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
 
   <artifactId>data-geo</artifactId>
 
   <dependencies>
     <dependency>
-      <groupId>com.serenditree</groupId>
+      <groupId>io.serenditree</groupId>
       <artifactId>data-generic</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
-      <groupId>com.serenditree</groupId>
-      <artifactId>root-etc</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <groupId>io.serenditree</groupId>
+      <artifactId>root-util</artifactId>
+      <version>1.0.0</version>
     </dependency>
   </dependencies>
 </project>

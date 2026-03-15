@@ -9,5 +9,10 @@
     <ignoreVersion type="regex">.*milestone.*</ignoreVersion>
   </ignoreVersions>
   <rules>
+    <rule groupId="net.bytebuddy">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
   </rules>
 </ruleset>

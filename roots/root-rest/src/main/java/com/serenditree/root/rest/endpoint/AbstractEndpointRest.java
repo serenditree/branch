@@ -11,13 +11,14 @@ import com.serenditree.fence.model.enums.RoleType;
 import com.serenditree.root.rest.cache.annotation.CacheControlConfig;
 import com.serenditree.root.rest.cache.annotation.CustomCacheControl;
 import com.serenditree.root.rest.transfer.ApiDescription;
+import io.quarkus.logging.Log;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Arrays;
@@ -25,12 +26,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Predicate;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public abstract class AbstractEndpointRest {
-
-    private static final Logger LOGGER = Logger.getLogger(AbstractEndpointRest.class.getName());
 
     @Inject
     @ConfigProperty(name = "serenditree.service")
@@ -67,8 +65,8 @@ public abstract class AbstractEndpointRest {
     @Open
     public Response retrieveApiDescription() {
         return Response
-                .ok(this.buildApiDescription())
-                .build();
+            .ok(this.buildApiDescription())
+            .build();
     }
 
     @GET
@@ -78,10 +76,10 @@ public abstract class AbstractEndpointRest {
     public Response retrieveAuthInformation(@PathParam("userId") Long userId,
                                             @PathParam("entityId") Long entityId,
                                             @PathParam("action") String action) {
-        LOGGER.severe("Retrieval of auth information not handled in filter");
+        Log.error("Retrieval of auth information not handled in filter");
         return Response
-                .serverError()
-                .build();
+            .serverError()
+            .build();
     }
 
     @GET
@@ -109,13 +107,16 @@ public abstract class AbstractEndpointRest {
 
             if (responseBuilder == null) {
                 responseBuilder = Response
-                        .status(success)
-                        .entity(result)
-                        .tag(entityTag);
+                    .status(success)
+                    .entity(result)
+                    .tag(entityTag);
             }
             responseBuilder.cacheControl(this.cacheControl);
         } else {
             responseBuilder = Response.status(error);
+            if (result != null) {
+                responseBuilder.entity(result);
+            }
         }
 
         return responseBuilder.build();
@@ -134,10 +135,13 @@ public abstract class AbstractEndpointRest {
 
         if (predicate.test(result)) {
             responseBuilder = Response
-                    .status(success)
-                    .entity(result);
+                .status(success)
+                .entity(result);
         } else {
             responseBuilder = Response.status(error);
+            if (result != null) {
+                responseBuilder.entity(result);
+            }
         }
 
         return responseBuilder;
@@ -156,15 +160,15 @@ public abstract class AbstractEndpointRest {
     }
 
     protected Response buildRedirect(final String path) {
-        URI redirect = URI.create(""
-                + StringUtils.removeEnd(this.host, "/")
-                + "/"
-                + StringUtils.removeStart(path, "/")
+        URI redirect = URI.create(
+            StringUtils.removeEnd(this.host, "/")
+            + "/"
+            + StringUtils.removeStart(path, "/")
         );
 
         return Response
-                .seeOther(redirect)
-                .build();
+            .seeOther(redirect)
+            .build();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -187,11 +191,11 @@ public abstract class AbstractEndpointRest {
         FencePrincipal principal = this.getPrincipal();
 
         return Response
-                .status(status)
-                .header(HttpHeaders.AUTHORIZATION, principal.getToken())
-                .header(FenceHeaders.ID, principal.getId())
-                .header(FenceHeaders.USERNAME, principal.getUsername())
-                .build();
+            .status(status)
+            .header(HttpHeaders.AUTHORIZATION, principal.getToken())
+            .header(FenceHeaders.ID, principal.getId())
+            .header(FenceHeaders.USERNAME, principal.getUsername())
+            .build();
     }
 
     protected <E> Response buildFenceResponse(E result,
@@ -201,8 +205,8 @@ public abstract class AbstractEndpointRest {
                                               Response.Status error) {
 
         return this.buildResponseBuilder(result, predicate, success, error)
-                .entity(new FenceResponse(entityId))
-                .build();
+            .entity(new FenceResponse(entityId))
+            .build();
 
     }
 
@@ -213,8 +217,8 @@ public abstract class AbstractEndpointRest {
     private Response buildEcho(final int status, final HttpHeaders httpHeaders) {
         Response.ResponseBuilder responseBuilder = Response.status(status);
         httpHeaders.getRequestHeaders().entrySet().stream()
-                .flatMap(entry -> entry.getValue().stream().map(value -> Pair.of(entry.getKey(), value)))
-                .forEach(pair -> responseBuilder.header(pair.getKey(), pair.getValue()));
+            .flatMap(entry -> entry.getValue().stream().map(value -> Pair.of(entry.getKey(), value)))
+            .forEach(pair -> responseBuilder.header(pair.getKey(), pair.getValue()));
 
         return responseBuilder.build();
     }
@@ -247,17 +251,17 @@ public abstract class AbstractEndpointRest {
 
     private Map<String, String> getApi() {
         return Arrays.stream(this.getClass().getMethods())
-                .filter(m -> m.isAnnotationPresent(Path.class))
-                .collect(
-                        Collectors.toMap(
-                                Method::getName,
-                                m -> AbstractEndpointRest.getHttpMethod(m) + m.getAnnotation(Path.class).value(),
-                                (m1, m2) -> {
-                                    throw new IllegalStateException("Overloading API is not allowed.");
-                                },
-                                TreeMap::new
-                        )
-                );
+            .filter(m -> m.isAnnotationPresent(Path.class))
+            .collect(
+                Collectors.toMap(
+                    Method::getName,
+                    m -> AbstractEndpointRest.getHttpMethod(m) + m.getAnnotation(Path.class).value(),
+                    (m1, m2) -> {
+                        throw new IllegalStateException("Overloading API is not allowed.");
+                    },
+                    TreeMap::new
+                )
+            );
     }
 
     private ApiDescription buildApiDescription() {
@@ -282,7 +286,7 @@ public abstract class AbstractEndpointRest {
         CacheControlConfig config = this.getClass().getAnnotation(CacheControlConfig.class);
 
         if (config != null) {
-            LOGGER.fine(() -> "CacheControlConfig found: " + config);
+            Log.debugv("CacheControlConfig found: {0}", config);
             cacheControl.setMaxAge(config.maxAge());
             cacheControl.setMustRevalidate(config.mustRevalidate());
             cacheControl.setNoCache(config.noCache());

@@ -1,30 +1,25 @@
 package com.serenditree.root.log.interceptor;
 
 import com.serenditree.root.log.annotation.Logged;
+import io.quarkus.logging.Log;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.context.Dependent;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
+import jakarta.ws.rs.core.Response;
 
-import javax.annotation.Priority;
-import javax.enterprise.context.Dependent;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
-import javax.ws.rs.core.Response;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-/**
- * Generic logging interceptor.
- */
 @Dependent
 @Interceptor
 @Logged
 @Priority(Interceptor.Priority.APPLICATION + 100)
 public class LoggedLeafInterceptor {
 
-    private static final Logger LOGGER = Logger.getLogger(LoggedLeafInterceptor.class.getName());
     private static final String BEFORE = "Calling method ";
     private static final String AFTER = "Returning from ";
 
@@ -32,21 +27,20 @@ public class LoggedLeafInterceptor {
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
         Object response;
 
-        if (LOGGER.isLoggable(Level.FINE) &&
-                invocationContext.getMethod().getModifiers() == Modifier.PUBLIC) {
+        if (Log.isDebugEnabled() && invocationContext.getMethod().getModifiers() == Modifier.PUBLIC) {
             final String declaringClass = invocationContext
-                    .getMethod()
-                    .getDeclaringClass()
-                    .getSimpleName();
+                .getMethod()
+                .getDeclaringClass()
+                .getSimpleName();
             final String method = invocationContext
-                    .getMethod()
-                    .getName();
+                .getMethod()
+                .getName();
             final String methodSignature = declaringClass + "::" + method;
 
             final boolean isVoid = invocationContext
-                    .getMethod()
-                    .getReturnType()
-                    .equals(Void.TYPE);
+                .getMethod()
+                .getReturnType()
+                .equals(Void.TYPE);
 
             this.before(methodSignature, invocationContext.getParameters());
             response = invocationContext.proceed();
@@ -65,17 +59,16 @@ public class LoggedLeafInterceptor {
      * @param parameters Method parameters.
      */
     private void before(final String method, final Object[] parameters) {
-
         String message = BEFORE + method;
 
         if (parameters != null && parameters.length > 0) {
             message += Arrays
-                    .stream(parameters)
-                    .map(parameter -> parameter == null ? "null" : parameter.toString())
-                    .collect(Collectors.joining("], [", " with parameters: [", "]"));
+                .stream(parameters)
+                .map(parameter -> parameter == null ? "null" : parameter.toString())
+                .collect(Collectors.joining("], [", " with parameters: [", "]"));
         }
 
-        LOGGER.fine(message);
+        Log.debug(message);
     }
 
     /**
@@ -87,8 +80,7 @@ public class LoggedLeafInterceptor {
      */
     private void after(final String method, final Object returnValue, final boolean isVoid) {
         if (!isVoid) {
-            if (returnValue instanceof Response) {
-                Response response = (Response) returnValue;
+            if (returnValue instanceof Response response) {
                 if (response.getEntity() instanceof Collection) {
                     this.logCollection(method, (Collection<?>) response.getEntity(), response.getStatusInfo());
                 } else {
@@ -100,39 +92,25 @@ public class LoggedLeafInterceptor {
                 this.logObject(method, returnValue);
             }
         } else {
-            LOGGER.fine(() -> AFTER + method);
+            Log.debugv("{0}{1}", AFTER, method);
         }
     }
 
     private <T> void logCollection(final String method,
                                    final Collection<T> collection,
                                    final Response.StatusType status) {
-        LOGGER.fine(() ->
-                AFTER + method +
-                        " Status: " + status +
-                        " Results: " + collection.size()
-        );
+        Log.debugv("{0}{1} Status: {2} Results: {3}", AFTER, method, status.getReasonPhrase(), collection.size());
     }
 
     private <T> void logCollection(final String method, final Collection<T> collection) {
-        LOGGER.fine(() ->
-                AFTER + method +
-                        " Results: " + collection.size()
-        );
+        Log.debugv("{0}{1} Results: {2}", AFTER, method, collection.size());
     }
 
     private void logObject(final String method, final Object returnValue, final Response.StatusType status) {
-        LOGGER.fine(() ->
-                AFTER + method +
-                        " Status: " + status +
-                        " Result: " + returnValue
-        );
+        Log.debugv("{0}{1} Status: {2} Result: {3}", AFTER, method, status.getReasonPhrase(), returnValue);
     }
 
     private void logObject(final String method, final Object returnValue) {
-        LOGGER.fine(() ->
-                AFTER + method +
-                        " Result: " + returnValue
-        );
+        Log.debugv("{0}{1} Result: {2}", AFTER, method, returnValue);
     }
 }

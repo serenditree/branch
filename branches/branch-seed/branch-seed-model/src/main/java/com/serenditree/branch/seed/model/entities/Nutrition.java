@@ -2,7 +2,6 @@ package com.serenditree.branch.seed.model.entities;
 
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
 
-import javax.persistence.Embeddable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,7 +9,6 @@ import java.time.LocalTime;
 /**
  * Entity that represents water, pruning and nubits.
  */
-@Embeddable
 public class Nutrition extends AbstractEntity {
 
     private int value;

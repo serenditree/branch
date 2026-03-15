@@ -10,13 +10,13 @@ import com.serenditree.root.rest.cache.CacheControlProducer;
 import com.serenditree.root.rest.cache.annotation.CacheControlConfig;
 import com.serenditree.root.rest.endpoint.AbstractEndpointRest;
 import io.quarkus.oidc.IdToken;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.Objects;
 
 @Path("user")
@@ -71,8 +71,10 @@ public class UserLeaf extends AbstractEndpointRest {
     @Open
     public Response verifyCallback(@PathParam("country") String country, @QueryParam("id") Long id) {
 
-        return this.buildRedirect("/user/settings?oidc="
-                + this.tokenService.buildVerificationToken(id, country + this.idToken.getSubject()));
+        return this.buildRedirect(
+            "/user/settings?oidc="
+            + this.tokenService.buildVerificationToken(id, country + this.idToken.getSubject())
+        );
     }
 
     @GET
@@ -82,9 +84,10 @@ public class UserLeaf extends AbstractEndpointRest {
     public Response retrieveByUsername(final @PathParam("username") String username) {
 
         return this.buildCacheResponse(
-                this.userService.retrieveByUsername(username),
-                Objects::nonNull,
-                Response.Status.NOT_FOUND);
+            this.userService.retrieveByUsername(username),
+            Objects::nonNull,
+            Response.Status.NOT_FOUND
+        );
     }
 
     @GET
@@ -94,32 +97,33 @@ public class UserLeaf extends AbstractEndpointRest {
     public Response retrieveBySubstring(final @PathParam("substring") String substring) {
 
         return this.buildCacheResponse(
-                this.userService.retrieveBySubstring(substring),
-                Objects::nonNull,
-                Response.Status.NOT_FOUND);
+            this.userService.retrieveBySubstring(substring),
+            this.notNullNotEmpty,
+            Response.Status.NOT_FOUND
+        );
     }
 
     @DELETE
     @Path("delete/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Fenced(
-            rolesAllowed = {RoleType.USER},
-            actionBased = true,
-            recordRequired = true,
-            recordType = FenceActionType.CRUD,
-            createOrDeleteRecord = true
+        rolesAllowed = {RoleType.USER},
+        actionBased = true,
+        recordRequired = true,
+        recordType = FenceActionType.CRUD,
+        createOrDeleteRecord = true
     )
     @Transactional
     public Response delete(final @PathParam("id") Long id) {
 
         return this.buildFenceResponse(
-                this.userService.delete(id),
-                result -> result.getId() != null,
-                id.toString(),
-                Response.Status.ACCEPTED,
-                Response.Status.NOT_FOUND);
+            this.userService.delete(id),
+            result -> result.getId() != null,
+            id.toString(),
+            Response.Status.OK,
+            Response.Status.NOT_FOUND
+        );
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // CDI

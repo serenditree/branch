@@ -1,6 +1,7 @@
 package com.serenditree.branch.seed.repository.qualifier;
 
-import javax.inject.Qualifier;
+import jakarta.inject.Qualifier;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

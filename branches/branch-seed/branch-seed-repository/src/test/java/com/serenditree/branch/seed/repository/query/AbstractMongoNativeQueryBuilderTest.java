@@ -1,6 +1,6 @@
 package com.serenditree.branch.seed.repository.query;
 
-import com.serenditree.root.etc.maple.Maple;
+import com.serenditree.root.util.maple.Maple;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,9 +30,9 @@ class AbstractMongoNativeQueryBuilderTest {
     }
 
     final String tagsQuery = new MongoNativeQueryBuilderTest()
-            .createNativeQuery()
-            .createTagsQuery("tag")
-            .toJson();
+        .createNativeQuery()
+        .createTagsQuery("tag")
+        .toJson();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // TESTS
@@ -46,16 +46,16 @@ class AbstractMongoNativeQueryBuilderTest {
 
     static Stream<Arguments> buildTagsQuerySchemaSource() {
         return Stream.of(
-                Arguments.of(matchesJsonSchemaInClasspath("initial-match-schema.json")),
-                Arguments.of(matchesJsonSchemaInClasspath("project-tag-only-schema.json"))
+            Arguments.of(matchesJsonSchemaInClasspath("initial-match-schema.json")),
+            Arguments.of(matchesJsonSchemaInClasspath("project-tag-only-schema.json"))
         );
     }
 
     @Test
     void buildTagsQueryTest() {
         assertThat(
-                Maple.mapList(from(this.tagsQuery).getList(""), Object::toString),
-                lastItem(is("{$project={tag=1}}"))
+            Maple.mapList(from(this.tagsQuery).getList(""), Object::toString),
+            lastItem(is("{$project={tag=1}}"))
         );
     }
 }

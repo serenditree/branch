@@ -1,6 +1,6 @@
 package com.serenditree.root.rest.transfer;
 
-import com.serenditree.root.etc.maple.Maple;
+import com.serenditree.root.util.maple.Maple;
 
 import java.io.Serializable;
 import java.util.Map;

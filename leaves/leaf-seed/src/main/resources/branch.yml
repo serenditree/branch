@@ -1,0 +1,40 @@
+# see serenditree.yml in project root
+serenditree:
+  seed:
+    retention: 21
+quarkus:
+  application:
+    name: branch-seed
+  smallrye-openapi:
+    path: /api/v1/seed/openapi
+  mongodb:
+    credentials:
+      username: ${serenditree.root.seed.user}
+      password: ${serenditree.root.seed.password}
+      auth-mechanism: SCRAM-SHA-256
+    database: serenditree
+    hosts:
+      - root-seed-0.root-seed-headless:27017
+      - root-seed-1.root-seed-headless:27017
+      - root-seed-2.root-seed-headless:27017
+    tracing:
+      enabled: true
+  log:
+    category:
+      "org.mongodb.driver":
+        level: WARN
+mp:
+  messaging:
+    outgoing:
+      seed-created:
+        bootstrap:
+          servers: root-wind:9092
+        connector: smallrye-kafka
+        value:
+          serializer: io.quarkus.kafka.client.serialization.JsonbSerializer
+      seed-deleted:
+        bootstrap:
+          servers: root-wind:9092
+        connector: smallrye-kafka
+        value:
+          serializer: org.apache.kafka.common.serialization.StringSerializer

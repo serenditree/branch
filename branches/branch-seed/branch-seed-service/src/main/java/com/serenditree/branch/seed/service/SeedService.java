@@ -5,16 +5,20 @@ import com.serenditree.branch.poll.service.api.PollServiceClientApi;
 import com.serenditree.branch.seed.model.entities.Seed;
 import com.serenditree.branch.seed.model.filter.SeedFilter;
 import com.serenditree.branch.seed.repository.api.SeedRepositoryApi;
+import com.serenditree.branch.seed.service.api.GardenServiceApi;
 import com.serenditree.branch.seed.service.api.SeedServiceApi;
 import com.serenditree.fence.annotation.FencedContext;
 import com.serenditree.fence.model.FenceResponse;
 import com.serenditree.fence.model.api.FencePrincipal;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.ws.rs.InternalServerErrorException;
 import java.util.List;
 
 @Dependent
@@ -23,6 +27,8 @@ public class SeedService implements SeedServiceApi {
     private FencePrincipal principal;
 
     private SeedRepositoryApi seedRepository;
+
+    private GardenServiceApi gardenService;
 
     private PollServiceClientApi pollServiceClient;
 
@@ -35,19 +41,24 @@ public class SeedService implements SeedServiceApi {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
+    @SuppressWarnings("java:S2139")
     public Seed create(Seed seed) {
         seed.prePersist();
         this.seedRepository.persist(seed);
 
-        if (seed.getPolls() != null && !seed.getPolls().isEmpty()) {
-            for (Poll poll : seed.getPolls()) {
-                poll.setUserId(this.principal.getId());
-                poll.setSeedId(seed.getId().toString());
+        try {
+            if (seed.getPolls() != null && !seed.getPolls().isEmpty()) {
+                for (Poll poll : seed.getPolls()) {
+                    poll.setUserId(this.principal.getId());
+                    poll.setSeedId(seed.getId().toString());
+                }
+                seed.setPolls(this.pollServiceClient.create(seed.getPolls()));
             }
-            seed.setPolls(this.pollServiceClient.create(seed.getPolls()));
+            this.onCreation.fire(seed);
+        } catch (ProcessingException e) {
+            this.seedRepository.delete(seed);
+            throw new WebApplicationException("Error creating polls.", e, Response.Status.BAD_GATEWAY);
         }
-
-        this.onCreation.fire(seed);
 
         return seed;
     }
@@ -68,12 +79,20 @@ public class SeedService implements SeedServiceApi {
     }
 
     @Override
-    public FenceResponse water(ObjectId id) {
+    public FenceResponse water(ObjectId id, ObjectId gardenId) {
+        if (gardenId != null) {
+            this.gardenService.water(gardenId);
+        }
+
         return this.seedRepository.water(id);
     }
 
     @Override
-    public FenceResponse prune(ObjectId id) {
+    public FenceResponse prune(ObjectId id, ObjectId gardenId) {
+        if (gardenId != null) {
+            this.gardenService.prune(gardenId);
+        }
+
         return this.seedRepository.prune(id);
     }
 
@@ -101,6 +120,11 @@ public class SeedService implements SeedServiceApi {
     @Inject
     public void setSeedRepository(SeedRepositoryApi seedRepository) {
         this.seedRepository = seedRepository;
+    }
+
+    @Inject
+    public void setGardenService(GardenServiceApi gardenService) {
+        this.gardenService = gardenService;
     }
 
     @Inject

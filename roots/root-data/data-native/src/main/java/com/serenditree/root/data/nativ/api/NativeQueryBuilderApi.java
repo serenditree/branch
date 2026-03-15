@@ -17,7 +17,11 @@ public interface NativeQueryBuilderApi {
 
     NativeQueryBuilderApi setUserId(Long userId);
 
-    NativeQueryBuilderApi setParent(ObjectId parentId, boolean isTrail);
+    NativeQueryBuilderApi setParentId(ObjectId parentId);
+
+    NativeQueryBuilderApi setGardenId(ObjectId parentId);
+
+    NativeQueryBuilderApi setTrailId(ObjectId trailId);
 
     NativeQueryBuilderApi setTags(Set<String> tags);
 
@@ -26,6 +30,10 @@ public interface NativeQueryBuilderApi {
     NativeQueryBuilderApi setTrail();
 
     NativeQueryBuilderApi setSort(SortingType sort);
+
+    NativeQueryBuilderApi setRetention(int retention);
+
+    NativeQueryBuilderApi setTextLimit(int maxBytes);
 
     NativeQueryBuilderApi setSkip(int skip);
 

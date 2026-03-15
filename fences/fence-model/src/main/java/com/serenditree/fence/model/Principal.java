@@ -2,9 +2,10 @@ package com.serenditree.fence.model;
 
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.RoleType;
-import com.serenditree.root.etc.maple.Maple;
+import com.serenditree.root.util.maple.Maple;
+import jakarta.json.bind.annotation.JsonbTransient;
+import org.eclipse.microprofile.config.ConfigProvider;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.security.auth.Subject;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,10 @@ import java.util.List;
  * Extension of {@link java.security.Principal} for usage in {@link FenceContext}.
  */
 public class Principal implements FencePrincipal {
+
+    private static final boolean LOG_PRETTY = ConfigProvider
+        .getConfig()
+        .getValue("serenditree.log.pretty", Boolean.class);
 
     private Long id;
 
@@ -89,8 +94,8 @@ public class Principal implements FencePrincipal {
     @JsonbTransient
     public boolean isInRole(RoleType role) {
         return this.roleTypes
-                .stream()
-                .anyMatch(r -> r.ordinal() >= role.ordinal());
+            .stream()
+            .anyMatch(r -> r.ordinal() >= role.ordinal());
     }
 
     @Override
@@ -107,7 +112,7 @@ public class Principal implements FencePrincipal {
 
     @Override
     public String toString() {
-        return Maple.prettyJson(this);
+        return LOG_PRETTY ? Maple.prettyJson(this) : Maple.json(this);
     }
 
     @Override

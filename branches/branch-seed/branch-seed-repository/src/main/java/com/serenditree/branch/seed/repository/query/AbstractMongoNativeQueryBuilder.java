@@ -7,13 +7,14 @@ import com.serenditree.branch.seed.model.filter.SortingType;
 import com.serenditree.root.data.geo.model.LngLatBounds;
 import com.serenditree.root.data.nativ.api.NativeQueryBuilderApi;
 import com.serenditree.root.data.nativ.model.Update;
+import io.quarkus.logging.Log;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -21,32 +22,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuilderApi {
 
-    private static final Logger LOGGER = Logger.getLogger(AbstractMongoNativeQueryBuilder.class.getName());
+    private static final String TEXT_FIELD = "text";
+    private static final String TEXT_FIELD_EXPRESSION = "$" + TEXT_FIELD;
 
     public static final String TOTAL_WATER = "totalWater";
-    public static final String WATER = "$water";
+    public static final String WATER_EXPRESSION = "$water";
 
     public static final String TOTAL_NUBITS = "totalNubits";
-    public static final String NUBITS = "$nubits";
-
+    public static final String NUBITS_EXPRESSION = "$nubits";
 
     public static final String TAG_SCORE = "score";
-    public static final String TAGS = "$tags";
+    public static final String TAG_FIELD = "tag";
+    public static final String TAGS_FIELD = "tags";
+    public static final String TAGS_FIELD_EXPRESSION = "$" + TAGS_FIELD;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // TAG
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected static final Bson TAG_UNWIND = Aggregates.unwind(TAGS);
-    protected static final Bson TAG_GROUP = Aggregates.group(TAGS);
+    protected static final Bson TAG_UNWIND = Aggregates.unwind(TAGS_FIELD_EXPRESSION);
+    protected static final Bson TAG_GROUP = Aggregates.group(TAGS_FIELD_EXPRESSION);
     protected static final Bson TAG_SCORE_FILTER = Aggregates.match(Filters.ne(TAG_SCORE, -1));
     protected static final Bson TAG_SCORE_SORT = Aggregates.sort(new Document().append(TAG_SCORE, 1));
-    protected static final Bson TAG_PROJECTION = Aggregates.project(Projections.include("tag"));
+    protected static final Bson TAG_PROJECTION = Aggregates.project(Projections.include(TAG_FIELD));
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // SORT
@@ -69,16 +71,16 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     protected static final List<BsonField> INCLUDED_FIELDS = List.of(
-            Accumulators.first("created", "$created"),
-            Accumulators.first("modified", "$modified"),
-            Accumulators.first("tags", TAGS),
-            Accumulators.first("parent", "$parent"),
-            Accumulators.first("location", "$location"),
-            Accumulators.first("username", "$username"),
-            Accumulators.first("userId", "$userId"),
-            Accumulators.first("anonymous", "$anonymous"),
-            Accumulators.first("title", "$title"),
-            Accumulators.first("text", "$text")
+        Accumulators.first("created", "$created"),
+        Accumulators.first("modified", "$modified"),
+        Accumulators.first("location", "$location"),
+        Accumulators.first("title", "$title"),
+        Accumulators.first(TEXT_FIELD, TEXT_FIELD_EXPRESSION),
+        Accumulators.first("username", "$username"),
+        Accumulators.first("userId", "$userId"),
+        Accumulators.first(TAGS_FIELD, TAGS_FIELD_EXPRESSION),
+        Accumulators.first("parentId", "$parentId"),
+        Accumulators.first("anonymous", "$anonymous")
     );
 
     protected List<Bson> pipeline;
@@ -89,11 +91,15 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
 
     protected Bson sort;
 
+    protected Bson textLimit;
+
     protected Bson skip;
 
     protected Bson limit;
 
     protected boolean unwind;
+
+    protected int retention;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // API
@@ -104,6 +110,7 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
         this.pipeline = new ArrayList<>();
         this.filters = new ArrayList<>();
         this.sort = null;
+        this.textLimit = null;
         this.skip = DEFAULT_SKIP;
         this.limit = DEFAULT_LIMIT;
         this.unwind = false;
@@ -114,13 +121,13 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     @Override
     public NativeQueryBuilderApi setBounds(LngLatBounds bounds) {
         this.filters.add(Filters.geoWithinBox(
-                "location",
-                // southwest and northeast are swapped to account for the persisted order which does not comply
-                // to https://docs.mongodb.com/manual/geospatial-queries/#geospatial-legacy
-                bounds.getSouth(),
-                bounds.getWest(),
-                bounds.getNorth(),
-                bounds.getEast()
+            "location",
+            // southwest and northeast are swapped to account for the persisted order which does not comply
+            // to https://docs.mongodb.com/manual/geospatial-queries/#geospatial-legacy
+            bounds.getSouth(),
+            bounds.getWest(),
+            bounds.getNorth(),
+            bounds.getEast()
         ));
 
         return this;
@@ -134,12 +141,21 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     }
 
     @Override
-    public NativeQueryBuilderApi setParent(ObjectId parentId, boolean isTrail) {
-        Bson filter = Filters.eq("parent", parentId);
-        if (isTrail) {
-            filter = Filters.or(filter, Filters.eq("_id", parentId));
-        }
-        this.filters.add(filter);
+    public NativeQueryBuilderApi setParentId(ObjectId parentId) {
+        this.filters.add(Filters.eq("parentId", parentId));
+
+        return this;
+    }
+
+    @Override
+    public NativeQueryBuilderApi setGardenId(ObjectId gardenId) {
+        this.filters.add(Filters.eq("gardenId", gardenId));
+        return this;
+    }
+
+    @Override
+    public NativeQueryBuilderApi setTrailId(ObjectId trailId) {
+        this.filters.add(Filters.or(Filters.eq("trailId", trailId), Filters.eq("_id", trailId)));
 
         return this;
     }
@@ -147,11 +163,11 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     @Override
     public NativeQueryBuilderApi setTags(Set<String> tags) {
         if (tags.size() == 1) {
-            this.filters.add(Filters.eq("tags", tags.iterator().next()));
+            this.filters.add(Filters.eq(TAGS_FIELD, tags.iterator().next()));
         } else {
             throw new WebApplicationException(
-                    "Only filtering by one tag is supported. You have provided " + tags.size() + ".",
-                    Response.Status.BAD_REQUEST
+                "Only filtering by one tag is supported. You have provided " + tags.size() + ".",
+                Response.Status.BAD_REQUEST
             );
         }
 
@@ -190,6 +206,36 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     }
 
     @Override
+    public NativeQueryBuilderApi setRetention(final int retention) {
+        this.retention = retention;
+
+        return this;
+    }
+
+    @Override
+    public NativeQueryBuilderApi setTextLimit(final int maxBytes) {
+        List<Bson> fields = this.includedFields.stream()
+            .map(BsonField::getName)
+            .filter(field -> !field.equals(TEXT_FIELD))
+            .map(field -> new Document(field, 1))
+            .collect(Collectors.toList());
+
+        fields.add(
+            new Document(
+                TEXT_FIELD,
+                new Document(
+                    "$substrBytes",
+                    List.of(TEXT_FIELD_EXPRESSION, 0, maxBytes)
+                )
+            )
+        );
+
+        this.textLimit = Aggregates.project(Projections.fields(fields));
+
+        return this;
+    }
+
+    @Override
     public NativeQueryBuilderApi setSkip(int skip) {
         this.skip = Aggregates.skip(skip);
 
@@ -198,31 +244,31 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
 
     @Override
     public NativeQueryBuilderApi setLimit(int limit) {
-
         this.limit = Aggregates.limit(limit);
+
         return this;
     }
 
     @Override
     public NativeQueryBuilderApi createTagsQuery(String name) {
         // TODO this won't scale...
-        this.pipeline.add(Aggregates.match(Filters.regex("tags", ".*" + name + ".*", "i")));
+        this.pipeline.add(Aggregates.match(Filters.regex(TAGS_FIELD, ".*" + name + ".*", "i")));
         this.pipeline.add(TAG_UNWIND);
         this.pipeline.add(TAG_GROUP);
         this.pipeline.add(
-                Aggregates.project(
-                        Projections.fields(
-                                Projections.excludeId(),
-                                Projections.computed("tag", "$_id"),
-                                Projections.computed(
-                                        TAG_SCORE,
-                                        new Document(
-                                                "$indexOfCP",
-                                                List.of(new Document("$toLower", "$_id"), name.toLowerCase())
-                                        )
-                                )
+            Aggregates.project(
+                Projections.fields(
+                    Projections.excludeId(),
+                    Projections.computed("tag", "$_id"),
+                    Projections.computed(
+                        TAG_SCORE,
+                        new Document(
+                            "$indexOfCP",
+                            List.of(new Document("$toLower", "$_id"), name.toLowerCase())
                         )
+                    )
                 )
+            )
         );
         this.pipeline.add(TAG_SCORE_FILTER);
         this.pipeline.add(TAG_SCORE_SORT);
@@ -234,24 +280,24 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
     @Override
     public Update water(final ObjectId id) {
         return Update.push(
-                Filters.eq("_id", id),
-                new Document("water", new Nutrition(1))
+            Filters.eq("_id", id),
+            new Document("water", new Nutrition(1))
         );
     }
 
     @Override
     public Update prune(final ObjectId id) {
         return Update.push(
-                Filters.eq("_id", id),
-                new Document("water", new Nutrition(-1))
+            Filters.eq("_id", id),
+            new Document("water", new Nutrition(-1))
         );
     }
 
     @Override
     public Update nubit(final ObjectId id, final int value) {
         return Update.push(
-                Filters.eq("_id", id),
-                new Document("nubit", new Nutrition(value))
+            Filters.eq("_id", id),
+            new Document("nubit", new Nutrition(value))
         );
     }
 
@@ -265,10 +311,10 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
             // TODO dynamic time frame/field
             Bson fromFilter = null;
             if (this.sort == SORT_BY_WATER) {
-                fromFilter = from("water.added", 14);
+                fromFilter = from("water.added", this.retention);
                 this.filters.add(fromFilter);
             } else if (this.sort == SORT_BY_NUBITS) {
-                fromFilter = from("nubits.added", 14);
+                fromFilter = from("nubits.added", this.retention);
                 this.filters.add(fromFilter);
             }
             if (!this.filters.isEmpty()) {
@@ -277,17 +323,7 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // NUTRITION AGGREGATES
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            if (this.sort == SORT_BY_WATER) {
-                this.pipeline.add(Aggregates.unwind(WATER));
-                this.pipeline.add(Aggregates.match(Objects.requireNonNull(fromFilter)));
-                this.includedFields.add(Accumulators.sum(TOTAL_WATER, WATER + ".value"));
-                this.pipeline.add(Aggregates.group("$_id", this.includedFields));
-            } else if (this.sort == SORT_BY_NUBITS) {
-                this.pipeline.add(Aggregates.unwind(NUBITS));
-                this.pipeline.add(Aggregates.match(Objects.requireNonNull(fromFilter)));
-                this.includedFields.add(Accumulators.sum(TOTAL_NUBITS, NUBITS + ".value"));
-                this.pipeline.add(Aggregates.group("$_id", this.includedFields));
-            }
+            this.setNutritionAggregates(fromFilter);
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // SORT
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -301,9 +337,15 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
                 this.pipeline.add(this.skip);
                 this.pipeline.add(this.limit);
             }
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // PROJECTION
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            if (this.textLimit != null) {
+                this.pipeline.add(this.textLimit);
+            }
         }
 
-        LOGGER.fine(this::toString);
+        Log.debug(this);
 
         return this.pipeline;
     }
@@ -318,21 +360,35 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
         return this.toJson(this.pipeline, true);
     }
 
+    private void setNutritionAggregates(final Bson fromFilter) {
+        if (this.sort == SORT_BY_WATER) {
+            this.pipeline.add(Aggregates.unwind(WATER_EXPRESSION));
+            this.pipeline.add(Aggregates.match(Objects.requireNonNull(fromFilter)));
+            this.includedFields.add(Accumulators.sum(TOTAL_WATER, WATER_EXPRESSION + ".value"));
+            this.pipeline.add(Aggregates.group("$_id", this.includedFields));
+        } else if (this.sort == SORT_BY_NUBITS) {
+            this.pipeline.add(Aggregates.unwind(NUBITS_EXPRESSION));
+            this.pipeline.add(Aggregates.match(Objects.requireNonNull(fromFilter)));
+            this.includedFields.add(Accumulators.sum(TOTAL_NUBITS, NUBITS_EXPRESSION + ".value"));
+            this.pipeline.add(Aggregates.group("$_id", this.includedFields));
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Filters
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static Bson from(final String field, final int daysAgo) {
         return Filters.gte(
-                field,
-                LocalDate.now().minus(Period.ofDays(daysAgo))
+            field,
+            LocalDate.now().minus(Period.ofDays(daysAgo))
         );
     }
 
     private static Bson between(final String field, final LocalDate from, final LocalDateTime to) {
         return Filters.and(
-                Filters.gte(field, from),
-                Filters.lte(field, to)
+            Filters.gte(field, from),
+            Filters.lte(field, to)
         );
     }
 
@@ -352,14 +408,14 @@ public abstract class AbstractMongoNativeQueryBuilder implements NativeQueryBuil
         }
 
         return documents.stream()
-                .map(AbstractMongoNativeQueryBuilder::toJson)
-                .collect(Collectors.joining(",", prefix, suffix));
+            .map(AbstractMongoNativeQueryBuilder::toJson)
+            .collect(Collectors.joining(",", prefix, suffix));
     }
 
     private static String toJson(Bson bson) {
         return bson.toBsonDocument(
-                BsonDocument.class,
-                MongoClientSettings.getDefaultCodecRegistry()
+            BsonDocument.class,
+            MongoClientSettings.getDefaultCodecRegistry()
         ).toJson();
     }
 }

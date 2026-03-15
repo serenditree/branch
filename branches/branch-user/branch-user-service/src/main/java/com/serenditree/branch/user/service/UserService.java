@@ -10,11 +10,11 @@ import com.serenditree.fence.model.FenceResponse;
 import com.serenditree.fence.model.Principal;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.RoleType;
-import com.serenditree.root.etc.maple.Maple;
+import com.serenditree.root.util.maple.Maple;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Dependent
@@ -53,9 +53,9 @@ public class UserService implements UserServiceApi {
     public FencePrincipal signUp(FencePrincipal principal) {
 
         User user = new User(
-                principal.getUsername(),
-                this.passwordService.hash(principal.getPassword()),
-                principal.getEmail()
+            principal.getUsername(),
+            this.passwordService.hash(principal.getPassword()),
+            principal.getEmail()
         );
 
         user.addRole(RoleType.USER);

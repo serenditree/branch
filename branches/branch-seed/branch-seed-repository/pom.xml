@@ -16,6 +16,20 @@
 
   <dependencies>
     <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-mongodb-panache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-mongodb-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.serenditree</groupId>
+      <artifactId>root-test</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.serenditree</groupId>
       <artifactId>branch-seed-repository-api</artifactId>
       <version>0.0.1-SNAPSHOT</version>
@@ -35,13 +49,6 @@
       <artifactId>fence-authorization-repository</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
-    <dependency>
-      <groupId>com.serenditree</groupId>
-      <artifactId>root-test</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
 </project>

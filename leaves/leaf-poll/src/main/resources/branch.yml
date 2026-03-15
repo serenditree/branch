@@ -1,0 +1,26 @@
+# see serenditree.yml in project root
+quarkus:
+  application:
+    name: branch-poll
+  smallrye-openapi:
+    path: /api/v1/poll/openapi
+mp:
+  messaging:
+    incoming:
+      seed-created:
+        bootstrap:
+          servers: root-wind:9092
+        connector: smallrye-kafka
+        value:
+          deserializer: com.serenditree.branch.seed.model.serde.SeedDeserializerKafka
+        group:
+          id: com.serenditree.wind.poll
+      seed-deleted:
+        bootstrap:
+          servers: root-wind:9092
+        connector: smallrye-kafka
+        value:
+          deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        group:
+          id: com.serenditree.wind.poll
+

@@ -10,10 +10,11 @@ public class SeedNativeQueryBuilder extends AbstractMongoNativeQueryBuilder impl
 
     public SeedNativeQueryBuilder() {
         this.includedFields = new ArrayList<>(AbstractMongoNativeQueryBuilder.INCLUDED_FIELDS);
-        this.includedFields.add(Accumulators.first("localAlignment", "$localAlignment"));
-        this.includedFields.add(Accumulators.first("trail", "$trail"));
-        this.includedFields.add(Accumulators.first("garden", "$garden"));
         this.includedFields.add(Accumulators.first("poll", "$poll"));
+        this.includedFields.add(Accumulators.first("gardenId", "$gardenId"));
+        this.includedFields.add(Accumulators.first("trail", "$trail"));
+        this.includedFields.add(Accumulators.first("trailId", "$trailId"));
+        this.includedFields.add(Accumulators.first("localAlignment", "$localAlignment"));
     }
 
     @Override

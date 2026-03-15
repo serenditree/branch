@@ -1,0 +1,28 @@
+# see serenditree.yml in project root
+quarkus:
+  application:
+    name: branch-user
+  smallrye-openapi:
+    path: /api/v1/user/openapi
+  oidc:
+    at:
+      auth-server-url: ~
+      application-type: web-app
+      client-id: ~
+      credentials:
+        secret: ~
+      authentication:
+        scopes: ${serenditree.fence.verification.scopes}
+    auth-server-url: ${quarkus.oidc.at.auth-server-url}
+    application-type: ${quarkus.oidc.at.application-type}
+    client-id: ${quarkus.oidc.at.client-id}
+    credentials:
+      secret: ${quarkus.oidc.at.credentials.secret}
+    authentication:
+      scopes: ${quarkus.oidc.at.authentication.scopes}
+  http:
+    auth:
+      permission:
+        authenticated:
+          paths: ${serenditree.fence.verification.paths}
+          policy: authenticated

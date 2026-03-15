@@ -2,15 +2,16 @@ package com.serenditree.fence.model;
 
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.RoleType;
-import com.serenditree.root.etc.maple.Maple;
-
-import javax.ws.rs.core.SecurityContext;
+import com.serenditree.root.util.maple.Maple;
+import jakarta.ws.rs.core.SecurityContext;
 
 /**
  * Custom {@link SecurityContext} for the propagation of security information from
- * {@link javax.ws.rs.container.ContainerRequestFilter}.
+ * {@link jakarta.ws.rs.container.ContainerRequestFilter}.
  */
 public class FenceContext implements SecurityContext {
+
+    public static final String AUTHENTICATION_SCHEME = "SERENDITREE-JOSE-V1";
 
     private FencePrincipal principal;
 
@@ -41,6 +42,6 @@ public class FenceContext implements SecurityContext {
 
     @Override
     public String getAuthenticationScheme() {
-        return "SERENDITREE-JOSE-V1";
+        return AUTHENTICATION_SCHEME;
     }
 }

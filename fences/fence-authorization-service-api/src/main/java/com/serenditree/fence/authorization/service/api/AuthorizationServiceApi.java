@@ -4,9 +4,9 @@ import com.serenditree.fence.annotation.Fenced;
 import com.serenditree.fence.authorization.repository.api.AuthorizationRepositoryApi;
 import com.serenditree.fence.model.FenceRecordAssertion;
 import com.serenditree.fence.model.api.FencePrincipal;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.UriInfo;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.UriInfo;
 import java.lang.reflect.Method;
 
 public interface AuthorizationServiceApi {

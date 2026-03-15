@@ -1,13 +1,12 @@
 package com.serenditree.fence.authentication.service;
 
 import com.serenditree.fence.authentication.service.api.PasswordServiceApi;
-import com.serenditree.root.etc.oak.Oak;
+import com.serenditree.root.util.oak.OakPassword;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import de.mkammerer.argon2.Argon2Helper;
-
-import javax.enterprise.context.Dependent;
-import javax.ws.rs.BadRequestException;
+import jakarta.enterprise.context.Dependent;
+import jakarta.ws.rs.BadRequestException;
 
 /**
  * Hashes and verifies passwords using Argon2.
@@ -30,10 +29,10 @@ public class PasswordService implements PasswordServiceApi {
             COST_R_ITERATIONS = 2;
         } else {
             COST_R_ITERATIONS = Argon2Helper.findIterations(
-                    ARGON_2,
-                    MAX_EXECUTION_TIME_MILLISECONDS,
-                    COST_N_MEMORY,
-                    COST_P_PARALLELISM
+                ARGON_2,
+                MAX_EXECUTION_TIME_MILLISECONDS,
+                COST_N_MEMORY,
+                COST_P_PARALLELISM
             );
         }
     }
@@ -51,14 +50,14 @@ public class PasswordService implements PasswordServiceApi {
 
         String hash;
 
-        if (Oak.password(plainText)) {
+        if (OakPassword.password(plainText)) {
             char[] plainTextCharArray = plainText.toCharArray();
             try {
                 hash = ARGON_2.hash(
-                        PasswordService.COST_R_ITERATIONS,
-                        PasswordService.COST_N_MEMORY,
-                        PasswordService.COST_P_PARALLELISM,
-                        plainTextCharArray
+                    PasswordService.COST_R_ITERATIONS,
+                    PasswordService.COST_N_MEMORY,
+                    PasswordService.COST_P_PARALLELISM,
+                    plainTextCharArray
                 );
             } finally {
                 ARGON_2.wipeArray(plainTextCharArray);

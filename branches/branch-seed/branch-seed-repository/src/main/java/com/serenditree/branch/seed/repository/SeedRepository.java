@@ -1,40 +1,43 @@
 package com.serenditree.branch.seed.repository;
 
 import com.serenditree.branch.seed.model.entities.Seed;
+import com.serenditree.branch.seed.model.filter.SeedFilter;
 import com.serenditree.branch.seed.repository.api.SeedRepositoryApi;
-import com.serenditree.branch.seed.repository.qualifier.SeedBound;
-import com.serenditree.root.data.nativ.api.NativeQueryBuilderApi;
-import io.quarkus.mongodb.panache.PanacheMongoRepository;
+import jakarta.enterprise.context.Dependent;
 import org.eclipse.microprofile.faulttolerance.Retry;
+import org.opensearch.client.opensearch._types.FieldValue;
+import org.opensearch.client.opensearch._types.OpenSearchException;
+import org.opensearch.client.opensearch._types.query_dsl.Query;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
+import java.util.List;
 
 @Dependent
 @Retry(
-        abortOn = {
-                EntityExistsException.class,
-                EntityNotFoundException.class,
-                NonUniqueResultException.class,
-                NoResultException.class
-        }
+    abortOn = {
+        OpenSearchException.class
+    }
 )
-public class SeedRepository extends AbstractSeedRepository<Seed> implements
-        SeedRepositoryApi,
-        PanacheMongoRepository<Seed> {
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // CDI
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+public class SeedRepository extends AbstractSeedRepository<Seed> implements SeedRepositoryApi {
 
     @Override
-    @Inject
-    public void setNativeQueryBuilder(@SeedBound NativeQueryBuilderApi nativeQueryBuilder) {
-        this.nativeQueryBuilder = nativeQueryBuilder;
+    protected void setTermFilters(SeedFilter filter, List<Query> filters) {
+        super.setTermFilters(filter, filters);
+
+        if (filter.getGardenId() != null) {
+            filters.add(this.getTermFilter(Seed.FIELD_GARDEN_ID, FieldValue.of(filter.getGardenId())));
+        }
+
+        if (filter.getTrailId() != null) {
+            filters.add(this.getTermFilter(Seed.FIELD_TRAIL_ID, FieldValue.of(filter.getTrailId())));
+        }
+
+        if (filter.isPoll()) {
+            filters.add(this.getTermFilter(Seed.FIELD_POLL, FieldValue.of(true)));
+        }
+
+        if (filter.isTrail()) {
+            filters.add(this.getTermFilter(Seed.FIELD_TRAIL, FieldValue.of(true)));
+        }
     }
 
     @Override

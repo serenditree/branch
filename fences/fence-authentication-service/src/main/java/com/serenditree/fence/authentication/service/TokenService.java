@@ -2,11 +2,18 @@ package com.serenditree.fence.authentication.service;
 
 import com.serenditree.fence.authentication.service.api.AuthenticationServiceApi;
 import com.serenditree.fence.authentication.service.api.TokenServiceApi;
+import com.serenditree.fence.model.FenceContext;
 import com.serenditree.fence.model.Principal;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.RoleType;
-import com.serenditree.root.etc.maple.Maple;
+import com.serenditree.root.util.maple.Maple;
 import com.serenditree.root.rest.transfer.ApiResponse;
+import io.quarkus.logging.Log;
+import jakarta.enterprise.context.Dependent;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.jose4j.json.JsonUtil;
@@ -23,14 +30,8 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.lang.JoseException;
 
-import javax.enterprise.context.Dependent;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Builds and verifies JOSE tokens. The environment needs to provide an 256bit key in a variable called
@@ -39,9 +40,8 @@ import java.util.logging.Logger;
 @Dependent
 public class TokenService implements TokenServiceApi {
 
-    private static final Logger LOGGER = Logger.getLogger(TokenService.class.getName());
-
     private static final String ISSUER = "serenditree.io";
+    private static final String WWW_AUTHENTICATE = FenceContext.AUTHENTICATION_SCHEME + " realm=\"serenditree.io\"";
     private static final String ROLES_KEY = "roles";
     private static final String USERNAME_KEY = "username";
     private static final int JWT_CONSUMER_ALLOWED_SKEW_SECONDS = 30;
@@ -49,8 +49,8 @@ public class TokenService implements TokenServiceApi {
     private static final int CLAIMS_NOT_BEFORE_MINUTES = 2;
     private static final String JWE_CONTENT_TYPE = "JWT";
     private static final Map<String, String> JWK_PARAMS = Map.of(
-            "kty", "oct",
-            "k", ConfigProvider.getConfig().getValue("serenditree.json.web.key", String.class)
+        "kty", "oct",
+        "k", ConfigProvider.getConfig().getValue("serenditree.json.web.key", String.class)
     );
     private static final JsonWebKey JWK;
 
@@ -64,7 +64,7 @@ public class TokenService implements TokenServiceApi {
             JWK = JsonWebKey.Factory.newJwk(JsonUtil.toJson(JWK_PARAMS));
         } catch (JoseException e) {
             String message = "Could not create a new JsonWebKey: " + e.getMessage();
-            LOGGER.severe(message);
+            Log.error(message);
             throw new SecurityException(message);
         }
     }
@@ -84,12 +84,12 @@ public class TokenService implements TokenServiceApi {
         FencePrincipal principal;
 
         JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                .setRequireExpirationTime()
-                .setAllowedClockSkewInSeconds(TokenService.JWT_CONSUMER_ALLOWED_SKEW_SECONDS)
-                .setRequireSubject()
-                .setExpectedIssuer(TokenService.ISSUER)
-                .setDecryptionKey(TokenService.JWK.getKey())
-                .setVerificationKey(TokenService.JWK.getKey()).build();
+            .setRequireExpirationTime()
+            .setAllowedClockSkewInSeconds(TokenService.JWT_CONSUMER_ALLOWED_SKEW_SECONDS)
+            .setRequireSubject()
+            .setExpectedIssuer(TokenService.ISSUER)
+            .setDecryptionKey(TokenService.JWK.getKey())
+            .setVerificationKey(TokenService.JWK.getKey()).build();
 
         try {
             // Retrieve user-claims/information
@@ -97,7 +97,7 @@ public class TokenService implements TokenServiceApi {
             Long id = Long.parseLong(jwtClaims.getSubject());
             String username = jwtClaims.getStringClaimValue(TokenService.USERNAME_KEY);
             List<RoleType> roleTypes = Maple.mapList(
-                    jwtClaims.getStringListClaimValue(TokenService.ROLES_KEY), RoleType::valueOf);
+                jwtClaims.getStringListClaimValue(TokenService.ROLES_KEY), RoleType::valueOf);
 
             // Create Principal
             principal = new Principal();
@@ -109,13 +109,13 @@ public class TokenService implements TokenServiceApi {
         } catch (InvalidJwtException e) {
             // TODO check reason. If it is not expired it is possibly a threat.
             ApiResponse apiResponse = new ApiResponse("Invalid claims provided: " + e.getMessage());
-            LOGGER.warning(apiResponse.getMessage());
+            Log.warn(apiResponse.getMessage());
             if (e.hasExpired()) {
                 throw new NotAuthorizedException(
-                        Response.status(Response.Status.UNAUTHORIZED)
-                                .entity(apiResponse)
-                                .header(HttpHeaders.WWW_AUTHENTICATE, "Basic realm=\"serenditree.io\" expired")
-                                .build()
+                    Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(apiResponse)
+                        .header(HttpHeaders.WWW_AUTHENTICATE, WWW_AUTHENTICATE)
+                        .build()
                 );
             } else {
                 throw new NotAuthorizedException(apiResponse.getMessage());
@@ -123,11 +123,11 @@ public class TokenService implements TokenServiceApi {
         } catch (MalformedClaimException e) {
             // TODO decide if this is threatening.
             String message = "Could not process malformed claims: " + e.getMessage();
-            LOGGER.warning(message);
+            Log.warn(message);
             throw new NotAuthorizedException(message);
         } catch (NumberFormatException e) {
             String message = "Could not retrieve subject claim: " + e.getMessage();
-            LOGGER.warning(message);
+            Log.warn(message);
             throw new NotAuthorizedException(message);
         }
 
@@ -148,7 +148,7 @@ public class TokenService implements TokenServiceApi {
             jwt = this.buildJsonWebSignature(this.buildJwtClaims(principal)).getCompactSerialization();
         } catch (JoseException e) {
             String message = "Could not serialize JWT: " + e.getMessage();
-            LOGGER.warning(message);
+            Log.warn(message);
             throw new NotAuthorizedException(message);
         }
 
@@ -157,7 +157,7 @@ public class TokenService implements TokenServiceApi {
             jweSerialization = this.buildJsonWebEncryption(jwt).getCompactSerialization();
         } catch (JoseException e) {
             String message = "Could not serialize JWE: " + e.getMessage();
-            LOGGER.warning(message);
+            Log.warn(message);
             throw new NotAuthorizedException(message);
         }
 
@@ -193,8 +193,10 @@ public class TokenService implements TokenServiceApi {
         // Principal information
         jwtClaims.setSubject(principal.getId().toString());
         jwtClaims.setStringClaim(TokenService.USERNAME_KEY, principal.getUsername());
-        jwtClaims.setStringListClaim(TokenService.ROLES_KEY,
-                Maple.mapList(principal.getRoleTypes(), RoleType::toString));
+        jwtClaims.setStringListClaim(
+            TokenService.ROLES_KEY,
+            Maple.mapList(principal.getRoleTypes(), RoleType::toString)
+        );
 
         return jwtClaims;
     }
@@ -214,7 +216,7 @@ public class TokenService implements TokenServiceApi {
         JsonWebEncryption jwe = new JsonWebEncryption();
 
         jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.DIRECT);
-        jwe.setEncryptionMethodHeaderParameter(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
+        jwe.setEncryptionMethodHeaderParameter(ContentEncryptionAlgorithmIdentifiers.AES_256_CBC_HMAC_SHA_512);
         jwe.setKey(TokenService.JWK.getKey());
         jwe.setKeyIdHeaderValue(TokenService.JWK.getKeyId());
         jwe.setContentTypeHeaderValue(TokenService.JWE_CONTENT_TYPE);

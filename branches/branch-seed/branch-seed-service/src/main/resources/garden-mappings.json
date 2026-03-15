@@ -1,0 +1,94 @@
+{
+  "properties": {
+    "id": {
+      "type": "keyword",
+      "index": true
+    },
+    "anonymous": {
+      "type": "boolean",
+      "index": true
+    },
+    "created": {
+      "type": "date",
+      "format": "date_hour_minute_second ",
+      "index": true
+    },
+    "location": {
+      "type": "nested",
+      "properties": {
+        "lat": {
+          "type": "double"
+        },
+        "lng": {
+          "type": "double"
+        }
+      }
+    },
+    "geoPoint": {
+      "type": "geo_point",
+      "index": true
+    },
+    "modified": {
+      "type": "date",
+      "format": "date_hour_minute_second "
+    },
+    "nubits": {
+      "type": "nested",
+      "properties": {
+        "added": {
+          "type": "date",
+          "format": "date_hour_minute_second ",
+          "index": true
+        },
+        "value": {
+          "type": "short"
+        }
+      }
+    },
+    "parentId": {
+      "type": "keyword",
+      "index": true
+    },
+    "tags": {
+      "type": "keyword",
+      "index": true,
+      "fields": {
+        "ngram": {
+          "type": "text",
+          "index": true,
+          "analyzer": "ngram_analyzer",
+          "search_analyzer": "standard"
+        }
+      }
+    },
+    "text": {
+      "type": "text",
+      "index": true
+    },
+    "title": {
+      "type": "text",
+      "index": true
+    },
+    "userId": {
+      "type": "long",
+      "index": true
+    },
+    "username": {
+      "type": "keyword",
+      "index": true
+    },
+    "water": {
+      "type": "nested",
+      "properties": {
+        "added": {
+          "type": "date",
+          "format": "date_hour_minute_second ",
+          "index": true
+        },
+        "value": {
+          "type": "short"
+        }
+      }
+    }
+  }
+}

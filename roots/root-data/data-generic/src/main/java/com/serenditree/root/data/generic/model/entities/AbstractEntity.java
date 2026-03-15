@@ -1,8 +1,10 @@
 package com.serenditree.root.data.generic.model.entities;
 
-import com.serenditree.root.etc.maple.Maple;
+import com.serenditree.root.util.maple.Maple;
+import jakarta.persistence.MappedSuperclass;
+import org.eclipse.microprofile.config.ConfigProvider;
 
-import javax.persistence.MappedSuperclass;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -11,7 +13,12 @@ import java.io.Serializable;
 @MappedSuperclass
 public abstract class AbstractEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+
+    private static final boolean LOG_PRETTY = ConfigProvider
+        .getConfig()
+        .getValue("serenditree.log.pretty", Boolean.class);
 
     /**
      * Prints the object in pretty JSON format.
@@ -20,6 +27,6 @@ public abstract class AbstractEntity implements Serializable {
      */
     @Override
     public String toString() {
-        return Maple.prettyJson(this);
+        return LOG_PRETTY ? Maple.prettyJson(this) : Maple.json(this);
     }
 }

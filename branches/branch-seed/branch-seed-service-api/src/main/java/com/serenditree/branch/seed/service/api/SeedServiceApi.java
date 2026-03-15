@@ -3,22 +3,21 @@ package com.serenditree.branch.seed.service.api;
 import com.serenditree.branch.seed.model.entities.Seed;
 import com.serenditree.branch.seed.model.filter.SeedFilter;
 import com.serenditree.fence.model.FenceResponse;
-import org.bson.types.ObjectId;
 
 import java.util.List;
 
 public interface SeedServiceApi {
     Seed create(Seed seed);
 
-    Seed retrieveById(ObjectId id);
+    Seed retrieveById(String id);
 
     List<Seed> retrieveByFilter(SeedFilter filter);
 
     List<String> retrieveTags(String name);
 
-    FenceResponse water(ObjectId id);
+    FenceResponse water(String id, String gardenId);
 
-    FenceResponse prune(ObjectId id);
+    FenceResponse prune(String id, String gardenId);
 
-    FenceResponse delete(ObjectId id);
+    FenceResponse delete(String id);
 }

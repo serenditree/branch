@@ -1,9 +1,11 @@
 package com.serenditree.root.data.generic.model.entities;
 
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import com.serenditree.root.util.oak.OakDate;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+
 import java.time.LocalDateTime;
 
 /**
@@ -37,7 +39,7 @@ public abstract class AbstractTimestampedEntity extends AbstractEntity {
      * Sets current {@link LocalDateTime} of created and modified when the entity is persisted for the first time.
      */
     protected void setCreated() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = OakDate.now();
         this.created = now;
         this.modified = now;
     }
@@ -46,7 +48,7 @@ public abstract class AbstractTimestampedEntity extends AbstractEntity {
      * Sets current {@link LocalDateTime} of created and modified each time the entity is updated.
      */
     protected void setModified() {
-        this.modified = LocalDateTime.now();
+        this.modified = OakDate.now();
     }
 
     /**

@@ -1,29 +1,29 @@
 package com.serenditree.branch.seed.model.entities;
 
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
+import com.serenditree.root.util.oak.OakDate;
+import jakarta.json.bind.annotation.JsonbProperty;
 
-import javax.persistence.Embeddable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * Entity that represents water, pruning and nubits.
  */
-@Embeddable
 public class Nutrition extends AbstractEntity {
 
+    public static final String FIELD_VALUE = "value";
+    public static final String FIELD_ADDED = "added";
+
+    @JsonbProperty(FIELD_VALUE)
     private int value;
 
+    @JsonbProperty(FIELD_ADDED)
     private LocalDateTime added;
-
-    public Nutrition() {
-    }
 
     public Nutrition(int value) {
         this.value = value;
         // Avoid linking nutrition with fence records by time.
-        this.added = LocalDateTime.of(LocalDate.now(), LocalTime.NOON);
+        this.added = OakDate.today();
     }
 
     public int getValue() {

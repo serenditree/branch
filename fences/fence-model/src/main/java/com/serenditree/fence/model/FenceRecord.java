@@ -1,48 +1,54 @@
 package com.serenditree.fence.model;
 
 
-import com.serenditree.fence.model.api.FenceEntity;
 import com.serenditree.fence.model.api.FencePrincipal;
 import com.serenditree.fence.model.enums.FenceActionType;
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
-import org.hibernate.annotations.GenericGenerator;
+import com.serenditree.root.util.oak.OakDate;
+import jakarta.annotation.Generated;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Objects;
 
 /**
  * Record that holds action based security information.
  */
 @Entity
+@Cacheable
 @Table(
-        indexes = {
-                @Index(name = FenceRecord.USER_REFERENCE, columnList = FenceRecord.USER_REFERENCE),
-                @Index(name = FenceRecord.ENTITY_REFERENCE, columnList = FenceRecord.ENTITY_REFERENCE),
-                @Index(name = FenceRecord.ACTION_REFERENCE, columnList = FenceRecord.ACTION_REFERENCE),
-                @Index(name = FenceRecord.EXPIRATION_REFERENCE, columnList = FenceRecord.EXPIRATION_REFERENCE)
-        }
+    indexes = {
+        @Index(name = "idx_fence_record_entity_id", columnList = FenceRecord.ENTITY_REFERENCE),
+        @Index(name = "idx_fence_record_expiration", columnList = FenceRecord.EXPIRATION_REFERENCE),
+    }
+)
+@IdClass(FenceRecord.class)
+@NamedQuery(
+    name = FenceRecord.RETRIEVE,
+    query = "SELECT r FROM FenceRecord r " +
+            "WHERE r.userId = :" + FenceRecord.USER_REFERENCE +
+            " AND r.entityId = :" + FenceRecord.ENTITY_REFERENCE +
+            " AND r.action = :" + FenceRecord.ACTION_REFERENCE +
+            " ORDER BY r.expiration DESC",
+    hints = @QueryHint(name = "org.hibernate.cacheable", value = "true")
 )
 @NamedQuery(
-        name = FenceRecord.RETRIEVE,
-        query = "SELECT r FROM FenceRecord r " +
-                "WHERE r.userId = :" + FenceRecord.USER_REFERENCE +
-                " AND r.entityId = :" + FenceRecord.ENTITY_REFERENCE +
-                " AND r.action = :" + FenceRecord.ACTION_REFERENCE +
-                " ORDER BY r.expiration DESC"
+    name = FenceRecord.RETRIEVE_BY_ENTITY,
+    query = "SELECT r FROM FenceRecord r " +
+            "WHERE r." + FenceRecord.ENTITY_REFERENCE + " = :" + FenceRecord.ENTITY_REFERENCE,
+    hints = @QueryHint(name = "org.hibernate.cacheable", value = "true")
 )
 @NamedQuery(
-        name = FenceRecord.RETRIEVE_BY_ENTITY,
-        query = "SELECT r FROM FenceRecord r " +
-                "WHERE r." + FenceRecord.ENTITY_REFERENCE + " = :" + FenceRecord.ENTITY_REFERENCE
+    name = FenceRecord.DELETE_BY_ENTITY,
+    query = "DELETE FROM FenceRecord " +
+            "WHERE " + FenceRecord.ENTITY_REFERENCE + " = :" + FenceRecord.ENTITY_REFERENCE
 )
 @NamedQuery(
-        name = FenceRecord.DELETE_BY_ENTITY,
-        query = "DELETE FROM FenceRecord " +
-                "WHERE " + FenceRecord.ENTITY_REFERENCE + " = :" + FenceRecord.ENTITY_REFERENCE
+    name = FenceRecord.DELETE_BY_EXPIRATION,
+    query = "DELETE FROM FenceRecord " +
+            "WHERE " + FenceRecord.EXPIRATION_REFERENCE + " < :" + FenceRecord.EXPIRATION_REFERENCE
 )
-public class FenceRecord extends AbstractEntity implements FenceEntity<UUID> {
+public class FenceRecord extends AbstractEntity {
 
     public static final String USER_REFERENCE = "userId";
     public static final String ENTITY_REFERENCE = "entityId";
@@ -52,39 +58,35 @@ public class FenceRecord extends AbstractEntity implements FenceEntity<UUID> {
     public static final String RETRIEVE = "FenceRecord.retrieve";
     public static final String RETRIEVE_BY_ENTITY = "FenceRecord.retrieveByEntity";
     public static final String DELETE_BY_ENTITY = "FenceRecord.deleteByEntity";
+    public static final String DELETE_BY_EXPIRATION = "FenceRecord.deleteByExpiration";
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)", name = "_id")
-    private UUID id;
-
-    @NotNull
     @Column(name = USER_REFERENCE)
-    private String userId;
+    private Long userId;
 
-    @NotNull
+    @Id
     @Column(name = ENTITY_REFERENCE)
     private String entityId;
 
-    @NotNull
+    @Id
     @Column(name = ACTION_REFERENCE)
     private String action;
 
+    @Id
     @Column(name = EXPIRATION_REFERENCE)
-    private LocalDateTime expiration;
+    private LocalDateTime expiration = OakDate.POSITIVE_INFINITY;
 
     public FenceRecord() {
     }
 
-    public FenceRecord(String entityId, String userId, String action, LocalDateTime expiration) {
+    public FenceRecord(String entityId, Long userId, String action, LocalDateTime expiration) {
         this.entityId = entityId;
         this.userId = userId;
         this.action = action;
         this.expiration = expiration;
     }
 
-    public FenceRecord(String entityId, String userId, String action) {
+    public FenceRecord(String entityId, Long userId, String action) {
         this.entityId = entityId;
         this.userId = userId;
         this.action = action;
@@ -92,23 +94,15 @@ public class FenceRecord extends AbstractEntity implements FenceEntity<UUID> {
 
     public FenceRecord(FencePrincipal principal) {
         this.entityId = principal.getId().toString();
-        this.userId = principal.getId().toString();
+        this.userId = principal.getId();
         this.action = FenceActionType.CRUD.name();
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -134,5 +128,22 @@ public class FenceRecord extends AbstractEntity implements FenceEntity<UUID> {
 
     public void setExpiration(LocalDateTime expiration) {
         this.expiration = expiration;
+    }
+
+    @Override
+    @Generated("IDE")
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        FenceRecord that = (FenceRecord) o;
+        return Objects.equals(userId, that.userId) && Objects.equals(entityId, that.entityId) &&
+               Objects.equals(action, that.action) && Objects.equals(expiration, that.expiration);
+    }
+
+    @Override
+    @Generated("IDE")
+    public int hashCode() {
+        return Objects.hash(userId, entityId, action, expiration);
     }
 }

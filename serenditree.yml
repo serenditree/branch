@@ -1,0 +1,57 @@
+# edit only at project root
+serenditree:
+  log:
+    level: INFO
+    pretty: false
+    properties: false
+  fence:
+    verification:
+      paths: /api/v1/user/verify/callback/*
+      scopes: profile,openid
+    policies:
+      enabled: false
+    cronjobs:
+      cleanup: 0 2 * * *
+    error: "Unhandled error during authentication and authorization."
+  root:
+    user:
+      user: ~
+      password: ~
+    seed:
+      user: ~
+      password: ~
+quarkus:
+  datasource:
+    db-kind: postgresql
+    username: ${serenditree.root.user.user}
+    password: ${serenditree.root.user.password}
+    jdbc:
+      telemetry: true
+      url: jdbc:postgresql://root-user-pgpool:5432/serenditree
+  hibernate-orm:
+    database:
+      generation: none
+    quote-identifiers:
+      strategy: all
+    log:
+      jdbc-warnings: true
+  log:
+    console:
+      format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p traceId=%X{traceId}, parentId=%X{parentId}, spanId=%X{spanId}, sampled=%X{sampled} [%c{3.}] (%t) %s%e%n"
+    category:
+      "io.smallrye.health":
+        level: WARN
+      "com.serenditree":
+        level: ${serenditree.log.level}
+  otel:
+    enabled: true
+    exporter:
+      otlp:
+        traces:
+          endpoint: ~
+  swagger-ui:
+    always-include: false
+  scheduler:
+    cron-type: unix
+  shutdown:
+    timeout: 10

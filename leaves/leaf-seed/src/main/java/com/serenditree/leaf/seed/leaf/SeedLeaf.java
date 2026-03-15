@@ -9,21 +9,20 @@ import com.serenditree.fence.model.enums.FenceActionType;
 import com.serenditree.fence.model.enums.RoleType;
 import com.serenditree.root.log.annotation.Logged;
 import com.serenditree.root.rest.cache.annotation.CacheControlConfig;
-import com.serenditree.root.rest.endpoint.AbstractEndpointRest;
-import org.bson.types.ObjectId;
+import com.serenditree.fence.AbstractFenceEndpoint;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 @Path("seed")
 @Logged
 @CacheControlConfig(noCache = true)
-public class SeedLeaf extends AbstractEndpointRest {
+public class SeedLeaf extends AbstractFenceEndpoint {
 
     private SeedServiceApi seedService;
 
@@ -36,31 +35,33 @@ public class SeedLeaf extends AbstractEndpointRest {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Fenced(
-            rolesAllowed = {RoleType.USER},
-            // policies = {SeedPolicies.PARENT},
-            createOrDeleteRecord = true,
-            recordType = FenceActionType.CRUD
+        rolesAllowed = {RoleType.USER},
+        // policies = {SeedPolicies.PARENT},
+        createOrDeleteRecord = true,
+        recordType = FenceActionType.CRUD
     )
     @Transactional(Transactional.TxType.NEVER)
     public Response create(final Seed seed) {
 
         return this.buildCacheResponse(
-                this.seedService.create(seed),
-                Objects::nonNull,
-                Response.Status.CREATED,
-                Response.Status.INTERNAL_SERVER_ERROR);
+            this.seedService.create(seed),
+            Objects::nonNull,
+            Response.Status.CREATED,
+            Response.Status.INTERNAL_SERVER_ERROR
+        );
     }
 
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Open
-    public Response retrieveById(final @PathParam("id") ObjectId id) {
+    public Response retrieveById(final @PathParam("id") String id) {
 
         return this.buildCacheResponse(
-                this.seedService.retrieveById(id),
-                Objects::nonNull,
-                Response.Status.NOT_FOUND);
+            this.seedService.retrieveById(id),
+            Objects::nonNull,
+            Response.Status.NOT_FOUND
+        );
     }
 
     @POST
@@ -71,9 +72,10 @@ public class SeedLeaf extends AbstractEndpointRest {
     public Response retrieveByFilter(final SeedFilter filter) {
 
         return this.buildCacheResponse(
-                this.seedService.retrieveByFilter(filter),
-                this.notNullNotEmpty,
-                Response.Status.NOT_FOUND);
+            this.seedService.retrieveByFilter(filter),
+            this.notNullNotEmpty,
+            Response.Status.NOT_FOUND
+        );
     }
 
     @GET
@@ -83,70 +85,74 @@ public class SeedLeaf extends AbstractEndpointRest {
     public Response retrieveTags(final @PathParam("name") String name) {
 
         return this.buildCacheResponse(
-                this.seedService.retrieveTags(name),
-                Objects::nonNull,
-                Response.Status.NOT_FOUND);
+            this.seedService.retrieveTags(name),
+            Objects::nonNull,
+            Response.Status.NOT_FOUND
+        );
     }
 
     @GET
     @Path("water/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Fenced(
-            rolesAllowed = {RoleType.USER},
-            actionBased = true,
-            createOrDeleteRecord = true,
-            recordRequired = false,
-            expirationTime = 1,
-            expirationUnit = ChronoUnit.DAYS
+        rolesAllowed = {RoleType.USER},
+        actionBased = true,
+        createOrDeleteRecord = true,
+        recordRequired = false,
+        expirationTime = 1,
+        expirationUnit = ChronoUnit.DAYS
     )
     @Transactional(Transactional.TxType.NEVER)
-    public Response water(final @PathParam("id") ObjectId id) {
+    public Response water(final @PathParam("id") String id, final @QueryParam("garden") String gardenId) {
 
         return this.buildResponse(
-                this.seedService.water(id),
-                r -> r != null && r.getId() != null,
-                Response.Status.INTERNAL_SERVER_ERROR);
+            this.seedService.water(id, gardenId),
+            r -> r != null && r.getId() != null,
+            Response.Status.INTERNAL_SERVER_ERROR
+        );
     }
 
     @GET
     @Path("prune/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Fenced(
-            rolesAllowed = {RoleType.USER},
-            actionBased = true,
-            createOrDeleteRecord = true,
-            recordRequired = false,
-            expirationTime = 1,
-            expirationUnit = ChronoUnit.DAYS
+        rolesAllowed = {RoleType.USER},
+        actionBased = true,
+        createOrDeleteRecord = true,
+        recordRequired = false,
+        expirationTime = 1,
+        expirationUnit = ChronoUnit.DAYS
     )
     @Transactional(Transactional.TxType.NEVER)
-    public Response prune(final @PathParam("id") ObjectId id) {
+    public Response prune(final @PathParam("id") String id, final @QueryParam("garden") String gardenId) {
 
         return this.buildResponse(
-                this.seedService.prune(id),
-                r -> r != null && r.getId() != null,
-                Response.Status.INTERNAL_SERVER_ERROR);
+            this.seedService.prune(id, gardenId),
+            r -> r != null && r.getId() != null,
+            Response.Status.INTERNAL_SERVER_ERROR
+        );
     }
 
     @DELETE
     @Path("delete/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Fenced(
-            rolesAllowed = {RoleType.USER},
-            actionBased = true,
-            recordRequired = true,
-            recordType = FenceActionType.CRUD,
-            createOrDeleteRecord = true
+        rolesAllowed = {RoleType.USER},
+        actionBased = true,
+        recordRequired = true,
+        recordType = FenceActionType.CRUD,
+        createOrDeleteRecord = true
     )
     @Transactional(Transactional.TxType.NEVER)
-    public Response delete(final @PathParam("id") ObjectId id) {
+    public Response delete(final @PathParam("id") String id) {
 
         return this.buildFenceResponse(
-                this.seedService.delete(id),
-                result -> result.getId() != null,
-                id.toString(),
-                Response.Status.ACCEPTED,
-                Response.Status.NOT_FOUND);
+            this.seedService.delete(id),
+            result -> result.getId() != null,
+            id.toString(),
+            Response.Status.OK,
+            Response.Status.NOT_FOUND
+        );
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

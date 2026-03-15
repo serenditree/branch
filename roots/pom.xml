@@ -14,9 +14,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>root-cdi</module>
     <module>root-data</module>
-    <module>root-etc</module>
+    <module>root-util</module>
     <module>root-log</module>
     <module>root-rest</module>
     <module>root-test</module>

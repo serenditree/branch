@@ -1,34 +1,37 @@
 package com.serenditree.root.rest.transfer;
 
-import com.serenditree.root.etc.maple.Maple;
+import com.serenditree.root.util.maple.Maple;
 
 import java.io.Serializable;
-import java.util.Map;
 
 public class ApiDescription implements Serializable {
 
-    private String serviceName;
+    private String service;
 
-    private String artifactVersion;
+    private String version;
 
     private String stage;
 
-    private Map<String, String> api;
+    private String openapi;
 
-    public String getServiceName() {
-        return serviceName;
+    private String openapiJson;
+
+    private String swagger;
+
+    public String getService() {
+        return service;
     }
 
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public void setService(String service) {
+        this.service = service;
     }
 
-    public String getArtifactVersion() {
-        return artifactVersion;
+    public String getVersion() {
+        return version;
     }
 
-    public void setArtifactVersion(String artifactVersion) {
-        this.artifactVersion = artifactVersion;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getStage() {
@@ -39,12 +42,28 @@ public class ApiDescription implements Serializable {
         this.stage = stage;
     }
 
-    public Map<String, String> getApi() {
-        return api;
+    public String getOpenapi() {
+        return openapi;
     }
 
-    public void setApi(Map<String, String> api) {
-        this.api = api;
+    public void setOpenapi(String openapi) {
+        this.openapi = openapi;
+    }
+
+    public String getOpenapiJson() {
+        return openapiJson;
+    }
+
+    public void setOpenapiJson(String openapiJson) {
+        this.openapiJson = openapiJson;
+    }
+
+    public String getSwagger() {
+        return swagger;
+    }
+
+    public void setSwagger(String swagger) {
+        this.swagger = swagger;
     }
 
     @Override

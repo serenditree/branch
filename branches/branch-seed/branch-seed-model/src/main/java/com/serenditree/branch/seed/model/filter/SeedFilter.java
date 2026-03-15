@@ -1,13 +1,14 @@
 package com.serenditree.branch.seed.model.filter;
 
 import com.serenditree.branch.seed.model.entities.Seed;
+import com.serenditree.branch.seed.model.types.SortingType;
 import com.serenditree.root.data.geo.model.LngLatBounds;
 
 public class SeedFilter extends Seed {
     private LngLatBounds bounds = null;
     private SortingType sort = null;
-    private Integer skip = null;
-    private Integer limit = null;
+    private int skip = 0;
+    private int limit = 10;
 
     public LngLatBounds getBounds() {
         return bounds;
@@ -25,7 +26,7 @@ public class SeedFilter extends Seed {
         this.sort = sort;
     }
 
-    public Integer getSkip() {
+    public int getSkip() {
         return skip;
     }
 
@@ -33,7 +34,7 @@ public class SeedFilter extends Seed {
         this.skip = skip;
     }
 
-    public Integer getLimit() {
+    public int getLimit() {
         return limit;
     }
 

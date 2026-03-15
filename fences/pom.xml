@@ -25,5 +25,6 @@
     <module>fence-authorization-service</module>
     <module>fence-authorization-service-api</module>
     <module>fence-interceptor</module>
+    <module>fence-extras</module>
   </modules>
 </project>

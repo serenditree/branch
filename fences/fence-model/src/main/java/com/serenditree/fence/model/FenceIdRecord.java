@@ -1,9 +1,11 @@
 package com.serenditree.fence.model;
 
 import com.serenditree.root.data.generic.model.entities.AbstractEntity;
+import jakarta.annotation.Generated;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import java.util.Objects;
 
 @Entity
 public class FenceIdRecord extends AbstractEntity {
@@ -24,5 +26,21 @@ public class FenceIdRecord extends AbstractEntity {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    @Override
+    @Generated("IDE")
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        FenceIdRecord that = (FenceIdRecord) o;
+        return Objects.equals(subject, that.subject);
+    }
+
+    @Override
+    @Generated("IDE")
+    public int hashCode() {
+        return Objects.hashCode(subject);
     }
 }

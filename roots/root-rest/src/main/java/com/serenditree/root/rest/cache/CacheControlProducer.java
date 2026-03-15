@@ -1,10 +1,9 @@
 package com.serenditree.root.rest.cache;
 
 import com.serenditree.root.rest.cache.annotation.CustomCacheControl;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
-import javax.ws.rs.core.CacheControl;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Produces;
+import jakarta.ws.rs.core.CacheControl;
 
 @Dependent
 public class CacheControlProducer {

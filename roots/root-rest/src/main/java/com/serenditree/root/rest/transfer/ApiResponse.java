@@ -1,6 +1,6 @@
 package com.serenditree.root.rest.transfer;
 
-import com.serenditree.root.etc.maple.Maple;
+import com.serenditree.root.util.maple.Maple;
 
 public class ApiResponse {
 

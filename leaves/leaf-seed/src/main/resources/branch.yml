@@ -1,0 +1,36 @@
+# see serenditree.yml in project root
+serenditree:
+  seed:
+    retention: 21
+quarkus:
+  application:
+    name: branch-seed
+  arc:
+    exclude-dependency:
+      "fence-extras-scheduler":
+        group-id: com.serenditree
+        artifact-id: fence-extras-scheduler
+  smallrye-openapi:
+    path: /api/v1/seed/openapi
+  swagger-ui:
+    path: /api/v1/seed/swagger
+  elasticsearch:
+    hosts:
+      - root-seed-master-0.root-seed-master-hl.serenditree.svc.cluster.local:9200
+      - root-seed-master-1.root-seed-master-hl.serenditree.svc.cluster.local:9200
+      - root-seed-master-2.root-seed-master-hl.serenditree.svc.cluster.local:9200
+mp:
+  messaging:
+    outgoing:
+      seed-created:
+        bootstrap:
+          servers: root-wind:9092
+        connector: smallrye-kafka
+        value:
+          serializer: io.quarkus.kafka.client.serialization.JsonbSerializer
+      seed-deleted:
+        bootstrap:
+          servers: root-wind:9092
+        connector: smallrye-kafka
+        value:
+          serializer: org.apache.kafka.common.serialization.StringSerializer

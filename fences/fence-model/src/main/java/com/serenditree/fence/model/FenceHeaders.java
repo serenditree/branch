@@ -11,4 +11,5 @@ public abstract class FenceHeaders {
     public static final String PASSWORD = PREFIX + "Password";
     public static final String EMAIL = PREFIX + "Email";
     public static final String VERIFICATION = PREFIX + "Verification";
+    public static final String VERIFIED = PREFIX + "Verified";
 }

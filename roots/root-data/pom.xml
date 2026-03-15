@@ -16,7 +16,6 @@
   <modules>
     <module>data-generic</module>
     <module>data-geo</module>
-    <module>data-native</module>
   </modules>
 
 </project>

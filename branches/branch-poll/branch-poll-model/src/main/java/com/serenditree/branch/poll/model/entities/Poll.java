@@ -2,37 +2,40 @@ package com.serenditree.branch.poll.model.entities;
 
 import com.serenditree.fence.model.AbstractTimestampedFenceEntity;
 import com.serenditree.fence.model.api.FenceEntity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
-import javax.persistence.*;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * An entity which represents a poll with title/topic/text and references a list of options users can vote for.
  */
 @Entity
 @Table(
-        indexes = {
-                @Index(name = Poll.SEED_REFERENCE, columnList = Poll.SEED_REFERENCE)
-        }
+    indexes = {
+        @Index(name = Poll.SEED_REFERENCE, columnList = Poll.SEED_REFERENCE)
+    }
 )
 @NamedQuery(
-        name = Poll.RETRIEVE_BY_SEED,
-        query = "SELECT p " +
-                "FROM Poll p " +
-                "WHERE p.seedId = :" + Poll.SEED_REFERENCE
+    name = Poll.RETRIEVE_BY_SEED,
+    query = "SELECT p " +
+            "FROM Poll p " +
+            "WHERE p.seedId = :" + Poll.SEED_REFERENCE,
+    hints = @QueryHint(name = "org.hibernate.cacheable", value = "true")
 )
 @NamedQuery(
-        name = Poll.VOTE,
-        query = "UPDATE PollOption p " +
-                "SET p.votes = p.votes + 1 " +
-                "WHERE p.id = :" + Poll.OPTION_REFERENCE
+    name = Poll.VOTE,
+    query = "UPDATE PollOption p " +
+            "SET p.votes = p.votes + 1 " +
+            "WHERE p.id = :" + Poll.OPTION_REFERENCE
 )
 @NamedQuery(
-        name = Poll.DELETE_BY_SEED,
-        query = "DELETE FROM Poll " +
-                "WHERE seedId = :" + Poll.SEED_REFERENCE
+    name = Poll.DELETE_BY_SEED,
+    query = "DELETE FROM Poll " +
+            "WHERE seedId = :" + Poll.SEED_REFERENCE
 )
-public class Poll extends AbstractTimestampedFenceEntity<Long> implements FenceEntity<Long> {
+public class Poll extends AbstractTimestampedFenceEntity<UUID> implements FenceEntity<UUID> {
 
     public static final String USER_REFERENCE = "userId";
     public static final String SEED_REFERENCE = "seedId";
@@ -58,23 +61,27 @@ public class Poll extends AbstractTimestampedFenceEntity<Long> implements FenceE
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
+    @NotNull
     @Column(name = USER_REFERENCE)
     private Long userId;
 
+    @NotNull
     @Column(name = SEED_REFERENCE)
     private String seedId;
 
+    @NotNull
     private String title;
 
     @OneToMany(
-            mappedBy = "poll",
-            fetch = FetchType.EAGER,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            orphanRemoval = true
+        mappedBy = "poll",
+        fetch = FetchType.EAGER,
+        cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+        orphanRemoval = true
     )
+    @NotNull
     private List<PollOption> options;
 
     /**
@@ -91,11 +98,11 @@ public class Poll extends AbstractTimestampedFenceEntity<Long> implements FenceE
         return options;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

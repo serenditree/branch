@@ -13,7 +13,7 @@
   <dependencies>
     <dependency>
       <groupId>com.serenditree</groupId>
-      <artifactId>root-etc</artifactId>
+      <artifactId>root-util</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>

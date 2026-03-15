@@ -81,10 +81,10 @@ public class FenceRecordAssertion {
     @Override
     public String toString() {
         return "{userId: \"" + userId +
-                "\", entityId: \"" + entityId +
-                "\", action: \"" + actionType +
-                "\", recordRequired. " + recordRequired +
-                ", recordCount: " + recordCount + "}";
+               "\", entityId: \"" + entityId +
+               "\", action: \"" + actionType +
+               "\", recordRequired. " + recordRequired +
+               ", recordCount: " + recordCount + "}";
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,11 +148,11 @@ public class FenceRecordAssertion {
             }
 
             return new FenceRecordAssertion(
-                    this.userId,
-                    this.entityId,
-                    this.actionType,
-                    this.recordRequired,
-                    this.recordCount
+                this.userId,
+                this.entityId,
+                this.actionType,
+                this.recordRequired,
+                this.recordCount
             );
         }
     }

@@ -1,0 +1,230 @@
+package io.serenditree.fence.authentication.service;
+
+import io.quarkus.logging.Log;
+import io.serenditree.fence.authentication.service.api.AuthenticationServiceApi;
+import io.serenditree.fence.authentication.service.api.TokenServiceApi;
+import io.serenditree.fence.model.FenceContext;
+import io.serenditree.fence.model.Principal;
+import io.serenditree.fence.model.api.FencePrincipal;
+import io.serenditree.fence.model.enums.RoleType;
+import io.serenditree.root.rest.transfer.ApiResponse;
+import io.serenditree.root.util.maple.Maple;
+import jakarta.enterprise.context.Dependent;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.microprofile.config.ConfigProvider;
+import org.jose4j.json.JsonUtil;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.jose4j.jwe.JsonWebEncryption;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.MalformedClaimException;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.lang.JoseException;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Builds and verifies JOSE tokens. The environment needs to provide an 256bit key in a variable called
+ * SERENDITREE_JSON_WEB_KEY.
+ */
+@Dependent
+public class TokenService implements TokenServiceApi {
+
+    private static final String ISSUER = "serenditree.io";
+    private static final String WWW_AUTHENTICATE = FenceContext.AUTHENTICATION_SCHEME + " realm=\"serenditree.io\"";
+    private static final String ROLES_KEY = "roles";
+    private static final String USERNAME_KEY = "username";
+    private static final int JWT_CONSUMER_ALLOWED_SKEW_SECONDS = 30;
+    private static final int CLAIMS_EXPIRATION_TIME_MINUTES = 60 * 24;
+    private static final int CLAIMS_NOT_BEFORE_MINUTES = 2;
+    private static final String JWE_CONTENT_TYPE = "JWT";
+    private static final Map<String, String> JWK_PARAMS = Map.of(
+        "kty", "oct",
+        "k", ConfigProvider.getConfig().getValue("serenditree.json.web.key", String.class)
+    );
+    private static final JsonWebKey JWK;
+    private static final boolean ENCRYPTION_ENABLED = false;
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // INIT JWK
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    static {
+        // Static initialization because of the key generation costs.
+        try {
+            JWK = JsonWebKey.Factory.newJwk(JsonUtil.toJson(JWK_PARAMS));
+        } catch (JoseException e) {
+            String message = "Could not create a new JsonWebKey: " + e.getMessage();
+            Log.error(message);
+            throw new SecurityException(message);
+        }
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // API
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Retrieves user information from a signed and optionally encrypted token of a user that is already signed in.
+     *
+     * @param token Signed and encrypted token
+     * @return {@link FencePrincipal} extracted from token. Verified user information.
+     */
+    @Override
+    public FencePrincipal authenticate(String token) {
+        FencePrincipal principal;
+
+        JwtConsumerBuilder jwtConsumer = new JwtConsumerBuilder()
+            .setRequireExpirationTime()
+            .setAllowedClockSkewInSeconds(TokenService.JWT_CONSUMER_ALLOWED_SKEW_SECONDS)
+            .setRequireSubject()
+            .setExpectedIssuer(TokenService.ISSUER)
+            .setVerificationKey(TokenService.JWK.getKey());
+
+        if (TokenService.ENCRYPTION_ENABLED) {
+            jwtConsumer.setDecryptionKey(TokenService.JWK.getKey());
+        }
+
+        try {
+            // Retrieve user-claims/information
+            JwtClaims jwtClaims = jwtConsumer.build().processToClaims(token);
+            Long id = Long.parseLong(jwtClaims.getSubject());
+            String username = jwtClaims.getStringClaimValue(TokenService.USERNAME_KEY);
+            List<RoleType> roleTypes = Maple.mapList(
+                jwtClaims.getStringListClaimValue(TokenService.ROLES_KEY), RoleType::valueOf);
+
+            // Create Principal
+            principal = new Principal();
+            principal.setId(id);
+            principal.setUsername(username);
+            principal.setToken(token);
+            principal.setRoleTypes(roleTypes);
+
+        } catch (InvalidJwtException e) {
+            ApiResponse apiResponse = new ApiResponse("Invalid claims provided: " + e.getMessage());
+            Log.warn(apiResponse.getMessage());
+            if (e.hasExpired()) {
+                throw new NotAuthorizedException(
+                    Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(apiResponse)
+                        .header(HttpHeaders.WWW_AUTHENTICATE, WWW_AUTHENTICATE)
+                        .build()
+                );
+            } else {
+                throw new NotAuthorizedException(apiResponse.getMessage());
+            }
+        } catch (MalformedClaimException e) {
+            String message = "Could not process malformed claims: " + e.getMessage();
+            Log.warn(message);
+            throw new NotAuthorizedException(message);
+        } catch (NumberFormatException e) {
+            String message = "Could not retrieve subject claim: " + e.getMessage();
+            Log.warn(message);
+            throw new NotAuthorizedException(message);
+        }
+
+        return principal;
+    }
+
+    /**
+     * Builds a JOSE token for a Principal who has already been authenticated by {@link AuthenticationServiceApi} ie
+     * by username and password or oauth.
+     *
+     * @param principal Encapsulated ID information
+     * @return Token
+     */
+    @Override
+    public String buildToken(FencePrincipal principal) {
+        String token;
+        try {
+            token = this.buildJsonWebSignature(this.buildJwtClaims(principal)).getCompactSerialization();
+        } catch (JoseException e) {
+            String message = "Could not serialize JWT: " + e.getMessage();
+            Log.warn(message);
+            throw new NotAuthorizedException(message);
+        }
+
+        if (TokenService.ENCRYPTION_ENABLED) {
+            try {
+                token = this.buildJsonWebEncryption(token).getCompactSerialization();
+            } catch (JoseException e) {
+                String message = "Could not serialize JWE: " + e.getMessage();
+                Log.warn(message);
+                throw new NotAuthorizedException(message);
+            }
+        }
+
+
+        return token;
+    }
+
+    @Override
+    public String buildVerificationToken(final Long id, final String subject) {
+        if (id == null || id < 1L || StringUtils.isBlank(subject)) {
+            throw new BadRequestException("Missing or invalid information for verification token.");
+        }
+        FencePrincipal fencePrincipal = new Principal();
+        // ID of target user.
+        fencePrincipal.setId(id);
+        fencePrincipal.setUsername(subject);
+        fencePrincipal.setRoleTypes(List.of(RoleType.USER, RoleType.HUMAN));
+
+        return this.buildToken(fencePrincipal);
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // SUB: BUILD TOKEN
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private JwtClaims buildJwtClaims(FencePrincipal principal) {
+        JwtClaims jwtClaims = new JwtClaims();
+
+        jwtClaims.setIssuer(TokenService.ISSUER);
+        jwtClaims.setExpirationTimeMinutesInTheFuture(TokenService.CLAIMS_EXPIRATION_TIME_MINUTES);
+        jwtClaims.setGeneratedJwtId();
+        jwtClaims.setIssuedAtToNow();
+        jwtClaims.setNotBeforeMinutesInThePast(TokenService.CLAIMS_NOT_BEFORE_MINUTES);
+        // Principal information
+        jwtClaims.setSubject(principal.getId().toString());
+        jwtClaims.setStringClaim(TokenService.USERNAME_KEY, principal.getUsername());
+        jwtClaims.setStringListClaim(
+            TokenService.ROLES_KEY,
+            Maple.mapList(principal.getRoleTypes(), RoleType::toString)
+        );
+
+        return jwtClaims;
+    }
+
+    private JsonWebSignature buildJsonWebSignature(JwtClaims jwtClaims) {
+        JsonWebSignature jws = new JsonWebSignature();
+
+        jws.setPayload(jwtClaims.toJson());
+        jws.setKeyIdHeaderValue(TokenService.JWK.getKeyId());
+        jws.setKey(TokenService.JWK.getKey());
+        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA256);
+
+        return jws;
+    }
+
+    private JsonWebEncryption buildJsonWebEncryption(String jwt) {
+        JsonWebEncryption jwe = new JsonWebEncryption();
+
+        jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.DIRECT);
+        jwe.setEncryptionMethodHeaderParameter(ContentEncryptionAlgorithmIdentifiers.AES_256_CBC_HMAC_SHA_512);
+        jwe.setKey(TokenService.JWK.getKey());
+        jwe.setKeyIdHeaderValue(TokenService.JWK.getKeyId());
+        jwe.setContentTypeHeaderValue(TokenService.JWE_CONTENT_TYPE);
+        jwe.setPayload(jwt);
+
+        return jwe;
+    }
+}

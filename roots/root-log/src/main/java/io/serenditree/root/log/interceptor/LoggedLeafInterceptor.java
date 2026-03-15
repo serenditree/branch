@@ -1,0 +1,116 @@
+package io.serenditree.root.log.interceptor;
+
+import io.serenditree.root.log.annotation.Logged;
+import io.quarkus.logging.Log;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.context.Dependent;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
+import jakarta.ws.rs.core.Response;
+
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+@Dependent
+@Interceptor
+@Logged
+@Priority(Interceptor.Priority.APPLICATION + 100)
+public class LoggedLeafInterceptor {
+
+    private static final String BEFORE = "Calling method ";
+    private static final String AFTER = "Returning from ";
+
+    @AroundInvoke
+    public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
+        Object response;
+
+        if (Log.isDebugEnabled() && invocationContext.getMethod().getModifiers() == Modifier.PUBLIC) {
+            final String declaringClass = invocationContext
+                .getMethod()
+                .getDeclaringClass()
+                .getSimpleName();
+            final String method = invocationContext
+                .getMethod()
+                .getName();
+            final String methodSignature = declaringClass + "::" + method;
+
+            final boolean isVoid = invocationContext
+                .getMethod()
+                .getReturnType()
+                .equals(Void.TYPE);
+
+            this.before(methodSignature, invocationContext.getParameters());
+            response = invocationContext.proceed();
+            this.after(methodSignature, response, isVoid);
+        } else {
+            response = invocationContext.proceed();
+        }
+
+        return response;
+    }
+
+    /**
+     * Logs method signature and parameters before the intercepted method executes.
+     *
+     * @param method     Method signature.
+     * @param parameters Method parameters.
+     */
+    private void before(final String method, final Object[] parameters) {
+        String message = BEFORE + method;
+
+        if (parameters != null && parameters.length > 0) {
+            message += Arrays
+                .stream(parameters)
+                .map(parameter -> parameter == null ? "null" : parameter.toString())
+                .collect(Collectors.joining("], [", " with parameters: [", "]"));
+        }
+
+        Log.debug(message);
+    }
+
+    /**
+     * Logs method signature and return value after the intercepted method was executed.
+     *
+     * @param method      Method signature.
+     * @param returnValue Return value of the intercepted method.
+     * @param isVoid      Flag for void return type.
+     */
+    private void after(final String method, final Object returnValue, final boolean isVoid) {
+        if (!isVoid) {
+            if (returnValue instanceof Response response) {
+                if (response.getEntity() instanceof Collection) {
+                    this.logCollection(method, (Collection<?>) response.getEntity(), response.getStatusInfo());
+                } else {
+                    this.logObject(method, response.getEntity(), response.getStatusInfo());
+                }
+            } else if (returnValue instanceof Collection) {
+                this.logCollection(method, (Collection<?>) returnValue);
+            } else {
+                this.logObject(method, returnValue);
+            }
+        } else {
+            Log.debugv("{0}{1}", AFTER, method);
+        }
+    }
+
+    private <T> void logCollection(final String method,
+                                   final Collection<T> collection,
+                                   final Response.StatusType status) {
+        Log.debugv("{0}{1} Status: {2} Results: {3}", AFTER, method, status.getReasonPhrase(), collection.size());
+    }
+
+    private <T> void logCollection(final String method, final Collection<T> collection) {
+        Log.debugv("{0}{1} Results: {2}", AFTER, method, collection.size());
+    }
+
+    private void logObject(final String method, final Object returnValue, final Response.StatusType status) {
+        Log.debugv("{0}{1} Status: {2} Result: {3}", AFTER, method, status.getReasonPhrase(), returnValue);
+    }
+
+    private void logObject(final String method, final Object returnValue) {
+        Log.debugv("{0}{1} Result: {2}", AFTER, method, returnValue);
+    }
+}

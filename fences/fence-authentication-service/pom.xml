@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>fences</artifactId>
-    <groupId>com.serenditree</groupId>
+    <groupId>io.serenditree</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -15,29 +15,29 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.serenditree</groupId>
+      <groupId>io.serenditree</groupId>
       <artifactId>fence-authentication-service-api</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.serenditree</groupId>
+      <groupId>io.serenditree</groupId>
       <artifactId>root-rest</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.serenditree</groupId>
-      <artifactId>root-etc</artifactId>
+      <groupId>io.serenditree</groupId>
+      <artifactId>root-util</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.serenditree</groupId>
+      <groupId>io.serenditree</groupId>
       <artifactId>root-test</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>de.mkammerer</groupId>
-      <artifactId>argon2-jvm</artifactId>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk18on</artifactId>
     </dependency>
   </dependencies>
 </project>

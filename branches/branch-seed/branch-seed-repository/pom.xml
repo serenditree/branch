@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>branch-seed</artifactId>
-    <groupId>com.serenditree</groupId>
+    <groupId>io.serenditree</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
@@ -16,32 +16,49 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.serenditree</groupId>
-      <artifactId>branch-seed-repository-api</artifactId>
+      <groupId>io.quarkiverse.opensearch</groupId>
+      <artifactId>quarkus-opensearch-java-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkiverse.opensearch</groupId>
+      <artifactId>quarkus-opensearch-transport-apache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.serenditree</groupId>
+      <artifactId>root-log</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.serenditree</groupId>
-      <artifactId>branch-seed-model</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.serenditree</groupId>
-      <artifactId>data-geo</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.serenditree</groupId>
-      <artifactId>fence-authorization-repository</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.serenditree</groupId>
+      <groupId>io.serenditree</groupId>
       <artifactId>root-test</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>io.serenditree</groupId>
+      <artifactId>branch-seed-repository-api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>io.serenditree</groupId>
+      <artifactId>branch-seed-model</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>io.serenditree</groupId>
+      <artifactId>data-geo</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>io.serenditree</groupId>
+      <artifactId>root-rest</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>io.serenditree</groupId>
+      <artifactId>fence-authorization-repository</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
 </project>

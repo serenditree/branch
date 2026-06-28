@@ -34,7 +34,7 @@
     <maven.required>3.9.0</maven.required>
     <maven.home>${settings.localRepository}</maven.home>
 
-    <version.quarkus>3.36.3</version.quarkus>
+    <version.quarkus>3.37.0</version.quarkus>
     <quarkus.package.output-directory>${serenditree.name}</quarkus.package.output-directory>
 
     <version.maven.antrun.plugin>3.2.0</version.maven.antrun.plugin>

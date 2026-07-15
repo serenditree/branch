@@ -336,7 +336,7 @@ public abstract class AbstractFenceEndpoint {
 
         apiDescription.setService("serenditree/" + this.service);
         apiDescription.setVersion(this.version);
-        apiDescription.setStage(this.stage);
+        apiDescription.setStage(this.stage + "-pr");
         apiDescription.setOpenapi(uriBuilder.path("openapi").build().toString());
         apiDescription.setOpenapiJson(uriBuilder.queryParam("format", "json").build().toString());
         if (this.swagger) {

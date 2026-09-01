@@ -1,0 +1,92 @@
+serenditree:
+  log:
+    level: INFO
+    pretty: false
+    properties: false
+  fence:
+    policies:
+      enabled: false
+    error: "Unhandled error during authentication and authorization."
+  root:
+    user:
+      user: ~
+      password: ~
+    seed:
+      user: ~
+      password: ~
+  seed:
+    retention: 21
+quarkus:
+  application:
+    name: branch-seed
+  datasource:
+    db-kind: postgresql
+    username: ${serenditree.root.user.user}
+    password: ${serenditree.root.user.password}
+    jdbc:
+      telemetry: true
+      url: jdbc:postgresql://root-user:5432/serenditree
+  hibernate-orm:
+    scripts:
+      generation: none
+    jdbc:
+      statement-batch-size: 100
+      statement-fetch-size: 100
+    quote-identifiers:
+      strategy: all
+    log:
+      jdbc-warnings: true
+  opensearch:
+    hosts:
+      - root-seed-0.root-seed-headless.serenditree.svc.cluster.local:9200
+      - root-seed-1.root-seed-headless.serenditree.svc.cluster.local:9200
+      - root-seed-2.root-seed-headless.serenditree.svc.cluster.local:9200
+  log:
+    console:
+      format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p traceId=%X{traceId}, parentId=%X{parentId}, spanId=%X{spanId}, sampled=%X{sampled} [%c{3.}] (%t) %s%e%n"
+    category:
+      "io.smallrye.health":
+        level: WARN
+      "io.opentelemetry":
+        level: WARN
+      "io.serenditree":
+        level: ${serenditree.log.level}
+  otel:
+    enabled: true
+    exporter:
+      otlp:
+        traces:
+          endpoint: ~
+  smallrye-openapi:
+    path: /api/v1/seed/openapi
+  swagger-ui:
+    always-include: false
+    path: /api/v1/seed/swagger
+  shutdown:
+    timeout: 10
+mp:
+  messaging:
+    outgoing:
+      seed-created:
+        bootstrap:
+          servers: root-wind:9092
+        connector: smallrye-kafka
+        value:
+          serializer: io.quarkus.kafka.client.serialization.JsonbSerializer
+      seed-deleted:
+        bootstrap:
+          servers: root-wind:9092
+        connector: smallrye-kafka
+        value:
+          serializer: org.apache.kafka.common.serialization.StringSerializer
+    incoming:
+      user-deleted:
+        bootstrap:
+          servers: root-wind:9092
+        connector: smallrye-kafka
+        key:
+          deserializer: org.apache.kafka.common.serialization.LongDeserializer
+        value:
+          deserializer: org.apache.kafka.common.serialization.LongDeserializer
+        group:
+          id: io.serenditree.wind.seed

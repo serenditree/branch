@@ -5,6 +5,7 @@ import io.serenditree.branch.seed.model.entities.AbstractSeed;
 import io.serenditree.branch.seed.model.entities.Nutrition;
 import io.serenditree.branch.seed.model.filter.SeedFilter;
 import io.serenditree.branch.seed.model.types.NutritionType;
+import io.serenditree.branch.seed.model.types.SortingType;
 import io.serenditree.branch.seed.repository.api.AbstractSeedRepository;
 import io.serenditree.fence.model.FenceResponse;
 import io.serenditree.root.data.geo.model.LngLatBounds;
@@ -108,12 +109,17 @@ public abstract class OpenSearchAbstractSeedRepository<T extends AbstractSeed> i
             }
         }
 
+        // TODO OpenSearch >= 3.8 (Lucene 10.5 sort skipping) fails on filtered nested sorts with an
+        // unsupported_operation_exception once the hits exceed the total-hits threshold. Tracking all hits disables it.
+        final boolean trackTotalHits = filter.getSort() == SortingType.BY_WATER ||
+                                       filter.getSort() == SortingType.BY_NUBITS;
         final Query finalQuery = query;
         SearchRequest searchRequest = SearchRequest.of(
             search -> search
                 .index(this.getIndex())
                 .query(finalQuery)
                 .sort(sortOptions)
+                .trackTotalHits(track -> track.enabled(trackTotalHits))
                 .from(filter.getSkip())
                 .size(filter.getLimit())
         );

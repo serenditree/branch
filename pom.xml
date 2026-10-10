@@ -67,7 +67,7 @@
     <version.hamcrest>2.1</version.hamcrest>
     <version.jayway.jsonpath>3.0.0</version.jayway.jsonpath>
     <version.mockito>5.24.0</version.mockito>
-    <version.rest-assured>6.0.1</version.rest-assured>
+    <version.rest-assured>6.1.0</version.rest-assured>
 
     <argLine/>
   </properties>

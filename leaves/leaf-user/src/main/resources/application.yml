@@ -80,6 +80,10 @@ quarkus:
   shutdown:
     timeout: 10
   http:
+    proxy:
+      proxy-address-forwarding: true
+      allow-x-forwarded: true
+      enable-forwarded-host: true
     auth:
       permission:
         authenticated:

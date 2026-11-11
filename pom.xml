@@ -34,7 +34,7 @@
     <maven.required>3.9.0</maven.required>
     <maven.home>${settings.localRepository}</maven.home>
 
-    <version.quarkus>3.40.1.1</version.quarkus>
+    <version.quarkus>3.40.1.2</version.quarkus>
     <quarkus.package.output-directory>${serenditree.name}</quarkus.package.output-directory>
 
     <version.maven.antrun.plugin>3.2.0</version.maven.antrun.plugin>
@@ -43,24 +43,24 @@
     <version.maven.dependency.plugin>3.11.0</version.maven.dependency.plugin>
     <version.maven.deploy.plugin>3.2.0</version.maven.deploy.plugin>
     <version.maven.enforcer.plugin>3.7.0</version.maven.enforcer.plugin>
-    <version.maven.exec.plugin>3.6.4</version.maven.exec.plugin>
+    <version.maven.exec.plugin>3.7.0</version.maven.exec.plugin>
     <version.maven.failsafe.plugin>3.6.1</version.maven.failsafe.plugin>
     <version.maven.install.plugin>3.2.0</version.maven.install.plugin>
-    <version.maven.jandex.plugin>3.6.0</version.maven.jandex.plugin>
-    <version.maven.quarkus.plugin>3.40.1.1</version.maven.quarkus.plugin>
+    <version.maven.jandex.plugin>3.6.1</version.maven.jandex.plugin>
+    <version.maven.quarkus.plugin>3.40.1.2</version.maven.quarkus.plugin>
     <version.maven.resources.plugin>3.5.0</version.maven.resources.plugin>
     <version.maven.site.plugin>4.0.0-M16</version.maven.site.plugin>
     <version.maven.surefire.plugin>3.6.1</version.maven.surefire.plugin>
     <version.maven.jar.plugin>3.5.1</version.maven.jar.plugin>
 
-    <version.versions.maven.plugin>2.23.0</version.versions.maven.plugin>
+    <version.versions.maven.plugin>2.25.1</version.versions.maven.plugin>
     <versions.maven.plugin.rules>file:///${project.basedir}/versions.xml</versions.maven.plugin.rules>
 
     <version.quarkus.opensearch>3.4.3</version.quarkus.opensearch>
     <version.apache.commons.io>2.22.0</version.apache.commons.io>
     <version.apache.commons.lang>3.21.0</version.apache.commons.lang>
-    <version.bouncycastle>1.86</version.bouncycastle>
-    <version.owasp>20261103.2</version.owasp>
+    <version.bouncycastle>1.87</version.bouncycastle>
+    <version.owasp>20261110.1</version.owasp>
 
     <version.awaitility>4.3.0</version.awaitility>
     <version.bytebuddy>1.17.7</version.bytebuddy>

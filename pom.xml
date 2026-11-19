@@ -53,12 +53,12 @@
     <version.maven.surefire.plugin>3.6.1</version.maven.surefire.plugin>
     <version.maven.jar.plugin>3.5.1</version.maven.jar.plugin>
 
-    <version.versions.maven.plugin>2.25.1</version.versions.maven.plugin>
+    <version.versions.maven.plugin>2.25.2</version.versions.maven.plugin>
     <versions.maven.plugin.rules>file:///${project.basedir}/versions.xml</versions.maven.plugin.rules>
 
     <version.quarkus.opensearch>3.4.3</version.quarkus.opensearch>
     <version.apache.commons.io>2.22.0</version.apache.commons.io>
-    <version.apache.commons.lang>3.21.0</version.apache.commons.lang>
+    <version.apache.commons.lang>3.22.0</version.apache.commons.lang>
     <version.bouncycastle>1.87</version.bouncycastle>
     <version.owasp>20261110.1</version.owasp>
 

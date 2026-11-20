@@ -14,5 +14,16 @@
         <ignoreVersion type="regex">.*</ignoreVersion>
       </ignoreVersions>
     </rule>
+    <!-- Quarkus platform and plugin are updated by quarkus:update. -->
+    <rule groupId="io.quarkus.platform" artifactId="quarkus-bom">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+    <rule groupId="io.quarkus.platform" artifactId="quarkus-maven-plugin">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
   </rules>
 </ruleset>

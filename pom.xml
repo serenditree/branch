@@ -35,6 +35,7 @@
     <maven.home>${settings.localRepository}</maven.home>
 
     <version.quarkus>3.40.1.2</version.quarkus>
+    <version.maven.quarkus.plugin>3.40.1.2</version.maven.quarkus.plugin>
     <quarkus.package.output-directory>${serenditree.name}</quarkus.package.output-directory>
 
     <version.maven.antrun.plugin>3.2.0</version.maven.antrun.plugin>
@@ -47,7 +48,6 @@
     <version.maven.failsafe.plugin>3.6.1</version.maven.failsafe.plugin>
     <version.maven.install.plugin>3.2.0</version.maven.install.plugin>
     <version.maven.jandex.plugin>3.6.1</version.maven.jandex.plugin>
-    <version.maven.quarkus.plugin>3.40.1.2</version.maven.quarkus.plugin>
     <version.maven.resources.plugin>3.5.0</version.maven.resources.plugin>
     <version.maven.site.plugin>4.0.0-M16</version.maven.site.plugin>
     <version.maven.surefire.plugin>3.6.1</version.maven.surefire.plugin>
@@ -76,8 +76,8 @@
     <dependencies>
       <!-- QUARKUS -->
       <dependency>
-        <groupId>io.quarkus</groupId>
-        <artifactId>quarkus-universe-bom</artifactId>
+        <groupId>io.quarkus.platform</groupId>
+        <artifactId>quarkus-bom</artifactId>
         <version>${version.quarkus}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -261,7 +261,7 @@
       <plugins>
         <!-- QUARKUS -->
         <plugin>
-          <groupId>io.quarkus</groupId>
+          <groupId>io.quarkus.platform</groupId>
           <artifactId>quarkus-maven-plugin</artifactId>
           <version>${version.maven.quarkus.plugin}</version>
           <extensions>true</extensions>
@@ -532,6 +532,23 @@
         <defaultGoal>validate</defaultGoal>
         <plugins>
           <plugin>
+            <groupId>io.quarkus.platform</groupId>
+            <artifactId>quarkus-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <phase>validate</phase>
+                <goals>
+                  <goal>update</goal>
+                </goals>
+                <configuration>
+                  <rewriteDryRun>true</rewriteDryRun>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>versions-maven-plugin</artifactId>
             <inherited>false</inherited>
@@ -560,7 +577,7 @@
         <defaultGoal>validate</defaultGoal>
         <plugins>
           <plugin>
-            <groupId>io.quarkus</groupId>
+            <groupId>io.quarkus.platform</groupId>
             <artifactId>quarkus-maven-plugin</artifactId>
             <extensions>true</extensions>
             <inherited>false</inherited>
